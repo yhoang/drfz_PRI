@@ -18,6 +18,7 @@ fcs$version="v0.39b"
 
 
 workspace="YH"
+# workspace="lenovoz570"
 #workspace="rev"
 # workspace="office"
 #workspace="Ria"
@@ -53,6 +54,17 @@ if (workspace=="office") {
 	### set template location
 	fcs$png.file=file.path("Y:","AG_Baumgrass","AG-PRI","PRIanalyzer","tcl","tmp.png")
 	fcs$template.file=file.path("Y:","AG_Baumgrass","AG-PRI","PRIanalyzer","tcl","template.png")
+} else if (	workspace="lenovoz570") {
+	setwd(file.path("/","scratch","drfz_PRI"))
+	fcs$db.path=file.path("","data","databases")
+	fcs$db.name=""
+	fcs$working=FALSE
+	
+	### load private library
+	source(file.path("tcl","libbwidget.r"))
+	### set template location
+	fcs$png.file=file.path("tcl","tmp.png")
+	fcs$template.file=file.path("tcl","template.png")
 } else if (workspace=="Ria") {
 	setwd("C:/Users/ag-baumgras/Documents/R")
 	fcs$db.path=file.path("data")
