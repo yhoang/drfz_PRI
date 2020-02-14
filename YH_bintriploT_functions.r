@@ -990,6 +990,7 @@ fcs$bintriploT_freq_doublepos <- function(
 # feat.Z2           name of feature Z2
 # popul             population of interest: 1 for positive, 0 for negative, default=c(1,1)
 # col               color palette for frequency of Z1+/Z2+
+# cutoffs.input      cutoffs for all 4 markers, default = NA
 # binsize           bin size
 # mincells          minimum amount of cells in a bin
 # plot.range        plot range, first x axis, second y axis, default= c(2,12,2,12)  
@@ -1002,7 +1003,8 @@ fcs$bintriploT_freq_doubleZ <- function(
   feat.Z1, 
   feat.Z2,
   popul=c(1,1),
-  col, 
+  col,
+  cutoffs.input=NA,
   binsize, 
   mincells, 
   maxfreq=100, 
@@ -1040,11 +1042,6 @@ fcs$bintriploT_freq_doubleZ <- function(
   
   ############ LOAD DATA AND CUTOFFS
   data = this$loaddata(project.idx,file.idx)
-  cutoffs = as.numeric(this$current.staintable[which(this$current.staintable$file_ID==file.idx),5])
-  
-  #cutoffs[idx.Z1]=10
-  #cutoffs[idx.Z2]=7.5
-  #cutoffs[idx.Z2]=8.663
   
   features = colnames(data) 
   
@@ -1068,6 +1065,17 @@ fcs$bintriploT_freq_doubleZ <- function(
   idx.Y = which(features.clean == feat.Y.clean)
   idx.Z1 = which(features.clean == feat.Z1.clean)
   idx.Z2 = which(features.clean == feat.Z2.clean)
+  
+  ### load cutoffs
+  cutoffs = as.numeric(this$current.staintable[which(this$current.staintable$file_ID==file.idx),5])
+  print(cutoffs.input)
+  if ( !is.na(cutoffs.input) ) {
+    cutoffs[idx.X]=cutoffs.input[1]
+    cutoffs[idx.Y]=cutoffs.input[2]
+    cutoffs[idx.Z1]=cutoffs.input[3]
+    cutoffs[idx.Z2]=cutoffs.input[4]
+  }
+  
   
   printf("idx X=%s Y=%s Z1=%s Z2=%s",idx.X,idx.Y,idx.Z1,idx.Z2)
   printf("cutoffs X=%s Y=%s Z1=%s Z2=%s",cutoffs[idx.X],cutoffs[idx.Y],cutoffs[idx.Z1],cutoffs[idx.Z2])

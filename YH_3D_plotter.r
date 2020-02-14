@@ -176,7 +176,7 @@ fcs$saved.checks = list()
 fcs$images = list()
 fcs$plot.attr = list()
 
-fcs$rbasinh = tclVar("1")
+# fcs$rbasinh = tclVar("1")
 
 fcs$asinh = list(
   scale = c(asinh(-1000),asinh(-100),asinh(-10),asinh(0),asinh(10),asinh(100),asinh(1000),asinh(10000),asinh(100000),asinh(1000000),asinh(10000000),asinh(100000000)),
@@ -215,7 +215,7 @@ fcs$current.filenum = fcs$selected.filenum = 1
 fcs$current.tab = "0"
 fcs$current.var1.diploT = ""
 fcs$current.diploT.x = 2
-fcs$current.cofactor = 1
+fcs$current.cofactor = "1"
 fcs$temp.num = 0
 fcs$min.counts = as.character(c(2,5,10,15,20,25,50))
 fcs$min.counts.diploT = as.character(c(10,20,50,100,200,300,500))
@@ -274,7 +274,7 @@ if (file.exists(paramfile)) {
 	fcs$vminMSI=tclVar(param$minMSI)
 	fcs$vmaxMSI=tclVar(param$maxMSI)
   
-	fcs$rbasinh = param$cofactor
+	fcs$rbasinh = tclVar(param$cofactor)
 	fcs$rbcalc = tclVar(param$rbcalc)
 	fcs$rbtrans = tclVar(param$rbtrans)
 	fcs$cbtfeatA = tclVar(param$cbtfeatA)
@@ -317,7 +317,7 @@ if (file.exists(paramfile)) {
 	fcs$vminMSI=tclVar("0")
 	fcs$vmaxMSI=tclVar("0")
 	
-	fcs$rbasinh = "1"
+	fcs$rbasinh = tclVar("1")
 	fcs$rbcalc = "MSI"
 	fcs$rbtrans = "asinh"
 	fcs$cbtfeatA = "0"
@@ -10050,7 +10050,7 @@ fcs$exit <- function() {
 		binsize = as.numeric(tclvalue(tkget(this$binSize)))
 		param$binSizesTriPos = which(this$binSizes==binsize)
 		# general
-		param$cofactor = as.character(this$rbasinh)
+		param$cofactor = tclvalue(this$rbasinh)
 		# FI range
 		minX = tclvalue(this$vminvalX)
 		param$minvalX = minX

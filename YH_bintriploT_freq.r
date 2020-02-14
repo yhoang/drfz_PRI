@@ -857,6 +857,79 @@ dev.off()
 
 
 
+############################################################
+############## 20200214 PRI manuscript Fig 6 E ( Figure 7 is now Figure 6!)
+# NOTE: THIS IS NOT DOUBLE POSITIVE, BUT FOR PD1+ IFNG+ IL21+ AND CXCR5-
+# 200214_627_4hP+I_011_CD44_CXCR5_IL21_double80_green.pdf
+# cutoffs in DB: IFNG=7.479, PD1=6.982, IL21=7.696, CXCR5=7.783
+rm(list = ls())
+fcs = new.env()
+source("YH_bintriploT_functions.r")
+
+####### PARAMETERS
+### calculation method
+calc = "freq"
+### bin size
+binsize = 0.2
+### minimum cell count in a bin
+mincells = 10
+
+fcs$db.path=file.path("","data","databases")
+fcs$db.name="SG_20170627_NZBxWTfh-Th1.sqlite3"
+
+### CONNECT TO DATABASE
+fcs$conn = dbConnect(SQLite(), dbname = file.path(fcs$db.path,fcs$db.name))
+
+fcs$project.idx.list = 1
+fcs$file.idx.list = 2
+fcs$bintriploT_construct(
+  project.idx.list = fcs$project.idx.list
+  ,file.idx.list = fcs$file.idx.list
+  ,feat.X = "PD-1"
+  ,feat.Y = "IFNg"
+  ,binsize = 0.2
+  ,mincells = 10
+)
+
+fcs$project.idx = 1
+fcs$file.idx = 2
+
+fcs$feat.X = "PD-1"
+fcs$feat.Y = "IFNg"
+fcs$feat.Z1 = "CXCR5"
+fcs$feat.Z2 = "IL21"
+fcs$population = c(0,1)
+source("YH_bintriploT_functions.r")
+
+
+color="green"
+maxfreq = 80
+fcs$bintriploT_freq_doubleZ(
+  project.idx = fcs$project.idx
+  ,file.idx = fcs$file.idx
+  ,feat.X = "PD-1"
+  ,feat.Y = "IFNg"
+  ,feat.Z1 = fcs$feat.Z1
+  ,feat.Z2 = fcs$feat.Z2
+  ,popul = fcs$population
+  ,binsize = 0.2
+  ,mincells = 10
+  ,col = color
+  ,maxfreq = maxfreq
+  ,cutoffs.input = c(8.7, 7.479, 7.783, 7.696)
+  # cutoffs in DB: PD1=6.982, IFNG=7.479, CXCR5=7.783, IL21=7.696
+)
+
+current.date = format(Sys.Date(),"%y%m%d")
+dev.copy(pdf,sprintf("%s_%s_%s_%s_double%s_%s.pdf",current.date,
+                     fcs$shortenFilename(fcs$file.list[fcs$file.idx]),fcs$feat.Z1,fcs$feat.Z2,maxfreq,color))
+dev.off()
+
+############################################################
+
+
+
+
 
 
 
