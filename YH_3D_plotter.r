@@ -7,7 +7,7 @@ rm(list = ls())
 fcs = new.env()
 param = new.env()
 fcs$parent.env=ls()
-fcs$version="v0.39b"
+fcs$version="v0.39c"
 
 
 ############# workspace
@@ -19,10 +19,10 @@ fcs$version="v0.39b"
 
 workspace="YH"
 # workspace="lenovoz570"
-#workspace="rev"
+# workspace="rev"
 # workspace="office"
-#workspace="Ria"
-#workspace="Praktika"
+# workspace="Ria"
+# workspace="Praktika"
 
 
 
@@ -54,7 +54,7 @@ if (workspace=="office") {
 	### set template location
 	fcs$png.file=file.path("Y:","AG_Baumgrass","AG-PRI","PRIanalyzer","tcl","tmp.png")
 	fcs$template.file=file.path("Y:","AG_Baumgrass","AG-PRI","PRIanalyzer","tcl","template.png")
-} else if (	workspace="lenovoz570") {
+} else if (	workspace=="lenovoz570") {
 	setwd(file.path("/","scratch","drfz_PRI"))
 	fcs$db.path=file.path("","data","databases")
 	fcs$db.name=""
@@ -86,13 +86,9 @@ if (workspace=="office") {
 	fcs$db.name="SG_20170915_NZBxW-TSubsets.sqlite3"
 	fcs$db.name="SG_20171220_ThSubsets-NZBxW.sqlite3"
 	fcs$db.name="CK_20170123_PBMC_Melanoma.sqlite3"
-	#fcs$db.name="AM_20180227_panel-redesgin_MS-project.sqlite3"
 	fcs$db.name="CP_20171030_humanmelanoma.sqlite3"
 	fcs$db.name="AM_20180227_panel-redesgin_MS-project.sqlite3"
 	fcs$db.name="AM_20180111_MS-exp-4-CIS10-CIS11-CIS12-HC05-HC07-HC08_CD4+.sqlite3"
-	fcs$db.name="CP_20171102_weidata3.sqlite3"
-	fcs$db.name="YH_20170123_PBMC_Melanoma.sqlite3"
-	fcs$db.name="YH_20180423_Myeloid_CD14CD16.sqlite3"
 	#fcs$db.name="SGJP_20180524_NZBxWIL21+Cytokines.sqlite3"
 	#fcs$db.name="SG_20170704_NZBxW-Tfh.sqlite3"
 	#fcs$db.name="SG_20161030_HumanCytokines_CD4mem.sqlite3"
@@ -100,12 +96,9 @@ if (workspace=="office") {
 	#fcs$db.name="SG_20170704_NZBxW-Tfh.sqlite3"
 	#fcs$db.name="SG_20170501_NZBxWCD4Subsets.sqlite3"
 	#fcs$db.name="SG_20170529_NZBxWIFNg+PD1+Signaling.sqlite3"
-	fcs$db.name="AR_20180111_Chevrier-selection.sqlite3"
 	#fcs$db.name="SG_20170627_NZBxWTfh-Th1.sqlite3"
 	#fcs$db.name="AR_20171109_test_NZBxWTCellSubsets.sqlite3"
 	#fcs$db.name="SG_20170915_NZBxWTCellSubsets.sqlite3"
-	#fcs$db.name="AM_20170914_MS-01.sqlite3"
-	#fcs$db.name="AM_20170928_MSIICIS4CIS5HC2.sqlite3"
 	#fcs$db.name="AM_20170524_Cytokines_CD4_Yen.sqlite3"
 	fcs$db.name="SG_20180612_NZBxWCytokines.sqlite3"
 	fcs$db.name="AM_20180323_MS-exp-6-CIS17-CIS18-CIS20-CIS21-CIS22-CIS23-HC13-HC14-HC15-HC16-BF1-BF2_CD4+.sqlite3"
@@ -300,6 +293,8 @@ if (file.exists(paramfile)) {
 	fcs$cbtgateData = tclVar(param$cbtgateData)
 	fcs$cbtautoRect = tclVar(param$cbtautoRect)
 	
+	fcs$current.cofactor = param$cofactor
+	
 } else {
 	param$currVarDi1 = 1
 	param$currVarDi2 = 2
@@ -341,6 +336,7 @@ if (file.exists(paramfile)) {
 	fcs$cbtgateData = "0"
 	fcs$cbtautoRect = "0"
 	
+	fcs$current.cofactor = "1"
 }
 
 
@@ -398,7 +394,9 @@ fcs$GUImain <- function () {
 	this$selected.filenum = this$current.filenum
 	this$selected.vars = this$getVariables()
 	this$current.vars = this$selected.vars
-
+  
+	### initiate lists
+	this$new.cutoffs = this$new.checks = vector(mode = "list", length = nrow(this$current.filetable))
 	if ( ncol(this$current.staintable)==6 ) {
 		### if cutoffs and checks were already saved
 		# get all cutoffs and checks
@@ -9451,7 +9449,12 @@ fcs$saveWindow <- function (type="diploT") {
 	this$lastpath = filepath
 	
 	### save pdf in original size
-	if (type == "diploT") {
+	if (grepl("histogram", active.window)) {
+	  dev.copy2pdf(file=tclvalue(file),
+	               pointsize=5,
+	               title = plot.title,
+	  )
+	} else if (type == "diploT") {
 		dev.label=paste("plotter","di",this$plotter.di.num,sep=".")
 		if (length(which(dev.label==names(devList())))!=0) devSet(devList()[which(dev.label==names(devList()))])
 		dev.copy2pdf(file=tclvalue(file),

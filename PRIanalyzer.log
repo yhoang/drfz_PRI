@@ -4,6 +4,13 @@
 #		2015-2020
 ##########	PRI-analyzer Update Log
 
+
+########## v0.39c
+*** general
+- debugged asinh-cofactor: if starts fresh, the cofactor is loaded from myPRIparam.rda. If there is no cofactor saved, reset cofactor to 1.
+- debugged function fcs$openDB: if new database is opened, the cutoffs and checks are resetted to the project size.
+########## 20200213
+
 ########## v0.39b
 *** general
 - debugged function fcs$saveCutoffsToAll: current set of cutoffs and checks should be applied to every file in the project
