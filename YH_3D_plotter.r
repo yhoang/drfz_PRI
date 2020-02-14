@@ -509,17 +509,17 @@ fcs$GUImain <- function () {
 	ttf_filenames_asinh = tkframe(ttf_maintop)
 	ttf_filenames = tkframe(ttf_filenames_asinh)
 	ttfchoosefile = tkframe(ttf_filenames,height=20)
-	if (this$working) {
+	# if (this$working) {
 	  this$tkchoosefile = ttkcombobox(ttfchoosefile,values=this$current.filenames,width=this$max.nchar-4)
 	  tkset(this$tkchoosefile,this$current.filenames[1])
 	  btrefreshPanel=tkbutton(ttfchoosefile,text="GUI",command=function() {this$refreshPanel()})
 	  tkgrid(btrefreshPanel,tklabel(ttfchoosefile,text="File:"),this$tkchoosefile,padx=5,sticky="w")
-	} else {
-	  this$tkchoosefile = ttkcombobox(ttfchoosefile,values=this$current.filenames,width=this$max.nchar)
-	  tkset(this$tkchoosefile,this$current.filenames[1])
-	  btrefreshPanel=tkbutton(ttfchoosefile,text="GUI",command=function() {this$refreshPanel()})
-	  tkgrid(btrefreshPanel,tklabel(ttfchoosefile,text="File:"),this$tkchoosefile,padx=5,sticky="w")
-	}
+	# } else {
+	#   this$tkchoosefile = ttkcombobox(ttfchoosefile,values=this$current.filenames,width=this$max.nchar-4)
+	#   tkset(this$tkchoosefile,this$current.filenames[1])
+	#   btrefreshPanel=tkbutton(ttfchoosefile,text="GUI",command=function() {this$refreshPanel()})
+	#   tkgrid(btrefreshPanel,tklabel(ttfchoosefile,text="File:"),this$tkchoosefile,padx=5,sticky="w")
+	# }
 	tkbind(this$tkchoosefile,"<<ComboboxSelected>>",function(){this$refreshComboboxVars(tclvalue(tkget(this$tkchoosefile)))})
 	tkgrid(ttfchoosefile,pady=1)
 	
@@ -881,14 +881,14 @@ fcs$GUItriploT <- function(tab){
 	btplot2= tkbutton(ttfbut,text="Plot for all files",command=this$dotriploTfiles)
 	yhbtplot2= tkbutton(ttfbut,text="Read Table",command=this$dotriploTtable)
 	bthist=tkbutton(ttfbut,text="Plot histograms",command=function(){this$plotHistograms(plotter="tri",pdf=FALSE)})
-	if (this$working) {
+	# if (this$working) {
 	  tkgrid(btplot,sticky="snwe",padx=2,pady=1)
 	  tkgrid(btplot2,sticky="snwe",padx=2,pady=1)
 	  tkgrid(yhbtplot2,sticky="snwe",padx=2,pady=1)
 	  tkgrid(bthist,sticky="snwe",padx=2,pady=1)
-	} else {
-	  tkgrid(btplot,btplot2,bthist,sticky="snwe",padx=5,pady=1)
-	}
+	# } else {
+	  # tkgrid(btplot,btplot2,bthist,sticky="snwe",padx=5,pady=1)
+	# }
 	tkconfigure(btplot,height=2,width=25)
 	#btdens=tkbutton(ttfbut,text="Plot density",command=function(){this$plotDensities(plotter="tri",pdf=FALSE)})
 	#tkgrid(btdens,sticky="we",pady=1)
