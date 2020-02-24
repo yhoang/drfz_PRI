@@ -816,6 +816,7 @@ fcs$bintriploT_construct(
   ,feat.Y = "IFNg"
   ,binsize = 0.2
   ,mincells = 10
+  ,plot.range = c(3,11,3,11)
 )
 
 fcs$project.idx = 1
@@ -843,6 +844,7 @@ fcs$bintriploT_freq_doubleZ(
   ,mincells = 10
   ,col = color
   ,maxfreq = maxfreq
+  ,plot.range = c(3,11,3,11)
 )
 
 current.date = format(Sys.Date(),"%y%m%d")
@@ -889,6 +891,7 @@ fcs$bintriploT_construct(
   ,feat.Y = "IFNg"
   ,binsize = 0.2
   ,mincells = 10
+  ,plot.range = c(3,11,3,11)
 )
 
 fcs$project.idx = 1
@@ -917,7 +920,7 @@ fcs$bintriploT_freq_doubleZ(
   ,col = color
   ,maxfreq = maxfreq
   ,cutoffs.input = c(8.7, 7.479, 7.783, 7.696)
-  # cutoffs in DB: PD1=6.982, IFNG=7.479, CXCR5=7.783, IL21=7.696
+  ,plot.range = c(3,11,3,11)
 )
 
 current.date = format(Sys.Date(),"%y%m%d")

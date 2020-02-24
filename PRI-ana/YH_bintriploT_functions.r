@@ -1008,23 +1008,25 @@ fcs$bintriploT_freq_doubleZ <- function(
   binsize, 
   mincells, 
   maxfreq=100, 
-  plot.range=c(2,12,2,12), sepa=".") 
+  plot.range=c(2,12,2,12), 
+  sepa=".") 
 { 
   this=fcs 
   
   if (FALSE) {
     project.idx = fcs$project.idx
     file.idx = fcs$file.idx
-    feat.X = fcs$feat.X
-    feat.Y = fcs$feat.Y
+    feat.X = "PD-1"
+    feat.Y = "IFNg"
     feat.Z1 = fcs$feat.Z1
     feat.Z2 = fcs$feat.Z2
-    popul=c(1,0)
+    popul = fcs$population
     binsize = 0.2
     mincells = 10
     col = color
     maxfreq = maxfreq
-    plot.range = c(1,12,1,12)
+    cutoffs.input = c(8.7, 7.479, 7.783, 7.696)
+    plot.range = c(3,11,3,11)
     sepa="."
   }
   
@@ -1085,13 +1087,16 @@ fcs$bintriploT_freq_doubleZ <- function(
   # cut all cells which are not producing cells
   ncells.total = nrow(data)
   
+  # q1 = left bottom
+  # q2 = right bottom
+  # q3 = right top
+  # q4 = left top
   tdata.q1 = data[which( data[,idx.X]<cutoffs[idx.X] &  data[,idx.Y]<cutoffs[idx.Y] ),]
   tdata.q2 = data[which( data[,idx.X]>=cutoffs[idx.X] &  data[,idx.Y]<cutoffs[idx.Y] ),]
   tdata.q3 = data[which( data[,idx.X]>=cutoffs[idx.X] &  data[,idx.Y]>=cutoffs[idx.Y] ),]
   tdata.q4 = data[which( data[,idx.X]<cutoffs[idx.X] &  data[,idx.Y]>=cutoffs[idx.Y] ),]
   
-  this$tdata.q1 = tdata.q1
-  
+  # this$tdata.q1 = tdata.q1
   
   ######## NEW: SWITCH SIGNS FOR POPULATION OF INTEREST
   if (popul[1]==1) {
@@ -1112,48 +1117,41 @@ fcs$bintriploT_freq_doubleZ <- function(
   feat.label.Z1 = paste(sprintf("%s(%s)",feat.label.Z1,cutoffs[idx.Z1]))
   feat.label.Z2 = paste(sprintf("%s(%s)",feat.label.Z2,cutoffs[idx.Z2]))
   
-  # q1.prodcells.num
+  # q1.prodcells.num = nrow(tdata.q1[which(tdata.q1[,idx.Z1]>=cutoffs[idx.Z1] & tdata.q1[,idx.Z2]<=cutoffs[idx.Z2]),])
   eval(parse(text=paste("q1.prodcells.num = nrow(tdata.q1[which(tdata.q1[,idx.Z1]",sign.Z1[1],"cutoffs[idx.Z1] ",
                         "& tdata.q1[,idx.Z2]",sign.Z2[1],"cutoffs[idx.Z2]),])",sep="")))
-  # q2.prodcells.num
+  # q2.prodcells.num = nrow(tdata.q2[which(tdata.q2[,idx.Z1]>=cutoffs[idx.Z1] & tdata.q2[,idx.Z2]<=cutoffs[idx.Z2]),])
   eval(parse(text=paste("q2.prodcells.num = nrow(tdata.q2[which(tdata.q2[,idx.Z1]",sign.Z1[1],"cutoffs[idx.Z1] ",
                         "& tdata.q2[,idx.Z2]",sign.Z2[1],"cutoffs[idx.Z2]),])",sep="")))
-  # q3.prodcells.num
-  eval(parse(text=paste("q3.prodcells.num = nrow(tdata.q1[which(tdata.q3[,idx.Z1]",sign.Z1[1],"cutoffs[idx.Z1] ",
-                        "& tdata.q3[,idx.Z2]",sign.Z2[1],"cutoffs[idx.Z2]),])",sep="")))
-  # q4.prodcells.num
-  eval(parse(text=paste("q4.prodcells.num = nrow(tdata.q1[which(tdata.q4[,idx.Z1]",sign.Z1[1],"cutoffs[idx.Z1] ",
-                        "& tdata.q4[,idx.Z2]",sign.Z2[1],"cutoffs[idx.Z2]),])",sep="")))
-  # q1.prodcells.num = nrow(tdata.q1[which(tdata.q1[,idx.Z1]>=cutoffs[idx.Z1] & tdata.q1[,idx.Z2]<=cutoffs[idx.Z2]),])
-  # q2.prodcells.num = nrow(tdata.q2[which(tdata.q2[,idx.Z1]>=cutoffs[idx.Z1] & tdata.q2[,idx.Z2]<=cutoffs[idx.Z2]),])
   # q3.prodcells.num = nrow(tdata.q3[which(tdata.q3[,idx.Z1]>=cutoffs[idx.Z1] & tdata.q3[,idx.Z2]<=cutoffs[idx.Z2]),])
+  eval(parse(text=paste("q3.prodcells.num = nrow(tdata.q3[which(tdata.q3[,idx.Z1]",sign.Z1[1],"cutoffs[idx.Z1] ",
+                        "& tdata.q3[,idx.Z2]",sign.Z2[1],"cutoffs[idx.Z2]),])",sep="")))
   # q4.prodcells.num = nrow(tdata.q4[which(tdata.q4[,idx.Z1]>=cutoffs[idx.Z1] & tdata.q4[,idx.Z2]<=cutoffs[idx.Z2]),])
+  eval(parse(text=paste("q4.prodcells.num = nrow(tdata.q4[which(tdata.q4[,idx.Z1]",sign.Z1[1],"cutoffs[idx.Z1] ",
+                        "& tdata.q4[,idx.Z2]",sign.Z2[1],"cutoffs[idx.Z2]),])",sep="")))
   q1.prodcells = round( (100 * q1.prodcells.num / nrow(tdata.q1) ), 2)
   q2.prodcells = round( (100 * q2.prodcells.num / nrow(tdata.q2) ), 2)
   q3.prodcells = round( (100 * q3.prodcells.num / nrow(tdata.q3) ), 2)
   q4.prodcells = round( (100 * q4.prodcells.num / nrow(tdata.q4) ), 2)
   
-  #q1.prodcells.total
-  eval(parse(text=paste("q1.prodcells.total = round( 100 * nrow(tdata.q1[which(tdata.q1[,idx.Z1]",sign.Z1[1],"cutoffs[idx.Z1] ",
-                        "& tdata.q1[,idx.Z2]",sign.Z1[1],"cutoffs[idx.Z2]),]) / ncells.total,2)",sep="")))
-  #q2.prodcells.total
-  eval(parse(text=paste("q2.prodcells.total = round( 100 * nrow(tdata.q2[which(tdata.q2[,idx.Z1]",sign.Z1[1],"cutoffs[idx.Z1] ",
-                        "& tdata.q2[,idx.Z2]",sign.Z1[1],"cutoffs[idx.Z2]),]) / ncells.total,2)",sep="")))
-  #q3.prodcells.total
-  eval(parse(text=paste("q3.prodcells.total = round( 100 * nrow(tdata.q3[which(tdata.q3[,idx.Z1]",sign.Z1[1],"cutoffs[idx.Z1] ",
-                        "& tdata.q3[,idx.Z2]",sign.Z1[1],"cutoffs[idx.Z2]),]) / ncells.total,2)",sep="")))
-  #q4.prodcells.total
-  eval(parse(text=paste("q4.prodcells.total = round( 100 * nrow(tdata.q4[which(tdata.q4[,idx.Z1]",sign.Z1[1],"cutoffs[idx.Z1] ",
-                        "& tdata.q4[,idx.Z2]",sign.Z1[1],"cutoffs[idx.Z2]),]) / ncells.total,2)",sep="")))
   # q1.prodcells.total = round( 100 * nrow(tdata.q1[which(tdata.q1[,idx.Z1]>=cutoffs[idx.Z1] & tdata.q1[,idx.Z2]>=cutoffs[idx.Z2]),]) / ncells.total,2)
+  eval(parse(text=paste("q1.prodcells.total = round( 100 * nrow(tdata.q1[which(tdata.q1[,idx.Z1]",sign.Z1[1],"cutoffs[idx.Z1] ",
+                        "& tdata.q1[,idx.Z2]",sign.Z2[1],"cutoffs[idx.Z2]),]) / ncells.total,2)",sep="")))
   # q2.prodcells.total = round( 100 * nrow(tdata.q2[which(tdata.q2[,idx.Z1]>=cutoffs[idx.Z1] & tdata.q2[,idx.Z2]>=cutoffs[idx.Z2]),]) / ncells.total,2)
+  eval(parse(text=paste("q2.prodcells.total = round( 100 * nrow(tdata.q2[which(tdata.q2[,idx.Z1]",sign.Z1[1],"cutoffs[idx.Z1] ",
+                        "& tdata.q2[,idx.Z2]",sign.Z2[1],"cutoffs[idx.Z2]),]) / ncells.total,2)",sep="")))
   # q3.prodcells.total = round( 100 * nrow(tdata.q3[which(tdata.q3[,idx.Z1]>=cutoffs[idx.Z1] & tdata.q3[,idx.Z2]>=cutoffs[idx.Z2]),]) / ncells.total,2)
+  eval(parse(text=paste("q3.prodcells.total = round( 100 * nrow(tdata.q3[which(tdata.q3[,idx.Z1]",sign.Z1[1],"cutoffs[idx.Z1] ",
+                        "& tdata.q3[,idx.Z2]",sign.Z2[1],"cutoffs[idx.Z2]),]) / ncells.total,2)",sep="")))
   # q4.prodcells.total = round( 100 * nrow(tdata.q4[which(tdata.q4[,idx.Z1]>=cutoffs[idx.Z1] & tdata.q4[,idx.Z2]>=cutoffs[idx.Z2]),]) / ncells.total,2)
-  
-  printf("cells quadrant:                %s %s %s %s",nrow(tdata.q1),nrow(tdata.q2),nrow(tdata.q3),nrow(tdata.q4))
+  eval(parse(text=paste("q4.prodcells.total = round( 100 * nrow(tdata.q4[which(tdata.q4[,idx.Z1]",sign.Z1[1],"cutoffs[idx.Z1] ",
+                        "& tdata.q4[,idx.Z2]",sign.Z2[1],"cutoffs[idx.Z2]),]) / ncells.total,2)",sep="")))
+    
+  printf("cells total: %s",ncells.total)
+  printf("cells in quadrant: botleft q1:%s, botright q2: %s, topright q3: %s, topleft q4: %s",nrow(tdata.q1),nrow(tdata.q2),nrow(tdata.q3),nrow(tdata.q4))
   printf("cells double prod in quadrant: %s %s %s %s",q1.prodcells.num,q2.prodcells.num,q3.prodcells.num,q4.prodcells.num)
-  printf("%% cells double prod in quadrant: %s %s %s %s",q1.prodcells,q2.prodcells,q3.prodcells,q4.prodcells)
-  printf("cells double prod in quadrant to total: %s %s %s %s",q1.prodcells.total,q2.prodcells.total,q3.prodcells.total,q4.prodcells.total)
+  printf("%% cells double prod in quad:  %s %s %s %s",q1.prodcells,q2.prodcells,q3.prodcells,q4.prodcells)
+  printf("%% cells double prod in quad to total: %s %s %s %s",q1.prodcells.total,q2.prodcells.total,q3.prodcells.total,q4.prodcells.total)
   
   ### construct bin table with number of cells per bin
   fX = cut(data[,idx.X],breaks=seq(xmin.val,xmax.val,by=binsize),include.lowest=TRUE,dig.lab=5)
