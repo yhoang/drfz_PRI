@@ -1,5 +1,8 @@
 #!/usr/bin/r
 
+### helpful print function
+printf <- function(...) invisible(print(sprintf(...)))
+
 # Tree Widget
 tclRequire("BWidget")
 # Image Package
@@ -173,4 +176,13 @@ tkvisiblenodes = function (widget,...) {
 ### ttk treewidget
 ttktag = function(widget,...) {
 	tcl(widget,"tag",...)
+}
+
+### opens a tree widget
+tkopentree <- function (widget,node,...) {
+  tkitemconfigure(widget,node,image=imageBookOpen)
+}
+### closes a tree widget
+tkclosetree <- function (widget,node,...) { 
+  tkitemconfigure(widget,node,image=imageBook)
 }
