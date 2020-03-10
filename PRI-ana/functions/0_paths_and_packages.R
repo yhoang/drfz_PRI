@@ -17,14 +17,28 @@ if (work.station == "asus-zenbook") {
 } else if (work.station == "delta") {
   ### DELTA
   # R 3.5.1
-  Lib.path = "/usr/lib/R/library"
+  Lib.path = "/usr/local/lib/R/site-library"
 }
 library(RSQLite,quietly=TRUE,lib.loc = Lib.path)
 library(tcltk2,quietly=TRUE,lib.loc = Lib.path)
 library(R.devices,quietly=TRUE,lib.loc = Lib.path)
 
 ### set paths
-if (work.station=="office") {
+if (work.station == "asus-zenbook") {
+  ### ASUS Zenbook
+  setwd(file.path("","scratch","drfz_PRI","PRI-ana"))
+  fcs$db.path=file.path("","data","databases")
+  fcs$db.name="EM_20200210_EME002_WTCD4.sqlite3"
+  
+  fcs$table.dir = "/scratch/drfz_PRI/PRI-ana/"
+  fcs$working=TRUE
+  #fcs$working=FALSE
+  
+  ### set template location
+  fcs$png.file=file.path("tcl","tmp.png")
+  fcs$template.file=file.path("tcl","template.png")
+  
+} else if (work.station=="office") {
   setwd(file.path("Y:","AG_Baumgrass","AG-PRI","PRIanalyzer"))
   fcs$db.path=file.path("Y:","AG_Baumgrass","AG-PRI","DB")
   fcs$db.name=""
@@ -54,8 +68,8 @@ if (work.station=="office") {
 } else if (work.station=="delta") {
   setwd(file.path("","scratch","drfz","PRI","PRI-ana"))
   fcs$db.path=file.path("","data","databases")
+  # fcs$db.name="RB_20191002_Good2018.sqlite3"
   fcs$db.name="YH_20190524_Tordesillas2016.sqlite3"
-  fcs$db.name="RB_20191002_Good2018.sqlite3"
   
   fcs$table.dir = "/scratch/drfz/Spitzer2017/glmnet_bio_keep/"
   fcs$working=TRUE
