@@ -17,7 +17,7 @@ if (work.station == "asus-zenbook") {
 } else if (work.station == "delta") {
   ### DELTA
   # R 3.5.1
-  Lib.path = "/usr/local/lib/R/site-library"
+  Lib.path = "/usr/lib/R/library"
 }
 library(RSQLite,quietly=TRUE,lib.loc = Lib.path)
 library(tcltk2,quietly=TRUE,lib.loc = Lib.path)
@@ -54,8 +54,8 @@ if (work.station=="office") {
 } else if (work.station=="delta") {
   setwd(file.path("","scratch","drfz","PRI","PRI-ana"))
   fcs$db.path=file.path("","data","databases")
-  # fcs$db.name="RB_20191002_Good2018.sqlite3"
   fcs$db.name="YH_20190524_Tordesillas2016.sqlite3"
+  fcs$db.name="RB_20191002_Good2018.sqlite3"
   
   fcs$table.dir = "/scratch/drfz/Spitzer2017/glmnet_bio_keep/"
   fcs$working=TRUE

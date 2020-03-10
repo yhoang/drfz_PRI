@@ -219,6 +219,8 @@ fcs$refreshComboboxStart <- function(num) {
   ### project is chosen, now no function if you click on main window
   this$openProjectYet = TRUE
   tkbind(this$tt, "<Button-1>", function(...) {})
+  
+  print("w: Done refreshComboboxStart.")
 }
 
 ### Refreshes the markers in the tabs
@@ -231,6 +233,7 @@ fcs$refreshMarker <- function(tab=FALSE,openProject=FALSE) {
   this$max.nchar.vars = max(nchar(this$selected.vars))
   
   if (tab) {
+    ### go here if you swith between the tabs
     ### tab 0 = diploT
     ### tab 1 = triploT
     
@@ -282,7 +285,6 @@ fcs$refreshMarker <- function(tab=FALSE,openProject=FALSE) {
     } 
     
   } else {
-    
     ### initiate
     this$idx=list()
     
@@ -326,7 +328,6 @@ fcs$refreshMarker <- function(tab=FALSE,openProject=FALSE) {
       #tclvalue(this$cbVal[[j]]) = "0"
       #tclvalue(this$vcutoffs[[j]]) = this$selected.cutoffs[j]
       #tclvalue(this$cbcutoffperc[[j]]) = "0"
-      
       cutoffcb=tcl("checkbutton",paste(subfID,".",i,sep=""),variable=this$cbVal[[j]],text=this$selected.vars[j])
       cutofflabel=tcl("label",paste(subfID,".",i+1,sep=""),text="cutoff: ")
       cutoffentry=tcl("entry",paste(subfID,".",i+2,sep=""),width=6,textvariable=this$vcutoffs[[j]])
@@ -335,8 +336,6 @@ fcs$refreshMarker <- function(tab=FALSE,openProject=FALSE) {
       i = i + 4
       j = j + 1
     }
-    #tkbind(cutoffcb,"<FocusIn>",function() tcl(scrollFrame,"see",cutoffcb) )
-    #tkgrid(this$sw)
     ###
     
     ### then go through idx list and set check/cutoff 
@@ -345,7 +344,6 @@ fcs$refreshMarker <- function(tab=FALSE,openProject=FALSE) {
       # and cutoff was not zero
       if ( length(this$idx[[i]])>0 & as.numeric(this$idx[[i]][3]) != 0 ) {
         position = as.numeric(this$idx[[i]][1])
-        #if (position != i) {
         tclvalue(this$cbVal[[i]])=this$idx[[i]][2]
         tclvalue(this$vcutoffs[[i]])=this$idx[[i]][3]
         if (this$working & tclvalue(this$vcutoffs[[i]])!="0" ) {
@@ -353,12 +351,8 @@ fcs$refreshMarker <- function(tab=FALSE,openProject=FALSE) {
                  this$selected.vars[i],position,i,tclvalue(this$vcutoffs[[position]]),tclvalue(this$cbVal[[position]])
           )
         }
-        #}
-        
       }
     }
-    
-    #tkgrid(this$sw)
   }
   printf("w: Done refreshMarker")
 }
@@ -367,12 +361,6 @@ fcs$refreshCutoffs <- function (fileindex=NA,current=FALSE,reset=FALSE,saved=FAL
   this=fcs
   
   if (is.na(fileindex)) {
-    #if (exists("tkchoosefile",envir=fcs)) {
-    #	file=tclvalue(tkget(this$tkchoosefile))
-    #} else {    
-    #	file=this$current.filenames[1]
-    #}
-    #fileindex=this$current.filetable[which(this$current.filetable[,2]==file),1]
     fileindex=this$selected.filenum
   }
   len = length(this$selected.cutoffs)
@@ -468,8 +456,6 @@ fcs$refreshComboboxVars <- function(file) {
     fileindex = 1
   } else {
     fileindex = this$current.filetable[which(this$current.filetable[,2]==file),1]
-    #this$selected.project = this$total.projects[this$selected.projectnum]
-    #this$selected.filenum = fileindex
   }
   
   
@@ -480,12 +466,7 @@ fcs$refreshComboboxVars <- function(file) {
     printf("w: do refreshComboboxVars: fileidx=%s file=%s",fileindex,file)
     
     this$selected.filenum = fileindex
-    #this$current.vars = this$selected.vars
     this$selected.vars = this$getVariables(index=fileindex)
-    #this$current.cutoffs = this$selected.cutoffs
-    
-    #this$recent.fileindex = this$selected.filenum
-    #this$selected.filenum = fileindex
     
     # if FSC/SSC are listed
     tmp = max(grep("SC",this$selected.vars)) 

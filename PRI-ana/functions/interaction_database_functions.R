@@ -15,6 +15,8 @@ fcs$getVariables <- function (staintable=NA,table=NA,index=NA) {
       file=this$current.filenames[1]
     }
     index=this$current.filetable[which(this$current.filetable[,2]==file),1]
+  } else {
+    file = this$current.filetable[index,2]
   }
   if (this$working) printf("w: do getVariables from project #%s=%s: fileidx #%s=%s",
                            this$selected.projectnum,this$total.projects[this$selected.projectnum],
