@@ -4,42 +4,46 @@
 
 # Create new environment
 rm(list = ls())
-fcs = new.env()
-param = new.env()
-fcs$parent.env=ls()
-fcs$version="v0.39c"
+fcs <- new.env()
+param <- new.env()
+fcs$parent.env <- ls()
+fcs$version <- "v0.39c"
 
 ### Chose work.stations --------------------------------------------------
-### "office"      : DRFZ Office
-### "Ria"         : Ria Laptop
-### "delta"       : delta office
-### "lenovoz570"  : laptop Lenovo Z570
-### "asus-zenbook": ASUS zenbook
+### "office"        : DRFZ Office
+### "Ria"           : Ria Laptop
+### "delta"         : delta office
+### "lenovoz570"    : Lenovo Z570
+### "asus-zenbook"  : ASUS zenbook
+### "asus-vividbook": ASUS Vividbook
 ### ----------------------------------------------------------------------
-work.station="asus-zenbook"
-# work.station="lenovoz570"
-# work.station="rev"
-# work.station="office"
-# work.station="Ria"
-# work.station="Praktika"
+work.station <- "asus-zenbook"
+work.station <- "asus-vividbook"
+# work.station <- "lenovoz570"
+# work.station <- "rev"
+# work.station <- "office"
+# work.station <- "Ria"
+# work.station <- "Praktika"
 
 if (work.station == "asus-zenbook") {
-  PRIana.path = file.path("","scratch","drfz_PRI","PRI-ana","functions")
+ PRIana.path <- file.path("", "scratch", "drfz_PRI", "PRI-ana", "functions")
 } else if (work.station == "drfz") {
-  PRIana.path = file.path("Y:","AG_Baumgrass","AG-PRI","PRIanalyzer","functions")
+ PRIana.path <- file.path("Y:", "AG_Baumgrass", "AG-PRI", "PRIanalyzer", "functions")
 } else if (work.station == "delta") {
-  PRIana.path = file.path("","scratch","drfz","PRI","PRI-ana","functions")
+ PRIana.path <- file.path("", "scratch", "drfz", "PRI", "PRI-ana", "functions")
 } else if (work.station == "lenovoz570") {
-  PRIana.path = file.path("","scratch","drfz_PRI","functions")
+ PRIana.path <- file.path("", "scratch", "drfz_PRI", "functions")
 } else if (work.station == "Ria") {
-  PRIana.path = file.path("C:","Users","ag-baumgras","Documents","R","functions")
+ PRIana.path <- file.path("C:", "Users", "ag-baumgras", "Documents", "R", "functions")
+} else if (work.station == "asus-vividbook") {
+ PRIana.path <- file.path("D:", "drfz_PRI", "PRI-ana", "functions")
 }
 
 ### Load functions -------------------------------------------------------
 # setwd(PRIana.path)
 ### Source several R scripts
 for (nm in list.files(path = PRIana.path, pattern = "\\.[Rr]$")) {
-  source(file.path(PRIana.path, nm))
+ source(file.path(PRIana.path, nm))
 }
 
 ### START APP -------------------------------------------------------------
