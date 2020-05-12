@@ -8,7 +8,10 @@ library(RSQLite)
 # and then create new environment
 #dbDisconnect(fcs$conn)
 rm(list = ls())
+options(max.print = 100)
+
 fcs = new.env()
+
 
 
 ############################################################
@@ -18,8 +21,8 @@ fcs = new.env()
 ##################
 ###### DATABASE
 ### set path where database is located
-fcs$db.path=file.path("","scratch","db")
-fcs$db.path=file.path("","data","databases")
+fcs$db.path=file.path("", "scratch", "db")
+fcs$db.path=file.path("", "data", "databases")
 ### set database name
 fcs$db.name="SG_20171220_ThSubsets-NZBxW.sqlite3"
 #fcs$db.name="SG_20170501_NZBxWCD4Subsets.sqlite3"
@@ -55,7 +58,7 @@ source("YH_bintriploT_functions.r")
 
 ############################################################
 ### CONNECT TO DATABASE
-fcs$conn = dbConnect(SQLite(), dbname = file.path(fcs$db.path,fcs$db.name))
+fcs$conn = dbConnect(SQLite(), dbname = file.path(fcs$db.path, fcs$db.name))
 ############################################################
 
 
@@ -69,23 +72,23 @@ fcs$conn = dbConnect(SQLite(), dbname = file.path(fcs$db.path,fcs$db.name))
 # fcs$data                      this is your data
 # fcs$current.vars              column names of your data fcs$data
 # fcs$current.staintable        lists all your column names in project
-# fcs$current.staintable[,5]    lists your cutoffs in database according to your table and file index
+# fcs$current.staintable[, 5]    lists your cutoffs in database according to your table and file index
 ############################################################
 
 ### call this if(FALSE) part manually first
-if(FALSE) {
+if (FALSE) {
 #if(TRUE) {
 source("YH_bintriploT_functions.r")
 
-fcs$project.idx.list = c(1,1,1,1)
-fcs$file.idx.list = c(2,6,10,13)
+fcs$project.idx = c(1, 1, 1, 1)
+fcs$file.idx = c(2, 6, 10, 13)
 fcs$bintriploT_construct(
-    project.idx.list = fcs$project.idx.list
-    ,file.idx.list = fcs$file.idx.list
-    ,feat.X = "PD-1"
-    ,feat.Y = "IFNg"
-    ,binsize=0.2
-    ,mincells=20
+    project.list.idx = fcs$project.idx,
+    file.list.idx = fcs$file.idx,
+    feat.X = "PD-1",
+    feat.Y = "IFNg",
+    binsize=0.2,
+    mincells=20
 )
 fcs$project.idx = 1
 fcs$file.idx = 16
@@ -96,18 +99,18 @@ fcs$col2="rainbow"
 source("YH_bintriploT_functions.r")
 
 fcs$bintriploT_freq_doublepos(
-    project.idx = fcs$project.idx
-    ,file.idx = fcs$file.idx
-    ,feat.X = "PD-1"
-    ,feat.Y = "IFNg"
-    ,feat.Z1 = fcs$feat.Z1
-    ,feat.Z2 = fcs$feat.Z2
-    ,binsize = 0.2
-    ,mincells = 20
-    ,col = fcs$col2
+    project.idx = fcs$project.idx,
+    file.idx = fcs$file.idx,
+    feat.X = "PD-1",
+    feat.Y = "IFNg",
+    feat.Z1 = fcs$feat.Z1,
+    feat.Z2 = fcs$feat.Z2,
+    binsize = 0.2,
+    mincells = 20,
+    col = fcs$col2
 )
-dev.copy(png,sprintf("%s_%s_%s_double.png",
-    fcs$shortenFilename(fcs$file.list[fcs$file.idx]),fcs$feat.Z1,fcs$feat.Z2))
+dev.copy(png, sprintf("%s_%s_%s_double.png", 
+    fcs$shortenFilename(fcs$file.list[fcs$file.idx]), fcs$feat.Z1, fcs$feat.Z2))
 dev.off()
 
 
@@ -133,19 +136,19 @@ fcs$file.idx = 16
 fcs$feat.Z1 = "CXCR5"
 fcs$feat.Z2 = "Tbet"
 fcs$bintriploT_double_onefile(
-    project.idx = fcs$project.idx
-    ,file.idx = fcs$file.idx
-    ,feat.X = "PD-1"
-    ,feat.Y = "IFNg"
-    ,feat.Z1 = fcs$feat.Z1
-    ,feat.Z2 = fcs$feat.Z2
-    ,calc = "freq"
-    ,binsize = 0.2
-    ,mincells = 20
-    ,col1 = fcs$col2
-    ,col2 = fcs$col1
+    project.idx = fcs$project.idx,
+    file.idx = fcs$file.idx,
+    feat.X = "PD-1",
+    feat.Y = "IFNg",
+    feat.Z1 = fcs$feat.Z1,
+    feat.Z2 = fcs$feat.Z2,
+    calc = "freq",
+    binsize = 0.2,
+    mincells = 20,
+    col1 = fcs$col2,
+    col2 = fcs$col1
 )
-dev.copy(png,sprintf("%s_%s_%s_%s%s.png",fcs$shortenFilename(fcs$file.list[fcs$file.idx]),fcs$feat.Z1,fcs$feat.Z2,fcs$col1,fcs$col2))
+dev.copy(png, sprintf("%s_%s_%s_%s%s.png", fcs$shortenFilename(fcs$file.list[fcs$file.idx]), fcs$feat.Z1, fcs$feat.Z2, fcs$col1, fcs$col2))
 dev.off()
 
 
@@ -153,15 +156,15 @@ dev.off()
 
 #####################################
 fcs$db.name="SG_20171220_ThSubsets-NZBxW.sqlite3"
-fcs$project.idx.list = c(3)
-fcs$file.idx.list = c(1)
+fcs$project.idx = c(3)
+fcs$file.idx = c(1)
 fcs$bintriploT_construct(
-    project.idx.list = fcs$project.idx.list
-    ,file.idx.list = fcs$file.idx.list
-    ,feat.X = "PD-1"
-    ,feat.Y = "IFNg"
-    ,binsize = 0.2
-    ,mincells = 20
+    project.list.idx = fcs$project.idx,
+    file.list.idx = fcs$file.idx,
+    feat.X = "PD-1",
+    feat.Y = "IFNg",
+    binsize = 0.2,
+    mincells = 20
 )
 
 fcs$project.idx = 3
@@ -173,27 +176,27 @@ fcs$col2="rainbow"
 source("YH_bintriploT_functions.r")
 
 fcs$bintriploT_freq_doublepos(
-    project.idx = fcs$project.idx
-    ,file.idx = fcs$file.idx
-    ,feat.X = "PD-1"
-    ,feat.Y = "IFNg"
-    ,feat.Z1 = fcs$feat.Z1
-    ,feat.Z2 = fcs$feat.Z2
-    ,binsize = 0.2
-    ,mincells = 20
-    ,col = fcs$col2
+    project.idx = fcs$project.idx,
+    file.idx = fcs$file.idx,
+    feat.X = "PD-1",
+    feat.Y = "IFNg",
+    feat.Z1 = fcs$feat.Z1,
+    feat.Z2 = fcs$feat.Z2,
+    binsize = 0.2,
+    mincells = 20,
+    col = fcs$col2
 )
 
-dev.copy(png,sprintf("%s_%s_%s_double.png",
-    fcs$shortenFilename(fcs$file.list[fcs$file.idx]),fcs$feat.Z1,fcs$feat.Z2))
+dev.copy(png, sprintf("%s_%s_%s_double.png", 
+    fcs$shortenFilename(fcs$file.list[fcs$file.idx]), fcs$feat.Z1, fcs$feat.Z2))
 dev.off()
 
 
 
 library(plotly)
-x=seq(0,12,by=0.2)
+x=seq(0, 12, by=0.2)
 y=x
-plot_ly() %>% add_surface(x=x,y=y,z=this$tab)
+plot_ly() %>% add_surface(x=x, y=y, z=this$tab)
 
 
 }
@@ -223,24 +226,24 @@ binsize = 0.2
 ### minimum cell count in a bin
 mincells = 10
 
-fcs$db.path=file.path("","data","databases")
+fcs$db.path=file.path("", "data", "databases")
 fcs$db.name="SG_20170627_NZBxWTfh-Th1.sqlite3"
 
 ############################################################
 ### CONNECT TO DATABASE
-fcs$conn = dbConnect(SQLite(), dbname = file.path(fcs$db.path,fcs$db.name))
+fcs$conn = dbConnect(SQLite(), dbname = file.path(fcs$db.path, fcs$db.name))
 
 
 
-fcs$project.idx.list = 1
-fcs$file.idx.list = 2
+fcs$project.idx = 1
+fcs$file.idx = 2
 fcs$bintriploT_construct(
-    project.idx.list = fcs$project.idx.list
-    ,file.idx.list = fcs$file.idx.list
-    ,feat.X = "PD-1"
-    ,feat.Y = "IFNg"
-    ,binsize = 0.2
-    ,mincells = 10
+    project.list.idx = fcs$project.idx,
+    file.list.idx = fcs$file.idx,
+    feat.X = "PD-1",
+    feat.Y = "IFNg",
+    binsize = 0.2,
+    mincells = 10
 )
 
 fcs$project.idx = 1
@@ -252,20 +255,20 @@ source("YH_bintriploT_functions.r")
 color="green"
 maxfreq = 80
 fcs$bintriploT_freq_doublepos(
-    project.idx = fcs$project.idx
-    ,file.idx = fcs$file.idx
-    ,feat.X = "PD-1"
-    ,feat.Y = "IFNg"
-    ,feat.Z1 = fcs$feat.Z1
-    ,feat.Z2 = fcs$feat.Z2
-    ,binsize = 0.2
-    ,mincells = 10
-    ,col = color
-    ,maxfreq = maxfreq
+    project.idx = fcs$project.idx,
+    file.idx = fcs$file.idx,
+    feat.X = "PD-1",
+    feat.Y = "IFNg",
+    feat.Z1 = fcs$feat.Z1,
+    feat.Z2 = fcs$feat.Z2,
+    binsize = 0.2,
+    mincells = 10,
+    col = color,
+    maxfreq = maxfreq
 )
 
-dev.copy(pdf,sprintf("%s_%s_%s_double%s_%s.pdf",
-    fcs$shortenFilename(fcs$file.list[fcs$file.idx]),fcs$feat.Z1,fcs$feat.Z2,maxfreq,color))
+dev.copy(pdf, sprintf("%s_%s_%s_double%s_%s.pdf", 
+    fcs$shortenFilename(fcs$file.list[fcs$file.idx]), fcs$feat.Z1, fcs$feat.Z2, maxfreq, color))
 dev.off()
 
 
@@ -279,23 +282,23 @@ fcs$feat.Z1 = "IL21"
 fcs$feat.Z2 = "Bcl6"
 fcs$calc = "MFI"
 fcs$bintriploT_double_onefile(
-    project.idx = fcs$project.idx
-    ,file.idx = fcs$file.idx
-    ,feat.X = "PD-1"
-    ,feat.Y = "IFNg"
-    ,feat.Z1 = fcs$feat.Z1
-    ,feat.Z2 = fcs$feat.Z2
-    ,calc = fcs$calc
-    ,binsize = 0.2
-    ,mincells = 10
-    ,col1 = fcs$col2
-    ,col2 = fcs$col1
+    project.idx = fcs$project.idx,
+    file.idx = fcs$file.idx,
+    feat.X = "PD-1",
+    feat.Y = "IFNg",
+    feat.Z1 = fcs$feat.Z1,
+    feat.Z2 = fcs$feat.Z2,
+    calc = fcs$calc,
+    binsize = 0.2,
+    mincells = 10,
+    col1 = fcs$col2,
+    col2 = fcs$col1
 )
 
-x=seq(2,12,by=0.2)
-y=seq(2,12,by=0.2)
-plot_ly() %>% add_surface(x=x,y=y,z=t(this$tab3D.Z1),reversescale=T)
-plot_ly() %>% add_surface(x=x,y=y,z=t(this$tab3D.Z2),reversescale=T)
+x=seq(2, 12, by=0.2)
+y=seq(2, 12, by=0.2)
+plot_ly() %>% add_surface(x=x, y=y, z=t(this$tab3D.Z1), reversescale=TRUE)
+plot_ly() %>% add_surface(x=x, y=y, z=t(this$tab3D.Z2), reversescale=TRUE)
 
 
 ##################################################
@@ -306,47 +309,47 @@ fcs$feat.Z1 = "Bcl6"
 fcs$feat.Z1 = "IL21"
 fcs$calc = "freq"
 fcs$bintriploT_table(
-    project.idx = fcs$project.idx
-    ,file.idx = fcs$file.idx
-    ,feat.X = "PD-1"
-    ,feat.Y = "IFNg"
-    ,feat.Z1 = fcs$feat.Z1
-    ,calc = fcs$calc
-    ,binsize = 0.2
-    ,mincells = 10
+    project.idx = fcs$project.idx,
+    file.idx = fcs$file.idx,
+    feat.X = "PD-1",
+    feat.Y = "IFNg",
+    feat.Z1 = fcs$feat.Z1,
+    calc = fcs$calc,
+    binsize = 0.2,
+    mincells = 10
 )
 
-x=seq(2,12,by=0.2)
-y=seq(2,12,by=0.2)
-scene = list(xaxis=list(title= "PD-1")
-    ,yaxis=list(title="IFN-g")
-    ,zaxis=list(title="freq",range=c(0,77))
-    #,camera=list(
-    #    up=list(x=0,y=0,z=1)
-    #    ,center=list(x=0,y=0,z=0)
-    #    ,eye=list(x=0.5,y=1.2,z=1.5))
-    ,cameraposition=list(c(-0.1, 0.4, -1, 0.33), c(0.0, 0, 0.0), 2)
+x=seq(2, 12, by=0.2)
+y=seq(2, 12, by=0.2)
+scene = list(xaxis=list(title= "PD-1"),
+    yaxis=list(title="IFN-g"),
+    zaxis=list(title="freq", range=c(0, 77)),
+    #camera=list(
+    #    up=list(x=0, y=0, z=1),
+    #    center=list(x=0, y=0, z=0),
+    #    eye=list(x=0.5, y=1.2, z=1.5))
+    cameraposition=list(c(-0.1, 0.4, -1, 0.33), c(0.0, 0, 0.0), 2)
 )
 
 
 # heat
-plot_ly(showscale = TRUE) %>% add_surface(x=x,y=y,z=t(fcs$tab3D), cmin=0, cmax=82,colors="YlOrRd",reversescale=F) %>% layout(scene=scene)
+plot_ly(showscale = TRUE) %>% add_surface(x=x, y=y, z=t(fcs$tab3D), cmin=0, cmax=82, colors="YlOrRd", reversescale=FALSE) %>% layout(scene=scene)
 
 #spectral
-plot_ly(showscale = TRUE) %>% add_surface(x=x,y=y,z=t(fcs$tab3D), cmin=0, cmax=82,colors="Spectral",reversescale=T) %>% layout(scene=scene)
+plot_ly(showscale = TRUE) %>% add_surface(x=x, y=y, z=t(fcs$tab3D), cmin=0, cmax=82, colors="Spectral", reversescale=TRUE) %>% layout(scene=scene)
 
 #ygn
-plot_ly(showscale = TRUE) %>% add_surface(x=x,y=y,z=t(fcs$tab3D), cmin=0, cmax=82,colors="YlGnBu",reversescale=F) %>% layout(scene=scene)
+plot_ly(showscale = TRUE) %>% add_surface(x=x, y=y, z=t(fcs$tab3D), cmin=0, cmax=82, colors="YlGnBu", reversescale=FALSE) %>% layout(scene=scene)
 
 #yg
-plot_ly(showscale = TRUE) %>% add_surface(x=x,y=y,z=t(fcs$tab3D), cmin=0, cmax=82,colors="YlGn",reversescale=F) %>% layout(scene=scene)
+plot_ly(showscale = TRUE) %>% add_surface(x=x, y=y, z=t(fcs$tab3D), cmin=0, cmax=82, colors="YlGn", reversescale=FALSE) %>% layout(scene=scene)
 
 #green
-plot_ly(showscale = TRUE) %>% add_surface(x=x,y=y,z=t(fcs$tab3D), cmin=0, cmax=82,colors="Greens",reversescale=F) %>% layout(scene=scene)
+plot_ly(showscale = TRUE) %>% add_surface(x=x, y=y, z=t(fcs$tab3D), cmin=0, cmax=82, colors="Greens", reversescale=FALSE) %>% layout(scene=scene)
 
-plotly_IMAGE(p,format="pdf",outfile=sprintf("%s_greens.pdf",fcs$feat.Z1))
+plotly_IMAGE(p, format="pdf", outfile=sprintf("%s_greens.pdf", fcs$feat.Z1))
 
-plot_ly(showscale = TRUE) %>% add_surface(x=x,y=y,z=t(fcs$tab3D), cmin=0, cmax=82,colorscale=list(c(0,"rgb(255, 0, 0)"), list(1, "rgb(0, 255, 0)"))) %>% layout(scene=scene)
+plot_ly(showscale = TRUE) %>% add_surface(x=x, y=y, z=t(fcs$tab3D), cmin=0, cmax=82, colorscale=list(c(0, "rgb(255, 0, 0)"), list(1, "rgb(0, 255, 0)"))) %>% layout(scene=scene)
 
 
 
@@ -354,7 +357,7 @@ plot_ly(showscale = TRUE) %>% add_surface(x=x,y=y,z=t(fcs$tab3D), cmin=0, cmax=8
 ############## PRI manuscript Fig 7 G
 fcs$db.name="SG_20170627_NZBxWTfh-Th1.sqlite3"
 #fcs$db.name="SG_20170704_NZBxW-Tfh.sqlite3"
-fcs$conn = dbConnect(SQLite(), dbname = file.path(fcs$db.path,fcs$db.name))
+fcs$conn = dbConnect(SQLite(), dbname = file.path(fcs$db.path, fcs$db.name))
 
 source("YH_bintriploT_functions.r")
 fcs$project.idx = 1
@@ -363,41 +366,41 @@ fcs$feat.Z1 = "Bcl6"
 #fcs$feat.Z1 = "IL21"
 fcs$calc = "freq"
 fcs$bintriploT_table(
-    project.idx = fcs$project.idx
-    ,file.idx = fcs$file.idx
-    ,feat.X = "PD-1"
-    ,feat.Y = "IFNg"
-    ,feat.Z1 = fcs$feat.Z1
-    ,calc = fcs$calc
-    ,binsize = 0.2
-    ,mincells = 10
+    project.idx = fcs$project.idx,
+    file.idx = fcs$file.idx,
+    feat.X = "PD-1",
+    feat.Y = "IFNg",
+    feat.Z1 = fcs$feat.Z1,
+    calc = fcs$calc,
+    binsize = 0.2,
+    mincells = 10
 )
-write.csv(fcs$tab3D,file=sprintf("%s_3d.csv",fcs$feat.Z1),row.names=rownames(fcs$tab3D))
+write.csv(fcs$tab3D, file=sprintf("%s_3d.csv", fcs$feat.Z1), row.names=rownames(fcs$tab3D))
 
-x=seq(2,12,by=0.2)
-y=seq(2,12,by=0.2)
-scene = list(xaxis=list(title= "PD-1")
-    ,yaxis=list(title="IFN-g")
-    ,zaxis=list(title="IL-21",range=c(0,77))
-    #,camera=list(
-    #    up=list(x=0,y=0,z=1)
-    #    ,center=list(x=0,y=0,z=0)
-    #    ,eye=list(x=0.5,y=1.2,z=1.5))
-    ,cameraposition=list(c(-0.1, 0.4, -1, 0.33), c(0.0, 0, 0.0), 2)
+x=seq(2, 12, by=0.2)
+y=seq(2, 12, by=0.2)
+scene = list(xaxis=list(title= "PD-1"),
+    yaxis=list(title="IFN-g"),
+    zaxis=list(title="IL-21", range=c(0, 77)),
+    #camera=list(
+    #    up=list(x=0, y=0,z=1)
+    #    center=list(x=0, y=0,z=0)
+    #    eye=list(x=0.5, y=1.2, z=1.5))
+    cameraposition=list(c(-0.1, 0.4, -1, 0.33), c(0.0, 0, 0.0), 2)
 )
 lighting = list(
-    ambient = 0.6
-    ,diffuse = 0.3
-    ,roughness = 0.9
-    ,specular = 0.3
-    ,fresnel = 0.2
+    mbient = 0.6,
+    diffuse = 0.3,
+    roughness = 0.9,
+    specular = 0.3,
+    fresnel = 0.2
 )
 
 
 #green
-plot_ly(showscale = TRUE) %>% add_surface(x=x,y=y,z=t(fcs$tab3D), cmin=0, cmax=82,colors="Greens",reversescale=F, lighting=lighting) %>% layout(scene=scene)
+plot_ly(showscale = TRUE) %>% add_surface(x=x, y=y, z=t(fcs$tab3D), cmin=0, cmax=82, colors="Greens", reversescale=FALSE, lighting=lighting) %>% layout(scene=scene)
 
-plot_ly(showscale = TRUE) %>% add_surface(x=x,y=y,z=t(fcs$tab3D), cmin=0, cmax=82,colors="Greens",reversescale=F) %>% layout(scene=scene)
+plot_ly(showscale = TRUE) %>% add_surface(x=x, y=y, z=t(fcs$tab3D), cmin=0, cmax=82, colors="Greens", reversescale=FALSE) %>% layout(scene=scene)
 ##########################
 
 
@@ -411,7 +414,7 @@ plot_ly(showscale = TRUE) %>% add_surface(x=x,y=y,z=t(fcs$tab3D), cmin=0, cmax=8
 source("YH_bintriploT_functions.r")
 fcs$db.name = "SGJP_20180524_NZBxWIL21+Cytokines.sqlite3"
 ### CONNECT TO DATABASE
-fcs$conn = dbConnect(SQLite(), dbname = file.path(fcs$db.path,fcs$db.name))
+fcs$conn = dbConnect(SQLite(), dbname = file.path(fcs$db.path, fcs$db.name))
 
 
 fcs$feat.X = "TNFA"
@@ -419,15 +422,15 @@ fcs$feat.Y = "Ifng"
 fcs$feat.Z1 = "il2"
 fcs$feat.Z2 = "il21"
 
-fcs$project.idx.list = 1
-fcs$file.idx.list = 2
+fcs$project.idx = 1
+fcs$file.idx = 2
 fcs$bintriploT_construct(
-  project.idx.list = fcs$project.idx.list
-  ,file.idx.list = fcs$file.idx.list
-  ,feat.X = fcs$feat.X
-  ,feat.Y = fcs$feat.Y
-  ,binsize = 0.2
-  ,mincells = 5
+  project.list.idx = fcs$project.idx,
+  file.list.idx = fcs$file.idx,
+  feat.X = fcs$feat.X,
+  feat.Y = fcs$feat.Y,
+  binsize = 0.2,
+  mincells = 5
 )
 
 fcs$project.idx = 1
@@ -437,20 +440,20 @@ source("YH_bintriploT_functions.r")
 color="green"
 maxfreq = 100
 fcs$bintriploT_freq_doublepos(
-  project.idx = fcs$project.idx
-  ,file.idx = fcs$file.idx
-  ,feat.X = fcs$feat.X
-  ,feat.Y = fcs$feat.Y
-  ,feat.Z1 = fcs$feat.Z1
-  ,feat.Z2 = fcs$feat.Z2
-  ,binsize = 0.2
-  ,mincells = 5
-  ,col = color
-  ,maxfreq = maxfreq
+  project.idx = fcs$project.idx,
+  file.idx = fcs$file.idx,
+  feat.X = fcs$feat.X,
+  feat.Y = fcs$feat.Y,
+  feat.Z1 = fcs$feat.Z1,
+  feat.Z2 = fcs$feat.Z2,
+  binsize = 0.2,
+  mincells = 5,
+  col = color,
+  maxfreq = maxfreq
 )
 
-dev.copy(pdf,sprintf("%s_%s_%s_double%s_%s.pdf",
-                     fcs$shortenFilename(fcs$file.list[fcs$file.idx]),fcs$feat.Z1,fcs$feat.Z2,maxfreq,color))
+dev.copy(pdf, sprintf("%s_%s_%s_double%s_%s.pdf", 
+                     fcs$shortenFilename(fcs$file.list[fcs$file.idx]), fcs$feat.Z1, fcs$feat.Z2, maxfreq, color))
 dev.off()
 #########################################################
 
@@ -462,86 +465,159 @@ dev.off()
 
 
 ### for Andreas Radbruch
-{
-fcs$db.name="SG_20170627_NZBxWTfh-Th1.sqlite3"
+if (FALSE) {
+    fcs$db.name="SG_20170627_NZBxWTfh-Th1.sqlite3"
+    source("YH_bintriploT_functions.r")
+    fcs$project.idx = 1
+    fcs$file.idx = 2
+    fcs$feat.Z1 = "Bcl6"
+    fcs$feat.Z1 = "CXCR5"
+    fcs$calc = "freq"
+    fcs$bintriploT_table(
+        project.idx = fcs$project.idx,
+        file.idx = fcs$file.idx,
+        feat.X = "PD-1",
+        feat.Y = "IL21",
+        feat.Z1 = fcs$feat.Z1,
+        calc = fcs$calc,
+        binsize = 0.2,
+        mincells = 10
+    )
+
+    x=seq(2, 12, by=0.2)
+    y=seq(2, 12, by=0.2)
+    scene = list(xaxis=list(title= "PD-1"),
+        yaxis=list(title="IL21"),
+        zaxis=list(title="Freq(CXCR5)", range=c(0, 70)),
+        #camera=list(
+        #    up=list(x=0, y=0, z=1),
+        #    center=list(x=0, y=0, z=0),
+        #    eye=list(x=0.5, y=1.2, z=1.5))
+        cameraposition=list(c(-0.1, 0.4, -1, 0.33), c(0.0, 0, 0.0), 2)
+    )
+
+    #green
+    plot_ly(showscale = TRUE) %>% add_surface(x=x, y=y, z=t(fcs$tab3D), cmin=0, cmax=82, colors="Greens", reversescale=FALSE) %>% layout(scene=scene)
+
+
+
+    fcs$db.name="SG_20170627_NZBxWTfh-Th1.sqlite3"
+    #fcs$db.name="SG_20170704_NZBxW-Tfh.sqlite3"
+    fcs$conn = dbConnect(SQLite(), dbname = file.path(fcs$db.path, fcs$db.name))
+    fcs$project.idx = 1
+    fcs$file.idx = 2
+    fcs$bintriploT_construct(
+        project.list.idx = fcs$project.idx,
+        file.list.idx = fcs$file.idx,
+        feat.X = "PD-1",
+        feat.Y = "IL21",
+        binsize = 0.2,
+        mincells = 10
+    )
+
+    fcs$project.idx = 1
+    fcs$file.idx = 2
+    fcs$feat.Z1 = "CXCR5"
+    fcs$feat.Z2 = "Bcl6"
+    fcs$col2="red"
+    source("YH_bintriploT_functions.r")
+
+    color="green"
+    maxfreq = 70
+    fcs$bintriploT_freq_doublepos(
+        project.idx = fcs$project.idx,
+        file.idx = fcs$file.idx,
+        feat.X = "PD-1",
+        feat.Y = "IL21",
+        feat.Z1 = fcs$feat.Z1,
+        feat.Z2 = fcs$feat.Z2,
+        binsize = 0.2,
+        mincells = 10,
+        col = color,
+        maxfreq = maxfreq
+    )
+    dev.copy(pdf, sprintf("%s_%s_%s_double%s_%s.pdf", 
+        fcs$shortenFilename(fcs$file.list[fcs$file.idx]), fcs$feat.Z1, fcs$feat.Z2, maxfreq, color))
+    dev.off()
+}
+
+
+########################################################################
+### 20200422 For PRI Manuscript Fig3D with concatenated data from new mice from Elodie (not NZBW)
+#X: TNFa
+#Y: IFNg
+#Z: IL2 + IL21.
+setwd("PRI-ana")
+
+###### DATABASE
+### set path where database is located
+fcs$db.path = file.path("D:", "DB")
+
+fcs$db.name = "EM_20200415_concatenatesEME004+8Young_CD44.sqlite3"
+### CONNECT TO DATABASE
+fcs$conn = dbConnect(SQLite(), dbname = file.path(fcs$db.path, fcs$db.name))
+
+
+############################################################
+############# LOAD ALL NECESSARY TABLES ####################
+#fcs$loaddata()
+########## after running fcs$loaddata() you have ###########
+# fcs$project.list              list all projects in database
+# fcs$current.project           project chosen with index project.idx
+# fcs$file.list                 list all files in one project
+# fcs$data                      this is your data
+# fcs$current.vars              column names of your data fcs$data
+# fcs$current.staintable        lists all your column names in project
+# fcs$current.staintable[,5]    lists your cutoffs in database according to your table and file index
+############################################################
+
+
 source("YH_bintriploT_functions.r")
-fcs$project.idx = 1
+##################
+####### PARAMETERS
+fcs$feat.X = "TNFA"
+fcs$feat.Y = "Ifn_g"
+fcs$feat.Z1 = "il_2"
+fcs$feat.Z2 = "il_21"
+
+fcs$project.idx = 3
 fcs$file.idx = 2
-fcs$feat.Z1 = "Bcl6"
-fcs$feat.Z1 = "CXCR5"
-fcs$calc = "freq"
-fcs$bintriploT_table(
-    project.idx = fcs$project.idx
-    ,file.idx = fcs$file.idx
-    ,feat.X = "PD-1"
-    ,feat.Y = "IL21"
-    ,feat.Z1 = fcs$feat.Z1
-    ,calc = fcs$calc
-    ,binsize = 0.2
-    ,mincells = 10
-)
-
-x=seq(2,12,by=0.2)
-y=seq(2,12,by=0.2)
-scene = list(xaxis=list(title= "PD-1")
-    ,yaxis=list(title="IL21")
-    ,zaxis=list(title="Freq(CXCR5)",range=c(0,70))
-    #,camera=list(
-    #    up=list(x=0,y=0,z=1)
-    #    ,center=list(x=0,y=0,z=0)
-    #    ,eye=list(x=0.5,y=1.2,z=1.5))
-    ,cameraposition=list(c(-0.1, 0.4, -1, 0.33), c(0.0, 0, 0.0), 2)
-)
-
-#green
-plot_ly(showscale = TRUE) %>% add_surface(x=x,y=y,z=t(fcs$tab3D), cmin=0, cmax=82,colors="Greens",reversescale=F) %>% layout(scene=scene)
-
-
-
-fcs$db.name="SG_20170627_NZBxWTfh-Th1.sqlite3"
-#fcs$db.name="SG_20170704_NZBxW-Tfh.sqlite3"
-fcs$conn = dbConnect(SQLite(), dbname = file.path(fcs$db.path,fcs$db.name))
-fcs$project.idx.list = 1
-fcs$file.idx.list = 2
 fcs$bintriploT_construct(
-    project.idx.list = fcs$project.idx.list
-    ,file.idx.list = fcs$file.idx.list
-    ,feat.X = "PD-1"
-    ,feat.Y = "IL21"
-    ,binsize = 0.2
-    ,mincells = 10
+  project.list.idx = fcs$project.idx,
+  file.list.idx = fcs$file.idx,
+  feat.X = fcs$feat.X,
+  feat.Y = fcs$feat.Y,
+  binsize = 0.2,
+  mincells = 5,
+  cofactor = 5,
+  plot.range = c(1, 11, 1, 11)
 )
 
-fcs$project.idx = 1
+fcs$project.idx = 3
 fcs$file.idx = 2
-fcs$feat.Z1 = "CXCR5"
-fcs$feat.Z2 = "Bcl6"
-fcs$col2="red"
 source("YH_bintriploT_functions.r")
 
 color="green"
 maxfreq = 70
 fcs$bintriploT_freq_doublepos(
-    project.idx = fcs$project.idx
-    ,file.idx = fcs$file.idx
-    ,feat.X = "PD-1"
-    ,feat.Y = "IL21"
-    ,feat.Z1 = fcs$feat.Z1
-    ,feat.Z2 = fcs$feat.Z2
-    ,binsize = 0.2
-    ,mincells = 10
-    ,col = color
-    ,maxfreq = maxfreq
+  project.idx = fcs$project.idx,
+  file.idx = fcs$file.idx,
+  feat.X = fcs$feat.X,
+  feat.Y = fcs$feat.Y,
+  feat.Z1 = fcs$feat.Z1,
+  feat.Z2 = fcs$feat.Z2,
+  binsize = 0.2,
+  mincells = 5,
+  cofactor = 5,
+  col = color,
+  maxfreq = maxfreq,
+  plot.range = c(1, 11, 1, 11)
 )
-dev.copy(pdf,sprintf("%s_%s_%s_double%s_%s.pdf",
-    fcs$shortenFilename(fcs$file.list[fcs$file.idx]),fcs$feat.Z1,fcs$feat.Z2,maxfreq,color))
+
+dev.copy(pdf, sprintf("%s_%s_%s_double%s_%s.pdf",
+                     fcs$shortenFilename(fcs$file.list[fcs$file.idx]), fcs$feat.Z1, fcs$feat.Z2, maxfreq, color))
 dev.off()
-
-
-
-}
-
-
+#########################################################
 
 
 
