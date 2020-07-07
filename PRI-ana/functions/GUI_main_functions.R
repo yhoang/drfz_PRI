@@ -699,7 +699,7 @@ fcs$GUItriploT <- function(tab){
       tkconfigure(btOverviewXY, height=2)
       tk2tip(btOverviewX, "Select your Feature A and Y above and check all features to the left which you would like to plot as heat bins.")
       tkgrid(btOverviewX, sticky="snwe", pady=1, padx=5)
-      tkconfigure(btOverviewX, height=2
+      tkconfigure(btOverviewX, height=2)
       tk2tip(btOverviewX, "Select your Feature A above and check all features to the left which you would like to plot.")
       tkgrid(btOverview, sticky="snwe", pady=1, padx=5)
       tkconfigure(btOverview, height=2)

@@ -4,6 +4,12 @@
 #		2015-2020
 ##########	PRI-analyzer Update Log
 
+########## v0.4
+*** general
+- 
+- add tab 'quadruplots' to create plots of A-B-stat(C1/C2) with option of neg/pos population
+########## 20200709
+
 
 ########## v0.39c
 *** general

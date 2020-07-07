@@ -7,7 +7,7 @@ rm(list = ls())
 fcs <- new.env()
 param <- new.env()
 fcs$parent.env <- ls()
-fcs$version <- "v0.39c"
+fcs$version <- "v0.40"
 
 ### Chose work.stations --------------------------------------------------
 ### "office"        : DRFZ Office
@@ -42,8 +42,10 @@ if (work.station == "asus-zenbook") {
 ### Load functions -------------------------------------------------------
 # setwd(PRIana.path)
 ### Source several R scripts
-for (nm in list.files(path = PRIana.path, pattern = "\\.[Rr]$")) {
- source(file.path(PRIana.path, nm))
+source.files <- list.files(path = PRIana.path, pattern = "\\.[Rr]$")
+for (nm in 1:5) {
+# for (nm in 1:length(source.files)) {
+ source(file.path(PRIana.path, source.files[nm]))
 }
 
 ### START APP -------------------------------------------------------------
