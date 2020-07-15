@@ -6,8 +6,8 @@ printf <- function(...) invisible(print(sprintf(...)))
 # Tree Widget
 tclRequire("BWidget")
 # Image Package
-tcl("lappend", "auto_path","../tcl/lib")
-tcl("lappend", "auto_path","./tcl/lib")
+tcl("lappend", "auto_path", "../tcl/lib")
+tcl("lappend", "auto_path", "./tcl/lib")
 tclRequire("tkpng")
 #tcl("lappend", "auto_path","tcl/lib")
 #tcl("package","require","tkpng")

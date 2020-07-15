@@ -393,6 +393,7 @@ fcs$exit <- function(){
     param$minCountDiPos <- which(this$min.counts.diploT == mincountDi)
     binsizeDi <- as.numeric(tclvalue(tkget(this$binSizedi)))
     param$binSizesDiPos <- which(this$binSizes == binsizeDi)
+
     # feature triplot
     var1 <- this$checkMarker(tclvalue(tkget(this$cbvar1)))[1]
     param$currVarTri1 <- which(this$selected.vars == var1)
@@ -405,6 +406,22 @@ fcs$exit <- function(){
     param$minCountTriPos <- which(this$min.counts == mincount)
     binsize <- as.numeric(tclvalue(tkget(this$binSize)))
     param$binSizesTriPos <- which(this$binSizes == binsize)
+
+    # feature quadruplot
+    var1 <- this$checkMarker(tclvalue(tkget(this$cbvar1quad)))[1]
+    param$currVarQuad1 <- which(this$selected.vars == var1)
+    var2 <- this$checkMarker(tclvalue(tkget(this$cbvar2quad)))[1]
+    param$currVarQuad2 <- which(this$selected.vars == var2)
+    var3 <- this$checkMarker(tclvalue(tkget(this$cbvar3quad)))[1]
+    param$currVarQuad3 <- which(this$selected.vars == var3)
+    var4 <- this$checkMarker(tclvalue(tkget(this$cbvar4quad)))[1]
+    param$currVarQuad4 <- which(this$selected.vars == var4)
+    printf("quadruploT :: var1=%s var2=%s var3=%s var4=%s", param$currVarQuad1, param$currVarQuad2, param$currVarQuad3, param$currVarQuad4)
+    mincountQuad <- as.numeric(tclvalue(tkget(this$minCountQuad)))
+    param$minCountQuadPos <- which(this$min.counts == mincountQuad)
+    binsizeQuad <- as.numeric(tclvalue(tkget(this$binSizeQuad)))
+    param$binSizesQuadPos <- which(this$binSizes == binsizeQuad)
+
     # general
     param$cofactor <- tclvalue(this$rbasinh)
     # FI range
@@ -420,17 +437,28 @@ fcs$exit <- function(){
     param$minMSI <- minMSI
     maxMSI <- tclvalue(this$vmaxMSI)
     param$maxMSI <- maxMSI
+    minfreq <- tclvalue(this$vminfreq)
+    param$minfreq <- minMSI
+    maxfreq <- tclvalue(this$vmaxfreq)
+    param$maxfreq <- maxfreq
+
     # radio and check buttons
     checkCALC <- tclvalue(this$rbcalc)
     param$rbcalc <- checkCALC
     checkTRANS <- tclvalue(this$rbtrans)
     param$rbtrans <- checkTRANS
-    checkfeatA <- tclvalue(this$cbtfeatA)
+    checkpopC1 <- tclVar(param$rbpopC1)
+    param$rbpopC1 <- checkpopC1
+    checkpopC2 <- tclVar(param$rbpopC2)
+    param$rbpopC2 <- checkpopC2
+
+    checkfeatA <- tclvalue(this$cbtfeatA) # fix feature
     param$cbtfeatA <- checkfeatA
     checkfeatB <- tclvalue(this$cbtfeatB)
     param$cbtfeatB <- checkfeatB
     checkfeatC <- tclvalue(this$cbtfeatC)
     param$cbtfeatC <- checkfeatC
+
     checkADDFILE <- tclvalue(this$cbtaddFilename)
     param$cbtaddFilename <- checkADDFILE
     checkADDDATE <- tclvalue(this$cbtaddDate)
@@ -498,8 +526,8 @@ fcs$exitandstart <- function (){
   this <- fcs
   
   this$exit()
-  source("YH_3D_plotter.r")
-  load(file = "myPRIparam.rda")
+  source("Start_PRI-ana.R")
+  # load(file = "myPRIparam.rda")
 }
 
 if (length(strsplit(fcs$db.name, "")[[1]]) >  0){

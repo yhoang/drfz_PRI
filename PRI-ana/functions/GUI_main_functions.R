@@ -277,21 +277,25 @@ fcs$GUImain <- function () {
   tab2 <- ttkframe(this$panelTabs)
   tab3 <- ttkframe(this$panelTabs)
   tab4 <- ttkframe(this$panelTabs)
+  tab5 <- ttkframe(this$panelTabs)
   
   tkadd(this$panelTabs, tab1, text="n-diploTs")
   tkadd(this$panelTabs, tab2, text="n-triploTs")
-  tkadd(this$panelTabs, tab3, text="table info")
-  tkadd(this$panelTabs, tab4, text="log")
+  tkadd(this$panelTabs, tab3, text="n-quadruploTs")
+  tkadd(this$panelTabs, tab4, text="table info")
+  tkadd(this$panelTabs, tab5, text="log")
   tkbind(this$panelTabs, "<<NotebookTabChanged>>", this$clickTab)
   
   # tab: diploT
   this$GUIdiploT(tab1)
   # tab: triploT
   this$GUItriploT(tab2)
+  # tab: quadruplot
+  this$GUIquadruploT(tab3)
   # tab: table info
-  this$GUIdataframe(tab3)
+  this$GUIdataframe(tab4)
   # tab: log
-  this$GUIlog(tab4)
+  this$GUIlog(tab5)
   tkgrid(this$panelTabs, sticky="w", padx=5)
   ###
   
@@ -323,6 +327,438 @@ fcs$GUImain <- function () {
   } else {
     tkraise(this$tt)
   }
+}
+
+### quadruploT tab
+# tab     tab frame, no default
+fcs$GUIquadruploT <- function(tab) {
+  this <- fcs
+  
+  if (this$working) printf("w: GUIquadruploT")
+
+  # set frame and content of combobox with file, mincount, binSize
+  ttftopframe <- tkframe(tab)
+    ttfcombo <- tkframe(ttftopframe)
+      # content comboboxleft
+      var.length <- 39
+      if (this$max.nchar.vars > var.length) var.length <- this$max.nchar.vars
+      
+      this$minCountQuad <- ttkcombobox(ttfcombo, values=this$min.counts, width=var.length)
+      tkset(this$minCountQuad, this$min.counts[param$minCountQuadPos])
+      this$binSizeQuad <- ttkcombobox(ttfcombo, values=this$binSizes, width=var.length)
+      tkset(this$binSizeQuad, this$binSizes[param$binSizesQuadPos])
+      
+      this$cbvar1quad <- ttkcombobox(ttfcombo, values=this$selected.vars, width=var.length)
+      tkset(this$cbvar1quad, this$selected.vars[param$currVarQuad1])
+      this$cbvar2quad <- ttkcombobox(ttfcombo, values=this$selected.vars, width=var.length)
+      tkset(this$cbvar2quad, this$selected.vars[param$currVarQuad2])
+      this$cbvar3quad <- ttkcombobox(ttfcombo, values=this$selected.vars, width=var.length)
+      tkset(this$cbvar3quad, this$selected.vars[param$currVarQuad3])
+      this$cbvar4quad <- ttkcombobox(ttfcombo, values=this$selected.vars, width=var.length)
+      tkset(this$cbvar4quad, this$selected.vars[param$currVarQuad4])
+    # call comboboxleft
+    tkgrid(tklabel(ttfcombo, text="binSize:"), this$binSizeQuad, sticky="e", padx=5)
+    tkgrid(tklabel(ttfcombo, text="minCount:"), this$minCountQuad, sticky="e", padx=5)
+    tkgrid(tklabel(ttfcombo, text="Feature A:"), this$cbvar1quad, sticky="e", padx=5)
+    tkgrid(tklabel(ttfcombo, text="Feature B:"), this$cbvar2quad, sticky="e", padx=5)
+    tkgrid(tklabel(ttfcombo, text="Feature C1:"), this$cbvar3quad,  sticky="e", padx=5)
+    tkgrid(tklabel(ttfcombo, text="Feature C2:"), this$cbvar4quad,  sticky="e", padx=5)
+  
+    #### rect buttons "Plot"
+    ttfbut <- tkframe(ttftopframe)
+      btplot <- tkbutton(ttfbut, text="Plot quadruploT", command=this$doquadruploT)
+      bthist <- tkbutton(ttfbut, text = "Plot histograms", command = function(){
+        this$plotHistograms(plotter = "tri", pdf = FALSE)
+        })
+    
+      tkgrid(btplot, sticky="snwe", padx=2, pady=1)
+      tkgrid(bthist, sticky="snwe", padx=2, pady=1)
+      tkconfigure(btplot, height=2, width=25)
+    tkgrid(ttfcombo, ttfbut, padx=5, sticky="w")
+  tkgrid(ttftopframe)
+
+  ##### set rect frame ttfvals with additional options min/max FI values  
+  ttfvals <- tkframe(tab)
+    # set label frame min/max FI in rect frame "ttfvals"
+    ttlfFI <- ttklabelframe(ttfvals, text = "Plot options")
+    
+      # checkbox axes range label -------------------------------------------
+      ttfRange <- tkframe(ttlfFI)
+        ttfRangeLabel <- tkframe(ttfRange)
+        tkgrid(tklabel(ttfRangeLabel, text="Range x-axis (min/max):"), padx=10, pady=1)
+        tkgrid(tklabel(ttfRangeLabel, text="Range y-axis (min/max):"), padx=10, pady=1)
+        cbtdynrange <- tkcheckbutton(ttfRangeLabel, variable=this$cbtdynRange, text="Dynamic frequency range")
+        tkgrid(cbtdynrange, sticky="ews", padx=10, pady=10)
+        tk2tip(cbtdynrange, "Uncheck for manual input")
+        # checkbox axes range value -------------------------------------------
+        ttfRangeValue <- tkframe(ttfRange)
+        # X axis
+        this$minvalX <- tkentry(ttfRangeValue, width=6, textvariable=this$vminvalX)
+        this$maxvalX <- tkentry(ttfRangeValue, width=6, textvariable=this$vmaxvalX)
+        tkgrid(this$minvalX, this$maxvalX, padx=5, pady=1, sticky="e")
+        # Y axis
+        this$minvalY <- tkentry(ttfRangeValue, width=6, textvariable=this$vminvalY)
+        this$maxvalY <- tkentry(ttfRangeValue, width=6, textvariable=this$vmaxvalY)
+        tkgrid(this$minvalY, this$maxvalY, padx=5, pady=1, sticky="e")
+        # Z range
+        this$minfreq <- tkentry(ttfRangeValue, width=4, textvariable=this$vminfreq)
+        this$maxfreq <- tkentry(ttfRangeValue, width=4, textvariable=this$vmaxfreq)
+        tkgrid(tklabel(ttfRangeValue, text="min(freq):"), this$minfreq, padx=5, pady=1, sticky="e")
+        tkgrid(tklabel(ttfRangeValue, text="max(freq):"), this$maxfreq, padx=5, pady=1, sticky="e")
+        tkgrid(ttfRangeLabel, ttfRangeValue, sticky="w")
+        tkgrid(ttfRange)
+        
+      # checkbox show grid --------------------------------------------------
+      ttfcheckPlot <- tkframe(ttlfFI)
+        cbtshowgrid <- tkcheckbutton(ttfcheckPlot, variable=this$cbtshowGrid, text="Grid")
+        tk2tip(cbtshowgrid, "Check to plot grid lines")
+        cbtpercentage <- tkcheckbutton(ttfcheckPlot, variable=this$cbtshowPercentage, text="Percentages")
+        tk2tip(cbtpercentage, "Check to plot percentages")
+        cbtshowlegend <- tkcheckbutton(ttfcheckPlot, variable=this$cbtshowLegend, text="Legend")
+        tk2tip(cbtshowlegend, "Uncheck to hide legend on plot")
+        cbtaddDate <- tkcheckbutton(ttfcheckPlot, variable=this$cbtaddDate, text="Date")
+        tkgrid(cbtshowgrid, cbtpercentage, cbtshowlegend, cbtaddDate, padx=5, pady=8, sticky="we")
+      tkgrid(ttfcheckPlot)
+    ### Done option panel
+  
+    # radio buttons for transformation type -----------------------------------
+    ttlfinfo <- ttklabelframe(ttfvals, text="Calculation options")
+      ttfradios <- tkframe(ttlfinfo)
+      ttfradiosright1 <- tkframe(ttfradios)
+      rb1 <- tkradiobutton(ttfradiosright1, variable=this$rbtrans, value="asinh")
+      rb2 <- tkradiobutton(ttfradiosright1, variable=this$rbtrans, value="none")
+      tkgrid(rb1, tklabel(ttfradiosright1, text="asinh"), 
+            rb2, tklabel(ttfradiosright1, text="none"), sticky="we")
+      tkgrid(tklabel(ttfradios, text="Transformation:"), ttfradiosright1, sticky="w")
+        tkbind(rb1, "<Button-1>", function() {
+            this$changeFI.range(1)
+        })
+      
+      # add radio buttons for calculation type
+      ttfradiosright2 <- tkframe(ttfradios)
+        rb1 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="density")
+        rbl1 <- tklabel(ttfradiosright2, text="density")
+        rb2 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="freq")
+        rbl2 <- tklabel(ttfradiosright2, text="frequency")
+        tkgrid(rb1, rbl1, rb2, rbl2, sticky="w")
+        tk2tip(rb1, "Cell count")
+        tk2tip(rbl1, "Cell count")
+        tk2tip(rb2, "Frequency of Feature C1/C2 cells")
+        tk2tip(rbl2, "Frequency of Feature C1/C2 cells")
+      tkgrid(tklabel(ttfradios, text = "Statistical method:"), ttfradiosright2, sticky = "nw")
+
+      ttfradiospopC1 <- tkframe(ttfradios)
+        rb1 <- tkradiobutton(ttfradiospopC1, variable = this$popC1, value = "pos")
+        rbl1 <- tklabel(ttfradiospopC1, text = "pos")
+        rb2 <- tkradiobutton(ttfradiospopC1, variable = this$popC1, value = "neg")
+        rbl2 <- tklabel(ttfradiospopC1, text = "neg")
+        tkgrid(rb1, rbl1, rb2, rbl2, sticky = "w")
+        tk2tip(rb1, "Choose neg/pos population.")
+        tk2tip(rbl1, "Choose neg/pos population.")
+        tk2tip(rb2, "Choose neg/pos population.")
+        tk2tip(rbl2, "Choose neg/pos population.")
+      tkgrid(tklabel(ttfradios, text = "Population C1:"), ttfradiospopC1, sticky = "nw")
+  
+
+      
+      tkgrid(ttfradios, padx = 10)
+      
+      ttfbuttons <- tkframe(ttlfinfo)
+        btremovdub <- tkbutton(ttfbuttons, text = "Remove Doublets", command = function() {
+            this$preprocData()
+        })
+        tk2tip(btremovdub, "Only possible with FSH/SSH channels")
+        cbttrimming <- tkcheckbutton(ttfbuttons, variable=this$cbttrimming, text="Trim first")
+        tk2tip(cbttrimming, sprintf("Trims %s of each column.", this$trim.num))
+        cbtshowMinBins <- tkcheckbutton(ttfbuttons, variable=this$cbtshowMinBins, text="Bins<minCount")
+        tk2tip(cbtshowMinBins, "Show bins in pale color.")
+        tkgrid(btremovdub, cbttrimming, cbtshowMinBins, padx=5, pady=1, sticky="we")
+      tkgrid(ttfbuttons, sticky="w")
+    tkgrid(ttlfFI, ttlfinfo, padx=5, pady=1, sticky="nsew")
+  tkgrid(ttfvals)
+  #####
+  
+}
+
+
+
+### triploT tab
+# tab     tab frame, no default
+fcs$GUItriploT <- function(tab){
+  this <- fcs
+  
+  if (this$working) printf("w: GUItriploT")
+  
+  # set frame and content of combobox with file, mincount, binSize
+  ttftopframe <- tkframe(tab)
+    ttfcombo <- tkframe(ttftopframe)
+      # content comboboxleft
+      var.length <- 39
+      if (this$max.nchar.vars > var.length) var.length <- this$max.nchar.vars
+      this$minCountTri <- ttkcombobox(ttfcombo, values=this$min.counts, width=var.length)
+      tkset(this$minCountTri, this$min.counts[param$minCountTriPos])
+      this$binSize <- ttkcombobox(ttfcombo, values=this$binSizes, width=var.length)
+      tkset(this$binSize, this$binSizes[param$binSizesTriPos])
+      
+      this$cbvar1 <- ttkcombobox(ttfcombo, values=this$selected.vars, width=var.length)
+      tkset(this$cbvar1, this$selected.vars[param$currVarTri1])
+      this$cbvar2 <- ttkcombobox(ttfcombo, values=this$selected.vars, width=var.length)
+      tkset(this$cbvar2, this$selected.vars[param$currVarTri2])
+      this$cbvar3 <- ttkcombobox(ttfcombo, values=this$selected.vars, width=var.length)
+      tkset(this$cbvar3, this$selected.vars[param$currVarTri3])
+      cbtfeatA <- tkcheckbutton(ttfcombo, variable=this$cbtfeatA)
+      cbtfeatB <- tkcheckbutton(ttfcombo, variable=this$cbtfeatB)
+      cbtfeatC <- tkcheckbutton(ttfcombo, variable=this$cbtfeatC)
+    # call comboboxleft
+    tkgrid(tklabel(ttfcombo, text="binSize:"), this$binSize, sticky="e", padx=5)
+    tkgrid(tklabel(ttfcombo, text="minCount:"), this$minCountTri, tklabel(ttfcombo, text="Fix"), sticky="e", padx=5)
+    tkgrid(tklabel(ttfcombo, text="Feature A:"), this$cbvar1, cbtfeatA, sticky="e", padx=5)
+    tk2tip(cbtfeatA, "Check to fix this feature for triploT-Overview (not working yet)")
+    tkgrid(tklabel(ttfcombo, text="Feature B:"), this$cbvar2, cbtfeatB, sticky="e", padx=5)
+    tk2tip(cbtfeatB, "Check to fix this feature for triploT-Overview (not working yet)")
+    tkgrid(tklabel(ttfcombo, text="Feature C:"), this$cbvar3, cbtfeatC, sticky="e", padx=5)
+    tk2tip(cbtfeatC, "Check to fix this feature for triploT-Overview (not working yet)")
+  
+    #### rect buttons "Plot"
+    ttfbut <- tkframe(ttftopframe)
+      btplot <- tkbutton(ttfbut, text="Plot triploT", command=this$dotriploT)
+      btplot2 <- tkbutton(ttfbut, text="Plot for all files", command=this$dotriploTfiles)
+      yhbtplot2 <- tkbutton(ttfbut, text="Read Table", command=this$dotriploTtable)
+      bthist <- tkbutton(ttfbut, text = "Plot histograms", command = function() {
+        this$plotHistograms(plotter = "tri", pdf = FALSE)
+        })
+    
+      tkgrid(btplot, sticky="snwe", padx=2, pady=1)
+      tkgrid(btplot2, sticky="snwe", padx=2, pady=1)
+      tkgrid(yhbtplot2, sticky="snwe", padx=2, pady=1)
+      tkgrid(bthist, sticky="snwe", padx=2, pady=1)
+      tkconfigure(btplot, height=2, width=25)
+    tkgrid(ttfcombo, ttfbut, padx=5, sticky="w")
+  tkgrid(ttftopframe)
+  
+  
+  ##### set rect frame ttfvals with additional options min/max FI values  
+  ttfvals <- tkframe(tab)
+    # set label frame min/max FI in rect frame "ttfvals"
+    ttlfFI <- ttklabelframe(ttfvals, text="Plot options")
+      # checkbox axes range label -------------------------------------------
+      ttfRange <- tkframe(ttlfFI)
+        ttfRangeLabel <- tkframe(ttfRange)
+        tkgrid(tklabel(ttfRangeLabel, text="Range x-axis (min/max):"), padx=10, pady=1)
+        tkgrid(tklabel(ttfRangeLabel, text="Range y-axis (min/max):"), padx=10, pady=1)
+        cbtdynrange <- tkcheckbutton(ttfRangeLabel, variable=this$cbtdynRange, text="Dynamic MSI range")
+        tkgrid(cbtdynrange, sticky="ews", padx=10, pady=10)
+        tk2tip(cbtdynrange, "Uncheck for manual input")
+        # checkbox axes range value -------------------------------------------
+        ttfRangeValue <- tkframe(ttfRange)
+        # X axis
+        this$minvalX <- tkentry(ttfRangeValue, width=6, textvariable=this$vminvalX)
+        this$maxvalX <- tkentry(ttfRangeValue, width=6, textvariable=this$vmaxvalX)
+        tkgrid(this$minvalX, this$maxvalX, padx=5, pady=1, sticky="e")
+        # Y axis
+        this$minvalY <- tkentry(ttfRangeValue, width=6, textvariable=this$vminvalY)
+        this$maxvalY <- tkentry(ttfRangeValue, width=6, textvariable=this$vmaxvalY)
+        tkgrid(this$minvalY, this$maxvalY, padx=5, pady=1, sticky="e")
+        # Z range
+        this$minMSI <- tkentry(ttfRangeValue, width=4, textvariable=this$vminMSI)
+        this$maxMSI <- tkentry(ttfRangeValue, width=4, textvariable=this$vmaxMSI)
+        tkgrid(tklabel(ttfRangeValue, text="min(MSI):"), this$minMSI, padx=5, pady=1, sticky="e")
+        tkgrid(tklabel(ttfRangeValue, text="max(MSI):"), this$maxMSI, padx=5, pady=1, sticky="e")
+        tkgrid(ttfRangeLabel, ttfRangeValue, sticky="w")
+        tkgrid(ttfRange)
+        
+      # checkbox show grid --------------------------------------------------
+      ttfcheckPlot <- tkframe(ttlfFI)
+        cbtshowgrid <- tkcheckbutton(ttfcheckPlot, variable=this$cbtshowGrid, text="Grid")
+        tk2tip(cbtshowgrid, "Check to plot grid lines")
+        cbtpercentage <- tkcheckbutton(ttfcheckPlot, variable=this$cbtshowPercentage, text="Percentages")
+        tk2tip(cbtpercentage, "Check to plot percentages")
+        cbtshowlegend <- tkcheckbutton(ttfcheckPlot, variable=this$cbtshowLegend, text="Legend")
+        tk2tip(cbtshowlegend, "Uncheck to hide legend on plot")
+        cbtaddDate <- tkcheckbutton(ttfcheckPlot, variable=this$cbtaddDate, text="Date")
+        tkgrid(cbtshowgrid, cbtpercentage, cbtshowlegend, cbtaddDate, padx=5, pady=8, sticky="we")
+      tkgrid(ttfcheckPlot)
+  ### Done option panel
+  
+  # radio buttons for transformation type -----------------------------------
+    ttlfinfo <- ttklabelframe(ttfvals, text="Calculation options")
+      ttfradios <- tkframe(ttlfinfo)
+      ttfradiosright1 <- tkframe(ttfradios)
+      rb1 <- tkradiobutton(ttfradiosright1, variable=this$rbtrans, value="asinh")
+      rb2 <- tkradiobutton(ttfradiosright1, variable=this$rbtrans, value="none")
+      tkgrid(rb1, tklabel(ttfradiosright1, text="asinh"), 
+            rb2, tklabel(ttfradiosright1, text="none"), sticky="we")
+      tkgrid(tklabel(ttfradios, text="Transformation:"), ttfradiosright1, sticky="w")
+        tkbind(rb1, "<Button-1>", function() {
+            this$changeFI.range(1)
+        })
+      
+      # add radio buttons for calculation type
+      ttfradiosright2 <- tkframe(ttfradios)
+        rb1 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="MSI")
+        rbl1 <- tklabel(ttfradiosright2, text="MSI")
+        rb2 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="MSI(+)")
+        rbl2 <- tklabel(ttfradiosright2, text="MSI(+)")
+        rb3 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="density")
+        rbl3 <- tklabel(ttfradiosright2, text="density")
+        rb4 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="freq")
+        rbl4 <- tklabel(ttfradiosright2, text="frequency")
+        rb5 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="SD")
+        rbl5 <- tklabel(ttfradiosright2, text="SD")
+        rb6 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="SEM")
+        rbl6 <- tklabel(ttfradiosright2, text="SEM")
+        rb7 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="RSEM")
+        rbl7 <- tklabel(ttfradiosright2, text="RSEM")
+        tkgrid(rb1, rbl1, rb2, rbl2, sticky="w")
+        tk2tip(rb1, "Mean signal intensity")
+        tk2tip(rbl1, "Mean signal intensity")
+        tk2tip(rb2, "Mean signal intensity of Feature C producing cells")
+        tk2tip(rbl2, "Mean signal intensity of Feature C producing cells")
+        tkgrid(rb3, rbl3, rb4, rbl4, sticky="w")
+        tk2tip(rb3, "Cell count")
+        tk2tip(rbl3, "Cell count")
+        tk2tip(rb4, "Frequency of Feature C producing cells")
+        tk2tip(rbl4, "Frequency of Feature C producing cells")
+        tkgrid(rb5, rbl5, rb6, rbl6, sticky="w")
+        tk2tip(rb5, "Standard deviation")
+        tk2tip(rbl5, "Standard deviation")
+        tk2tip(rb6, "Standard error of mean")
+        tk2tip(rbl6, "Standard error of mean")
+        tkgrid(rb7, rbl7, sticky="w")
+        tk2tip(rb7, "Relative standard error of mean")
+        tk2tip(rbl7, "Relative standard error of mean")
+        tkgrid(tklabel(ttfradios, text="Statistical method:"), ttfradiosright2, sticky="nw")
+      tkgrid(ttfradios, padx = 10)
+      
+      ttfbuttons <- tkframe(ttlfinfo)
+        btremovdub <- tkbutton(ttfbuttons, text = "Remove Doublets", command = function() {
+            this$preprocData()
+        })
+        tk2tip(btremovdub, "Only possible with FSH/SSH channels")
+        cbttrimming <- tkcheckbutton(ttfbuttons, variable=this$cbttrimming, text="Trim first")
+        tk2tip(cbttrimming, sprintf("Trims %s of each column.", this$trim.num))
+        cbtshowMinBins <- tkcheckbutton(ttfbuttons, variable=this$cbtshowMinBins, text="Bins<minCount")
+        tk2tip(cbtshowMinBins, "Show bins in pale color.")
+        tkgrid(btremovdub, cbttrimming, cbtshowMinBins, padx=5, pady=1, sticky="we")
+      tkgrid(ttfbuttons, sticky="w")
+    tkgrid(ttlfFI, ttlfinfo, padx=5, pady=1, sticky="nsew")
+  tkgrid(ttfvals)
+  #####
+  
+  ##### set rect frame ttfgraph with Graphics/Comment and Set Rectangle   
+  ttfgraph <- tkframe(tab)
+    ##### set rect frame ttfgraphcomment with Graphics and Comment
+    ttfgraphcomment <- tkframe(ttfgraph)
+      # frame: Graphics
+      btOverviewXY <- tkbutton(ttfgraphcomment, text = "Plot triploT-Overview with fixed Features A and B", command = function() {
+          this$dotriploTOverviewXY()
+          })
+      btOverviewX <- tkbutton(ttfgraphcomment, text = "Plot triploT-Overview with fixed Feature A", command = function() {
+          this$dotriploTOverviewX()
+          })
+      btOverview <- tkbutton(ttfgraphcomment, text = "Plot triploT-Overview total", command = function() {
+          this$dotriploTOverview()
+          })
+      tkgrid(btOverviewXY, sticky="snwe", pady=1, padx=5)
+      tkconfigure(btOverviewXY, height=2)
+      tk2tip(btOverviewX, "Select your Feature A and Y above and check all features to the left which you would like to plot as heat bins.")
+      tkgrid(btOverviewX, sticky="snwe", pady=1, padx=5)
+      tkconfigure(btOverviewX, height=2)
+      tk2tip(btOverviewX, "Select your Feature A above and check all features to the left which you would like to plot.")
+      tkgrid(btOverview, sticky="snwe", pady=1, padx=5)
+      tkconfigure(btOverview, height=2)
+      tk2tip(btOverview, "Check your features to the left. If more than 16 markers are selected, several PDFs will be created.")
+      
+      ttlfgraph <- ttklabelframe(ttfgraphcomment, text="Graphics")
+        ttfrowcol <- tkframe(ttlfgraph)
+        this$ncol <- tkentry(ttfrowcol, width=2, textvariable=this$vncol)
+        this$nrow <- tkentry(ttfrowcol, width=2, textvariable=this$vnrow)
+        # call buttons and frame Graphics
+        tkgrid(tklabel(ttfrowcol, text="Rows:"), this$nrow, padx=10, sticky="e")
+        tkgrid(tklabel(ttfrowcol, text="Columns:"), this$ncol, padx=10, sticky="e")
+        tkgrid(tkbutton(ttfrowcol, text="New plot window", command=this$newPlotWindow))
+        ttfgridsave <- tkframe(ttlfgraph)
+          ttfsave <- tkframe(ttfgridsave)
+            btsavePNG <- tkbutton(ttfsave, text = "Save last plot as PNG", command = function() {
+                this$savePNG(single = TRUE)
+            })
+            btsavePDF <- tkbutton(ttfsave, text = "Save active window", command = function() {
+                this$saveWindow(type = "triploT")
+              })
+            tkgrid(btsavePNG, pady=1, sticky="we")
+            tkgrid(btsavePDF, pady=1, sticky="we")
+            tk2tip(btsavePDF, "Save as pdf")
+            tk2tip(btsavePNG, "Save as jpg")
+          tkgrid(ttfsave, padx=3)
+        tkgrid(ttfrowcol, ttfgridsave, padx = 5, pady = 1)
+      tkgrid(ttlfgraph, padx=5, pady=1)
+  
+      ### set label frame "Set Rectangle"
+      ttlfRect <- ttklabelframe(ttfgraph, text="Set rectangle")
+        ttfdef <- tkframe(ttlfRect)
+          butdef <- tkbutton(ttfdef, text="Click rectangle", command=this$doRect)
+          # checkbox manual rectangle
+          cbtmanrect <- tkcheckbutton(ttfdef, variable=this$cbtmanRect, text="Manual rectangle")
+          tkgrid(butdef, cbtmanrect, padx=10, pady=1)
+          tk2tip(butdef, "Define rectangle by mouse clicks")
+          tk2tip(cbtmanrect, "Define rectangle with coordinates below")
+        tkgrid(ttfdef)
+
+        ttfcoords <- tkframe(ttlfRect)
+          # choose coords from x axis
+          ttfcoords.x <- tkframe(ttfcoords)
+            x1 <- tkentry(ttfcoords.x, width=4, textvariable=this$vx1)
+            x2 <- tkentry(ttfcoords.x, width=4, textvariable=this$vx2)
+            tkgrid(tklabel(ttfcoords.x, text="x1:"), x1, padx=6, sticky="e", pady=1)
+            tkgrid(tklabel(ttfcoords.x, text="x2:"), x2, padx=6, sticky="e", pady=1)
+          # choose coords from y ayis
+          ttfcoords.y <- tkframe(ttfcoords)
+            y1 <- tkentry(ttfcoords.y, width=4, textvariable=this$vy1)
+            y2 <- tkentry(ttfcoords.y, width=4, textvariable=this$vy2)
+            tkgrid(tklabel(ttfcoords.y, text="y1:"), y1, padx=8, sticky="e", pady=1)
+            tkgrid(tklabel(ttfcoords.y, text="y2:"), y2, padx=8, sticky="e", pady=1)
+          tkgrid(ttfcoords.x, ttfcoords.y)
+        tkgrid(ttfcoords)
+        #
+        ttfcheckboxes <- tkframe(ttlfRect)
+          # checkbox tmp.data
+          cbttmpdata <- tkcheckbutton(ttfcheckboxes, variable=this$cbtgateData, text="Gate data")
+          #ä#tkgrid(, padx=5, pady=1, sticky="n")
+          tk2tip(cbttmpdata, "Save gated data temporarily")
+          # call button "Rect" and "Redo Rect"
+          ttfaddInfo <- tkframe(ttfcheckboxes)
+            # checkbox auto rectangle
+            cbtautorect <- tkcheckbutton(ttfaddInfo, variable=this$cbtautoRect, text="Auto add info")
+            tk2tip(cbtautorect, "Add rect and cell info automatically")
+            tkgrid(cbtautorect, padx=5, sticky="n")
+            tkgrid(tkbutton(ttfaddInfo, text = "Add rect info", command = function() {
+                this$addRectInfo(setcex = 1.0)
+                }), pady=1)
+            tkgrid(tkbutton(ttfaddInfo, text = "Add cell info", command = function() {
+                this$addCellInfo(setcex = 1.0)
+                }))
+          tkgrid(cbttmpdata, ttfaddInfo, padx=5)
+        tkgrid(ttfcheckboxes, padx=5, pady=1, sticky="nsew")
+        ##
+        btplotrect <- tkbutton(ttlfRect, text="Plot rectangle data only", command=this$dotriploTRectData)
+        tkgrid(btplotrect, sticky="we", pady=5, padx=5)
+        tkconfigure(btplotrect, height = 2)
+        
+    tkgrid(ttfgraphcomment, ttlfRect, padx=5, sticky="we")
+    ## 
+  tkgrid(ttfgraph, padx=5)
+  ##### set rect frame ttfgraph with Graphics and rectangle end
+  
+  # frame: Data Info
+  lfinfo <- ttklabelframe(tab, text="Data info")
+    this$ncell.gui <- tklabel(lfinfo, text=as.character(this$origin.ncells))
+    this$ncell.sel.gui <- tklabel(lfinfo, text=as.character(this$ncell.sel))
+    this$ncell.perc.gui <- tklabel(lfinfo, text=as.character(this$ncell.perc))
+    tkgrid(tklabel(lfinfo, text="# of total cells:"), this$ncell.gui, sticky="w", padx=5)
+    tkgrid(tklabel(lfinfo, text="# of selected cells:"), this$ncell.sel.gui, tklabel(lfinfo, text="("), this$ncell.perc.gui, tklabel(lfinfo, text="%)"), sticky="w", padx=5)
+    # call frame Data Info
+  tkgrid(lfinfo, columnspan=2, padx=5, sticky="we")
+  tkgrid.configure(lfinfo, sticky="ew")  
 }
 
 ### diploT tab
@@ -518,285 +954,6 @@ fcs$GUIdiploT <- function(tab) {
   tkgrid.configure(lfinfo, sticky="swe", pady=5, padx=5)  
 }
 
-### triploT tab
-# tab     tab frame, no default
-fcs$GUItriploT <- function(tab){
-  this <- fcs
-  
-  if (this$working) printf("w: GUItriploT")
-  
-  # set frame and content of combobox with file, mincount, binSize
-  ttftopframe <- tkframe(tab)
-    ttfcombo <- tkframe(ttftopframe)
-      # content comboboxleft
-      var.length <- 39
-      if (this$max.nchar.vars > var.length) var.length <- this$max.nchar.vars
-      this$minCountTri <- ttkcombobox(ttfcombo, values=this$min.counts, width=var.length)
-      tkset(this$minCountTri, this$min.counts[param$minCountTriPos])
-      this$binSize <- ttkcombobox(ttfcombo, values=this$binSizes, width=var.length)
-      tkset(this$binSize, this$binSizes[param$binSizesTriPos])
-      
-      this$cbvar1 <- ttkcombobox(ttfcombo, values=this$selected.vars, width=var.length)
-      tkset(this$cbvar1, this$selected.vars[param$currVarTri1])
-      this$cbvar2 <- ttkcombobox(ttfcombo, values=this$selected.vars, width=var.length)
-      tkset(this$cbvar2, this$selected.vars[param$currVarTri2])
-      this$cbvar3 <- ttkcombobox(ttfcombo, values=this$selected.vars, width=var.length)
-      tkset(this$cbvar3, this$selected.vars[param$currVarTri3])
-      cbtfeatA <- tkcheckbutton(ttfcombo, variable=this$cbtfeatA)
-      cbtfeatB <- tkcheckbutton(ttfcombo, variable=this$cbtfeatB)
-      cbtfeatC <- tkcheckbutton(ttfcombo, variable=this$cbtfeatC)
-    # call comboboxleft
-    tkgrid(tklabel(ttfcombo, text="binSize:"), this$binSize, sticky="e", padx=5)
-    tkgrid(tklabel(ttfcombo, text="minCount:"), this$minCountTri, tklabel(ttfcombo, text="Fix"), sticky="e", padx=5)
-    tkgrid(tklabel(ttfcombo, text="Feature A:"), this$cbvar1, cbtfeatA, sticky="e", padx=5)
-    tk2tip(cbtfeatA, "Check to fix this feature for triploT-Overview (not working yet)")
-    tkgrid(tklabel(ttfcombo, text="Feature B:"), this$cbvar2, cbtfeatB, sticky="e", padx=5)
-    tk2tip(cbtfeatB, "Check to fix this feature for triploT-Overview (not working yet)")
-    tkgrid(tklabel(ttfcombo, text="Feature C:"), this$cbvar3, cbtfeatC, sticky="e", padx=5)
-    tk2tip(cbtfeatC, "Check to fix this feature for triploT-Overview (not working yet)")
-  
-    #### rect buttons "Plot"
-    ttfbut <- tkframe(ttftopframe)
-      btplot <- tkbutton(ttfbut, text="Plot triploT", command=this$dotriploT)
-      btplot2 <- tkbutton(ttfbut, text="Plot for all files", command=this$dotriploTfiles)
-      yhbtplot2 <- tkbutton(ttfbut, text="Read Table", command=this$dotriploTtable)
-      bthist <- tkbutton(ttfbut, text = "Plot histograms", command = function() {
-        this$plotHistograms(plotter = "tri", pdf = FALSE)
-        })
-    
-      tkgrid(btplot, sticky="snwe", padx=2, pady=1)
-      tkgrid(btplot2, sticky="snwe", padx=2, pady=1)
-      tkgrid(yhbtplot2, sticky="snwe", padx=2, pady=1)
-      tkgrid(bthist, sticky="snwe", padx=2, pady=1)
-      tkconfigure(btplot, height=2, width=25)
-    tkgrid(ttfcombo, ttfbut, padx=5, sticky="w")
-  tkgrid(ttftopframe)
-  
-  
-  ##### set rect frame ttfvals with additional options min/max FI values  
-  ttfvals <- tkframe(tab)
-    # set label frame min/max FI in rect frame "ttfvals"
-    ttlfFI <- ttklabelframe(ttfvals, text="Plot options")
-      # checkbox axes range label -------------------------------------------
-      ttfRange <- tkframe(ttlfFI)
-        ttfRangeLabel <- tkframe(ttfRange)
-        tkgrid(tklabel(ttfRangeLabel, text="Range x-axis (min/max):"), padx=10, pady=1)
-        tkgrid(tklabel(ttfRangeLabel, text="Range y-axis (min/max):"), padx=10, pady=1)
-        cbtdynrange <- tkcheckbutton(ttfRangeLabel, variable=this$cbtdynRange, text="Dynamic MSI range")
-        tkgrid(cbtdynrange, sticky="ews", padx=10, pady=10)
-        tk2tip(cbtdynrange, "Uncheck for manual input")
-        # checkbox axes range value -------------------------------------------
-        ttfRangeValue <- tkframe(ttfRange)
-        # X axis
-        this$minvalX <- tkentry(ttfRangeValue, width=6, textvariable=this$vminvalX)
-        this$maxvalX <- tkentry(ttfRangeValue, width=6, textvariable=this$vmaxvalX)
-        tkgrid(this$minvalX, this$maxvalX, padx=5, pady=1, sticky="e")
-        # Y axis
-        this$minvalY <- tkentry(ttfRangeValue, width=6, textvariable=this$vminvalY)
-        this$maxvalY <- tkentry(ttfRangeValue, width=6, textvariable=this$vmaxvalY)
-        tkgrid(this$minvalY, this$maxvalY, padx=5, pady=1, sticky="e")
-        # Z range
-        this$minMSI <- tkentry(ttfRangeValue, width=4, textvariable=this$vminMSI)
-        this$maxMSI <- tkentry(ttfRangeValue, width=4, textvariable=this$vmaxMSI)
-        tkgrid(tklabel(ttfRangeValue, text="min(MSI):"), this$minMSI, padx=5, pady=1, sticky="e")
-        tkgrid(tklabel(ttfRangeValue, text="max(MSI):"), this$maxMSI, padx=5, pady=1, sticky="e")
-        tkgrid(ttfRangeLabel, ttfRangeValue, sticky="w")
-        tkgrid(ttfRange)
-        
-      # checkbox show grid --------------------------------------------------
-      ttfcheckPlot <- tkframe(ttlfFI)
-        cbtshowgrid <- tkcheckbutton(ttfcheckPlot, variable=this$cbtshowGrid, text="Grid")
-        tk2tip(cbtshowgrid, "Check to plot grid lines")
-        cbtpercentage <- tkcheckbutton(ttfcheckPlot, variable=this$cbtshowPercentage, text="Percentages")
-        tk2tip(cbtpercentage, "Check to plot percentages")
-        cbtshowlegend <- tkcheckbutton(ttfcheckPlot, variable=this$cbtshowLegend, text="Legend")
-        tk2tip(cbtshowlegend, "Uncheck to hide legend on plot")
-        cbtaddDate <- tkcheckbutton(ttfcheckPlot, variable=this$cbtaddDate, text="Date")
-        tkgrid(cbtshowgrid, cbtpercentage, cbtshowlegend, cbtaddDate, padx=5, pady=8, sticky="we")
-      tkgrid(ttfcheckPlot)
-  ### Done option panel
-  
-  # radio buttons for transformation type -----------------------------------
-    ttlfinfo <- ttklabelframe(ttfvals, text="Calculation options")
-      ttfradios <- tkframe(ttlfinfo)
-      ttfradiosright1 <- tkframe(ttfradios)
-      rb1 <- tkradiobutton(ttfradiosright1, variable=this$rbtrans, value="asinh")
-      rb2 <- tkradiobutton(ttfradiosright1, variable=this$rbtrans, value="none")
-      tkgrid(rb1, tklabel(ttfradiosright1, text="asinh"), 
-            rb2, tklabel(ttfradiosright1, text="none"), sticky="we")
-      tkgrid(tklabel(ttfradios, text="Transformation:"), ttfradiosright1, sticky="w")
-        tkbind(rb1, "<Button-1>", function() {
-            this$changeFI.range(1)
-        })
-      
-      # add radio buttons for calculation type
-      ttfradiosright2 <- tkframe(ttfradios)
-        rb1 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="MSI")
-        rbl1 <- tklabel(ttfradiosright2, text="MSI")
-        rb2 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="MSI(+)")
-        rbl2 <- tklabel(ttfradiosright2, text="MSI(+)")
-        rb3 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="density")
-        rbl3 <- tklabel(ttfradiosright2, text="density")
-        rb4 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="freq")
-        rbl4 <- tklabel(ttfradiosright2, text="frequency")
-        rb5 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="SD")
-        rbl5 <- tklabel(ttfradiosright2, text="SD")
-        rb6 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="SEM")
-        rbl6 <- tklabel(ttfradiosright2, text="SEM")
-        rb7 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="RSEM")
-        rbl7 <- tklabel(ttfradiosright2, text="RSEM")
-        tkgrid(rb1, rbl1, rb2, rbl2, sticky="w")
-        tk2tip(rb1, "Mean signal intensity")
-        tk2tip(rbl1, "Mean signal intensity")
-        tk2tip(rb2, "Mean signal intensity of Feature C producing cells")
-        tk2tip(rbl2, "Mean signal intensity of Feature C producing cells")
-        tkgrid(rb3, rbl3, rb4, rbl4, sticky="w")
-        tk2tip(rb3, "Cell count")
-        tk2tip(rbl3, "Cell count")
-        tk2tip(rb4, "Frequency of Feature C producing cells")
-        tk2tip(rbl4, "Frequency of Feature C producing cells")
-        tkgrid(rb5, rbl5, rb6, rbl6, sticky="w")
-        tk2tip(rb5, "Standard deviation")
-        tk2tip(rbl5, "Standard deviation")
-        tk2tip(rb6, "Standard error of mean")
-        tk2tip(rbl6, "Standard error of mean")
-        tkgrid(rb7, rbl7, sticky="w")
-        tk2tip(rb7, "Relative standard error of mean")
-        tk2tip(rbl7, "Relative standard error of mean")
-        tkgrid(tklabel(ttfradios, text="Statistical method:"), ttfradiosright2, sticky="nw")
-      tkgrid(ttfradios, padx = 10)
-      
-      ttfbuttons <- tkframe(ttlfinfo)
-        btremovdub <- tkbutton(ttfbuttons, text = "Remove Doublets", command = function() {
-            this$preprocData()
-        })
-        tk2tip(btremovdub, "Only possible with FSH/SSH channels")
-        cbttrimming <- tkcheckbutton(ttfbuttons, variable=this$cbttrimming, text="Trim first")
-        tk2tip(cbttrimming, sprintf("Trims %s of each column.", this$trim.num))
-        cbtshowMinBins <- tkcheckbutton(ttfbuttons, variable=this$cbtshowMinBins, text="Bins <minCount")
-        tk2tip(cbtshowMinBins, "Show bins in pale color.")
-        tkgrid(btremovdub, cbttrimming, cbtshowMinBins, padx=5, pady=1, sticky="we")
-      tkgrid(ttfbuttons, sticky="w")
-    tkgrid(ttlfFI, ttlfinfo, padx=5, pady=1, sticky="nsew")
-  tkgrid(ttfvals)
-  #####
-  
-  ##### set rect frame ttfgraph with Graphics/Comment and Set Rectangle   
-  ttfgraph <- tkframe(tab)
-    ##### set rect frame ttfgraphcomment with Graphics and Comment
-    ttfgraphcomment <- tkframe(ttfgraph)
-      # frame: Graphics
-      btOverviewXY <- tkbutton(ttfgraphcomment, text = "Plot triploT-Overview with fixed Features A and B", command = function() {
-          this$dotriploTOverviewXY()
-          })
-      btOverviewX <- tkbutton(ttfgraphcomment, text = "Plot triploT-Overview with fixed Feature A", command = function() {
-          this$dotriploTOverviewX()
-          })
-      btOverview <- tkbutton(ttfgraphcomment, text = "Plot triploT-Overview total", command = function() {
-          this$dotriploTOverview()
-          })
-      tkgrid(btOverviewXY, sticky="snwe", pady=1, padx=5)
-      tkconfigure(btOverviewXY, height=2)
-      tk2tip(btOverviewX, "Select your Feature A and Y above and check all features to the left which you would like to plot as heat bins.")
-      tkgrid(btOverviewX, sticky="snwe", pady=1, padx=5)
-      tkconfigure(btOverviewX, height=2)
-      tk2tip(btOverviewX, "Select your Feature A above and check all features to the left which you would like to plot.")
-      tkgrid(btOverview, sticky="snwe", pady=1, padx=5)
-      tkconfigure(btOverview, height=2)
-      tk2tip(btOverview, "Check your features to the left. If more than 16 markers are selected, several PDFs will be created.")
-      
-      ttlfgraph <- ttklabelframe(ttfgraphcomment, text="Graphics")
-        ttfrowcol <- tkframe(ttlfgraph)
-        this$ncol <- tkentry(ttfrowcol, width=2, textvariable=this$vncol)
-        this$nrow <- tkentry(ttfrowcol, width=2, textvariable=this$vnrow)
-        # call buttons and frame Graphics
-        tkgrid(tklabel(ttfrowcol, text="Rows:"), this$nrow, padx=10, sticky="e")
-        tkgrid(tklabel(ttfrowcol, text="Columns:"), this$ncol, padx=10, sticky="e")
-        tkgrid(tkbutton(ttfrowcol, text="New plot window", command=this$newPlotWindow))
-        ttfgridsave <- tkframe(ttlfgraph)
-          ttfsave <- tkframe(ttfgridsave)
-            btsavePNG <- tkbutton(ttfsave, text = "Save last plot as PNG", command = function() {
-                this$savePNG(single = TRUE)
-            })
-            btsavePDF <- tkbutton(ttfsave, text = "Save active window", command = function() {
-                this$saveWindow(type = "triploT")
-              })
-            tkgrid(btsavePNG, pady=1, sticky="we")
-            tkgrid(btsavePDF, pady=1, sticky="we")
-            tk2tip(btsavePDF, "Save as pdf")
-            tk2tip(btsavePNG, "Save as jpg")
-          tkgrid(ttfsave, padx=3)
-        tkgrid(ttfrowcol, ttfgridsave, padx = 5, pady = 1)
-      tkgrid(ttlfgraph, padx=5, pady=1)
-  
-      ### set label frame "Set Rectangle"
-      ttlfRect <- ttklabelframe(ttfgraph, text="Set rectangle")
-        ttfdef <- tkframe(ttlfRect)
-          butdef <- tkbutton(ttfdef, text="Click rectangle", command=this$doRect)
-          # checkbox manual rectangle
-          cbtmanrect <- tkcheckbutton(ttfdef, variable=this$cbtmanRect, text="Manual rectangle")
-          tkgrid(butdef, cbtmanrect, padx=10, pady=1)
-          tk2tip(butdef, "Define rectangle by mouse clicks")
-          tk2tip(cbtmanrect, "Define rectangle with coordinates below")
-        tkgrid(ttfdef)
-
-        ttfcoords <- tkframe(ttlfRect)
-          # choose coords from x axis
-          ttfcoords.x <- tkframe(ttfcoords)
-            x1 <- tkentry(ttfcoords.x, width=4, textvariable=this$vx1)
-            x2 <- tkentry(ttfcoords.x, width=4, textvariable=this$vx2)
-            tkgrid(tklabel(ttfcoords.x, text="x1:"), x1, padx=6, sticky="e", pady=1)
-            tkgrid(tklabel(ttfcoords.x, text="x2:"), x2, padx=6, sticky="e", pady=1)
-          # choose coords from y ayis
-          ttfcoords.y <- tkframe(ttfcoords)
-            y1 <- tkentry(ttfcoords.y, width=4, textvariable=this$vy1)
-            y2 <- tkentry(ttfcoords.y, width=4, textvariable=this$vy2)
-            tkgrid(tklabel(ttfcoords.y, text="y1:"), y1, padx=8, sticky="e", pady=1)
-            tkgrid(tklabel(ttfcoords.y, text="y2:"), y2, padx=8, sticky="e", pady=1)
-          tkgrid(ttfcoords.x, ttfcoords.y)
-        tkgrid(ttfcoords)
-        #
-        ttfcheckboxes <- tkframe(ttlfRect)
-          # checkbox tmp.data
-          cbttmpdata <- tkcheckbutton(ttfcheckboxes, variable=this$cbtgateData, text="Gate data")
-          #ä#tkgrid(, padx=5, pady=1, sticky="n")
-          tk2tip(cbttmpdata, "Save gated data temporarily")
-          # call button "Rect" and "Redo Rect"
-          ttfaddInfo <- tkframe(ttfcheckboxes)
-            # checkbox auto rectangle
-            cbtautorect <- tkcheckbutton(ttfaddInfo, variable=this$cbtautoRect, text="Auto add info")
-            tk2tip(cbtautorect, "Add rect and cell info automatically")
-            tkgrid(cbtautorect, padx=5, sticky="n")
-            tkgrid(tkbutton(ttfaddInfo, text = "Add rect info", command = function() {
-                this$addRectInfo(setcex = 1.0)
-                }), pady=1)
-            tkgrid(tkbutton(ttfaddInfo, text = "Add cell info", command = function() {
-                this$addCellInfo(setcex = 1.0)
-                }))
-          tkgrid(cbttmpdata, ttfaddInfo, padx=5)
-        tkgrid(ttfcheckboxes, padx=5, pady=1, sticky="nsew")
-        ##
-        btplotrect <- tkbutton(ttlfRect, text="Plot rectangle data only", command=this$dotriploTRectData)
-        tkgrid(btplotrect, sticky="we", pady=5, padx=5)
-        tkconfigure(btplotrect, height = 2)
-        
-    tkgrid(ttfgraphcomment, ttlfRect, padx=5, sticky="we")
-    ## 
-  tkgrid(ttfgraph, padx=5)
-  ##### set rect frame ttfgraph with Graphics and rectangle end
-  
-  # frame: Data Info
-  lfinfo <- ttklabelframe(tab, text="Data info")
-    this$ncell.gui <- tklabel(lfinfo, text=as.character(this$origin.ncells))
-    this$ncell.sel.gui <- tklabel(lfinfo, text=as.character(this$ncell.sel))
-    this$ncell.perc.gui <- tklabel(lfinfo, text=as.character(this$ncell.perc))
-    tkgrid(tklabel(lfinfo, text="# of total cells:"), this$ncell.gui, sticky="w", padx=5)
-    tkgrid(tklabel(lfinfo, text="# of selected cells:"), this$ncell.sel.gui, tklabel(lfinfo, text="("), this$ncell.perc.gui, tklabel(lfinfo, text="%)"), sticky="w", padx=5)
-    # call frame Data Info
-  tkgrid(lfinfo, columnspan=2, padx=5, sticky="we")
-  tkgrid.configure(lfinfo, sticky="ew")  
-}
-
 ### Dataframe tab
 # tab     tab frame, no default
 fcs$GUIdataframe <- function(tab) {
@@ -824,7 +981,7 @@ fcs$GUIdataframe <- function(tab) {
                           closecmd = function(...) {
                               tkclosetree(this$treeDF, ...)
                             }
-)
+  )
   
   # call treewidget
   tkgrid(this$treeDF, yScr)

@@ -5,27 +5,11 @@
 ### load public libraries - DO NOT TOUCH!
 
 ### set paths and load libraries - DO NOT TOUCH! -----------------------------
-if (work.station  ==  "asus-zenbook") {
-  ### ASUS Zenbook
-  Lib.path <- "/opt/R-3.5.1/library"
-} else if (work.station  ==  "drfz") {
-  ### DRFZ
-  # R 3.6.1
-  Lib.path <- "Y:/AG_Baumgrass/AG-PRI/R/R-3.6.1/library"
-} else if (work.station  ==  "delta") {
-  ### DELTA
-  # R 3.5.1
-  Lib.path <- "/usr/local/lib/R/site-library"
-} else if (work.station == "asus-vividbook") {
-  Lib.path <- "C:/Program\ Files/R/R-3.5.1/library"
-}
-library(RSQLite, quietly=TRUE, lib.loc = Lib.path)
-library(tcltk2, quietly=TRUE, lib.loc = Lib.path)
-library(R.devices, quietly=TRUE, lib.loc = Lib.path)
-
 ### set paths
 if (work.station  ==  "asus-zenbook") {
   ### ASUS Zenbook
+  Lib.path <- "/opt/R-3.5.1/library"
+
   setwd(file.path("", "scratch", "drfz_PRI", "PRI-ana"))
   fcs$db.path <- file.path("", "data", "databases")
   fcs$db.name <- "EM_20200210_EME002_WTCD4.sqlite3"
@@ -38,16 +22,20 @@ if (work.station  ==  "asus-zenbook") {
   fcs$png.file <- file.path("tcl", "tmp.png")
   fcs$template.file <- file.path("tcl", "template.png")
 } else if (work.station == "asus-vividbook") {
+  Lib.path <- file.path("C:", "Program\ Files", "R", "R-3.5.1", "library")
+
   setwd(file.path("D:", "drfz_PRI", "PRI-ana"))
   fcs$db.path <- file.path("D:", "DB")
-  fcs$db.name <- ""
+  fcs$db.name <- "SGJP_20180524_NZBxWIL21+Cytokines.sqlite3"
   fcs$working <- FALSE
-  #fcs$working <- TRUE
+  fcs$working <- TRUE
 
   ### set template location
   fcs$png.file <- file.path("tcl", "tmp.png")
   fcs$template.file <- file.path("tcl", "template.png")
-} else if (work.station == "office") {
+} else if (work.station == "drfz") {
+  Lib.path <- "Y:/AG_Baumgrass/AG-PRI/R/R-3.6.1/library"
+
   setwd(file.path("Y:", "AG_Baumgrass", "AG-PRI", "PRIanalyzer"))
   fcs$db.path <- file.path("Y:", "AG_Baumgrass", "AG-PRI", "DB")
   fcs$db.name <- ""
@@ -75,6 +63,8 @@ if (work.station  ==  "asus-zenbook") {
   fcs$png.file <- file.path("tcl", "tmp.png")
   fcs$template.file <- file.path("tcl", "template.png")
 } else if (work.station == "delta") {
+  Lib.path <- "/usr/local/lib/R/site-library"
+
   setwd(file.path("", "scratch", "drfz", "PRI", "PRI-ana"))
   fcs$db.path <- file.path("", "data", "databases")
   # fcs$db.name <- "RB_20191002_Good2018.sqlite3"
@@ -94,6 +84,9 @@ if (work.station  ==  "asus-zenbook") {
   fcs$working <- TRUE
   density <- TRUE
 }
+library(RSQLite, quietly=TRUE, lib.loc = Lib.path)
+library(tcltk2, quietly=TRUE, lib.loc = Lib.path)
+library(R.devices, quietly=TRUE, lib.loc = Lib.path)
 
 ### load private library
 source(file.path("tcl", "libbwidget.r"))
@@ -110,6 +103,7 @@ fcs$plot.windows <- vector()
 fcs$plotter.di.graph <- 0
 fcs$plotter.di.num <- 0
 fcs$plotter.tri.num <- 0
+fcs$plotter.quad.num <- 0
 fcs$distepy <- 0
 fcs$origin.ncells <- 0
 fcs$ncell.sel <- 0
@@ -178,6 +172,10 @@ fcs$col.rainbow.pale <- c("#868EC0", "#868EC0", "#93C5D2", "#A8F1EF", "#AEF8D6",
 
 fcs$col.blackwhite <- c("gray90", "gray90", "gray80", "gray70", "gray60", "gray50", "gray40", "gray30", "gray20", "gray10", "gray0", "gray0")
 fcs$col.blackred <- c("gray95", "gray95", "gray80", "gray65", "gray50", "gray35", "darkred", "darkred")
+# green
+cols  <-  c("#F4FBEF", "#E0F3D3", "#C3E1AD", "#ACD88D", "#93CC6B", "#7DC24C", "#71B441", "#63AB30", "#56972B", "#4F8726")
+fcs$col.green <- col2rgb(cols)
+
 #fcs$ncores <- detectCores() - 1
 
 ### initiate parameters
@@ -202,24 +200,31 @@ if (!grepl("linux", sessionInfo()$R.version$os)) {
 
 ### load PRI parameters if exist ----------------------------------------
 paramfile <- "myPRIparam.rda"
-if (file.exists(paramfile)) {
+if (!file.exists(paramfile)) {
   printf("Loading myPRIparam.rda..")
   load(paramfile)
   print(sprintf("diploT :: saved var1=%s var2=%s", param$currVarDi1, param$currVarDi2))
   print(sprintf("triploT :: saved var1=%s var2=%s var3=%s", param$currVarTri1, param$currVarTri2, param$currVarTri3))
-  fcs$vnrow <- tclVar(param$nrow)
-  fcs$vncol <- tclVar(param$ncol)
+  print(sprintf("quadruploT :: saved var1=%s var2=%s var3=%s var4=%s", param$currVarQuad1, param$currVarQuad2, param$currVarQuad3, param$currVarQuad4))
 
+  # FI range
   fcs$vminvalX <- tclVar(param$minvalX)
   fcs$vmaxvalX <- tclVar(param$maxvalX)
   fcs$vminvalY <- tclVar(param$minvalY)
   fcs$vmaxvalY <- tclVar(param$maxvalY)
   fcs$vminMSI <- tclVar(param$minMSI)
   fcs$vmaxMSI <- tclVar(param$maxMSI)
+  fcs$vminfreq <- tclVar(param$minfreq)
+  fcs$vmaxfreq <- tclVar(param$maxfreq)
 
+  # radio buttons
   fcs$rbasinh <- tclVar(param$cofactor)
   fcs$rbcalc <- tclVar(param$rbcalc)
   fcs$rbtrans <- tclVar(param$rbtrans)
+  fcs$popC1 <- tclVar(param$rbpopC1)
+  fcs$popC2 <- tclVar(param$rbpopC2)
+
+  # check buttons
   fcs$cbtfeatA <- tclVar(param$cbtfeatA)
   fcs$cbtfeatB <- tclVar(param$cbtfeatB)
   fcs$cbtfeatC <- tclVar(param$cbtfeatC)
@@ -236,49 +241,71 @@ if (file.exists(paramfile)) {
   fcs$cbtgateData <- tclVar(param$cbtgateData)
   fcs$cbtautoRect <- tclVar(param$cbtautoRect)
 
+  # graphics  
+  fcs$vnrow <- tclVar(param$nrow)
+  fcs$vncol <- tclVar(param$ncol)
+
   fcs$current.cofactor <- param$cofactor
   print("Done loading.")
 } else {
   printf("Could not find \"myPRIparam.rda\", load default vars..")
+
+  # feature diplot
   param$currVarDi1 <- 1
   param$currVarDi2 <- 2
   param$binSizesDiPos <- 2
   param$minCountDiPos <- 2
-
+  # feature triplot
   param$currVarTri1 <- 1
   param$currVarTri2 <- 2
   param$currVarTri3 <- 3
   param$binSizesTriPos <- 2
   param$minCountTriPos <- 3
+  # feature quadruplot
+  param$currVarQuad1 <- 1
+  param$currVarQuad2 <- 2
+  param$currVarQuad3 <- 3
+  param$currVarQuad4 <- 4
+  param$binSizesQuadPos <- 2
+  param$minCountQuadPos <- 3
 
-  fcs$vnrow <- tclVar("2")
-  fcs$vncol <- tclVar("4")
-
+  # FI range
   fcs$vminvalX <- tclVar("0")
-  fcs$vmaxvalX <- tclVar("14")
+  fcs$vmaxvalX <- tclVar("12")
   fcs$vminvalY <- tclVar("0")
-  fcs$vmaxvalY <- tclVar("14")
+  fcs$vmaxvalY <- tclVar("12")
   fcs$vminMSI <- tclVar("0")
   fcs$vmaxMSI <- tclVar("0")
+  fcs$vminfreq <- tclVar("0")
+  fcs$vmaxfreq <- tclVar("100")
 
+  # radio buttons
   fcs$rbasinh <- tclVar("1")
-  fcs$rbcalc <- "MSI"
-  fcs$rbtrans <- "asinh"
-  fcs$cbtfeatA <- "0"
-  fcs$cbtfeatB <- "0"
-  fcs$cbtfeatC <- "0"
-  fcs$cbtaddFilename <- "1"
-  fcs$cbtaddDate <- "0"
-  fcs$cbtdisplayA <- "0"
-  fcs$cbtshowGrid <- "0"
-  fcs$cbttrimming <- "0"
-  fcs$cbtmanRect <- "0"
-  fcs$cbtdynRange <- "1"
-  fcs$cbtshowLegend <- "1"
-  fcs$cbtshowPercentage <- "1"
-  fcs$cbtshowMinBins <- "0"
-  fcs$cbtgateData <- "0"
-  fcs$cbtautoRect <- "0"
+  fcs$rbcalc <- tclVar("MSI")
+  fcs$rbtrans <- tclVar("asinh")
+  fcs$popC1 <- tclVar("pos")
+  fcs$popC2 <- tclVar("pos")
+
+  # check buttons
+  fcs$cbtfeatA <- tclVar("0") # fix feature
+  fcs$cbtfeatB <- tclVar("0")
+  fcs$cbtfeatC <- tclVar("0")
+  fcs$cbtaddFilename <- tclVar("1")
+  fcs$cbtaddDate <- tclVar("0")
+  fcs$cbtdisplayA <- tclVar("0")
+  fcs$cbtshowGrid <- tclVar("1")
+  fcs$cbtshowPercentage <- tclVar("1")
+  fcs$cbttrimming <- tclVar("0")
+  fcs$cbtmanRect <- tclVar("0")
+  fcs$cbtdynRange <- tclVar("1")
+  fcs$cbtshowLegend <- tclVar("1")
+  fcs$cbtshowMinBins <- tclVar("0")
+  fcs$cbtgateData <- tclVar("0")
+  fcs$cbtautoRect <- tclVar("0")
+
+  # graphics
+  fcs$vnrow <- tclVar("2")
+  fcs$vncol <- tclVar("4")
 
   fcs$current.cofactor <- "1"
 }

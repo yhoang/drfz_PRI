@@ -43,8 +43,8 @@ if (work.station == "asus-zenbook") {
 # setwd(PRIana.path)
 ### Source several R scripts
 source.files <- list.files(path = PRIana.path, pattern = "\\.[Rr]$")
-for (nm in 1:5) {
-# for (nm in 1:length(source.files)) {
+# for (nm in 1:5) {
+for (nm in 1:length(source.files)) {
  source(file.path(PRIana.path, source.files[nm]))
 }
 
