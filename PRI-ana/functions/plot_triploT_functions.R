@@ -1,6 +1,6 @@
 #! / usr / bin / R
 # Author: Yen Hoang
-# DRFZ 2015-2020
+# DRFZ 2015 - 2020
 
 
 ### triploT functions -----------------------------------------------------
@@ -126,10 +126,6 @@ fcs$dotriploT <- function() {
   
   tkconfigure(this$tt, cursor = "watch")
   if ((checkGATED == "1") & (this$temp.num > 0)) {
-    #   table = file
-    #   file = this$plot.attr[[1]]$file.name
-    #   file.idx = 1
-    # } else if (grepl("^temp", file)) {
     table <- file
     file.idx <- 0
   } else {
@@ -207,7 +203,11 @@ fcs$dotriploT <- function() {
     title.axis <- c(title.axis, v2)
   }
   
-  plot(1, type="n", frame.plot=FALSE, xlim=c(xminval, xmaxval + 10 * binSize), axes=FALSE, ylim=c(yminval - 2.5 * binSize, ymaxval + 5 * binSize), xlab=title.axis[1], ylab=title.axis[2], cex.lab=set.cex, cex.axis=0.5 * set.cex.axes, mgp=set.mgp)
+  plot(1, type = "n", frame.plot = FALSE, axes = FALSE,
+    xlim = c(xminval - 0.5, xmaxval + 1),
+    ylim = c(yminval - 0.5, ymaxval + 1),
+    xlab = title.axis[1], ylab = title.axis[2],
+    cex.lab=set.cex, cex.axis=0.5 * set.cex.axes, mgp=set.mgp)
   box(lwd=0.8, col="darkgrey")
   
   ### draw axis on the bottom and on the left
@@ -529,9 +529,7 @@ fcs$dotriploTfiles <- function(read=FALSE) {
         ### 
         width=3.21 * max.nhorizplots, 
         height=3.5 * max.nvertiplots, 
-        pointsize=11, 
-        ###
-        {
+        pointsize=11, {
           label.cex <- 1.2
           set.cex.axes <- 1
           set.mgp <- c(1.9, 0.5, 0)
@@ -595,8 +593,11 @@ fcs$dotriploTfiles <- function(read=FALSE) {
             if (cutoffs[2] > 0) title.axis <- c(title.axis, sprintf("%s (%s)", v2, cutoffs[2]))
             else title.axis <- c(title.axis, v2)
             
-            plot(1, type="n", frame.plot=FALSE, xlim=c(xminval, xmaxval + 10 * binSize), axes=FALSE, 
-                 ylim=c(yminval - 2.5 * binSize, ymaxval + 5 * binSize), xlab=title.axis[1], ylab=title.axis[2], cex.lab=set.cex, cex.axis=0.5 * set.cex.axes, mgp=set.mgp)
+            plot(1, type = "n", frame.plot = FALSE, axes = FALSE,
+              xlim = c(xminval - 0.5, xmaxval + 1),
+              ylim = c(yminval - 0.5, ymaxval + 1),
+              xlab = title.axis[1], ylab = title.axis[2],
+              cex.lab=set.cex, cex.axis=0.5 * set.cex.axes, mgp=set.mgp)
             box(lwd=0.8, col="darkgrey")
             
             ### draw axis on the bottom and on the left
@@ -605,8 +606,8 @@ fcs$dotriploTfiles <- function(read=FALSE) {
             
             ### add grid
             if (checkGRID == "1") {
-              xgrid.steps=seq(0, (xmaxval), by=grid.step)
-              ygrid.steps=seq(0, (ymaxval), by=grid.step)
+              xgrid.steps  <- seq(0, (xmaxval), by=grid.step)
+              ygrid.steps  <- seq(0, (ymaxval), by=grid.step)
               abline(h=ygrid.steps, v=xgrid.steps, col="grey", lty=3)
             }
             
@@ -751,7 +752,7 @@ fcs$dotriploTfiles <- function(read=FALSE) {
   
   if (checkDATE == "1") {
     date <- gsub("-", "", Sys.Date())
-    title(main=date, outer=T, line=1, cex.main=1.3, adj=1)
+    title(main=date, outer=TRUE, line=1, cex.main=1.3, adj=1)
   }
   
 }
@@ -827,7 +828,7 @@ fcs$dotriploTtable <- function() {
   # ask for triplot values ---------------------------------------------------
   printf("w: do open triplot table")
   file <- tclvalue(tkgetOpenFile(initialdir=this$table.dir, defaultextension="csv"))
-  triplot.table <- read.table(file, fill=T, header=T, sep="\t")
+  triplot.table <- read.table(file, fill=TRUE, header=TRUE, sep="\t")
   
   
   
@@ -858,9 +859,7 @@ fcs$dotriploTtable <- function() {
           ### 
           width=3.21 * max.nhorizplots, 
           height=3.5 * max.nvertiplots, 
-          pointsize=11, 
-          ###
-          {
+          pointsize=11, {
             label.cex <- 1.2
             set.cex.axes <- 1
             set.mgp <- c(1.9, 0.5, 0)
@@ -925,8 +924,11 @@ fcs$dotriploTtable <- function() {
               if (cutoffs[2] > 0) title.axis <- c(title.axis, sprintf("%s (%s)", v2, cutoffs[2]))
               else title.axis <- c(title.axis, v2)
               
-              plot(1, type="n", frame.plot=FALSE, xlim=c(xminval, xmaxval + 10 * binSize), axes=FALSE, 
-                   ylim=c(yminval - 2.5 * binSize, ymaxval + 5 * binSize), xlab=title.axis[1], ylab=title.axis[2], cex.lab=set.cex, cex.axis=0.5 * set.cex.axes, mgp=set.mgp)
+              plot(1, type = "n", frame.plot = FALSE, axes = FALSE,
+                xlim = c(xminval - 0.5, xmaxval + 1),
+                ylim = c(yminval - 0.5, ymaxval + 1),
+                xlab = title.axis[1], ylab = title.axis[2],
+                cex.lab=set.cex, cex.axis=0.5 * set.cex.axes, mgp=set.mgp)
               box(lwd=0.8, col="darkgrey")
               
               ### draw axis on the bottom and on the left
@@ -1025,7 +1027,10 @@ fcs$dotriploTtable <- function() {
               } 
               
               
-              if (checkGATED != "1") this$origin.ncells=ncells; this$coords=list()
+              if (checkGATED != "1") {
+                this$origin.ncells <- ncells
+                this$coords  <- list()
+              }
               
               if (checkCALC == "density") {
                 this$bintriplot(data=tdata, cutoffs=cutoffs, density=TRUE, binSize=binSize, mincells=mincount)
@@ -1079,7 +1084,7 @@ fcs$dotriploTtable <- function() {
     
     if (checkDATE == "1") {
       date <- gsub("-", "", Sys.Date())
-      title(main=date, outer=T, line=1, cex.main=1.3, adj=1)
+      title(main=date, outer=TRUE, line=1, cex.main=1.3, adj=1)
     }
   }
 }
@@ -1111,7 +1116,7 @@ fcs$dotriploTRectData <- function() {
   cutoffs <- c(cutoffx, cutoffy, cutoffz)
   
   ### if axes ranges are not the same
-  try (if (!this$checkAxesRange()) {
+  try(if (!this$checkAxesRange()) {
     tkmessageBox(title = "An error has occured!", 
                  message = "Please set x and y axis with the same range.", icon = "error", type = "ok")
     stop("Set x and y axis with the same range.")
@@ -1224,8 +1229,11 @@ fcs$dotriploTRectData <- function() {
     if (cutoffs[2] > 0) title.axis <- c(title.axis, sprintf("%s (%s)", var2, cutoffs[2]))
     else title.axis <- c(title.axis, var2)
     
-    plot(1, type="n", frame.plot=FALSE, xlim=c(xminval, xmaxval + 10 * binSize), axes=FALSE, 
-         ylim=c(yminval - 2.5 * binSize, ymaxval + 5 * binSize), xlab=title.axis[1], ylab=title.axis[2], cex.lab=set.cex, cex.axis=0.5 * set.cex.axes, mgp=set.mgp)
+    plot(1, type = "n", frame.plot = FALSE, axes = FALSE,
+      xlim = c(xminval - 0.5, xmaxval + 1),
+      ylim = c(yminval - 0.5, ymaxval + 1),
+      xlab = title.axis[1], ylab = title.axis[2],
+      cex.lab=set.cex, cex.axis=0.5 * set.cex.axes, mgp=set.mgp)
     box(lwd=0.8, col="darkgrey")
     
     ### draw axis on the bottom and on the left
@@ -1239,7 +1247,6 @@ fcs$dotriploTRectData <- function() {
       abline(h=ygrid.steps, v=xgrid.steps, col="grey", lty=3)
     }
     
-    # this$getInfo(file, vars)
     
     # get rect data to plot
     if (checkGATED == "1") tdata <- this$data[c(var1, var2, var3)]
@@ -1341,7 +1348,7 @@ fcs$dotriploTRectData <- function() {
     
     
     # get only the cells which are greater than 0
-    tdata.zero <- tdata[ tdata[, 1] >= 0 & tdata[, 2] >= 0, ]
+    tdata.zero <- tdata[tdata[, 1] >= 0 & tdata[, 2] >= 0, ]
     ncells.zero <- nrow(tdata.zero)
     
     ### calc quadrants with only positive values
@@ -1356,7 +1363,7 @@ fcs$dotriploTRectData <- function() {
       q4.zero <- abs(100 - q1.zero - q2.zero - q3.zero)
     }
     
-    if (checkGATED != "1") this$origin.ncells=ncells 
+    if (checkGATED != "1") this$origin.ncells  <- ncells 
     tkconfigure(this$ncell.sel.gui, text=as.character(ncells))
     tkconfigure(this$ncell.sel.gui.di, text=as.character(ncells))
     
@@ -1368,10 +1375,8 @@ fcs$dotriploTRectData <- function() {
     } else {
       this$bintriplot(data=tdata, cutoffs=cutoffs, binSize=binSize, mincells=mincount)
     }
-    #this$bintriplot(tdata, cutoffs, binSize=binSize, mincells=mincount, quadrants.color = quadrants.col)
     
-    # attr = this$plot.attr[[1]]
-    this$ncell.perc=ncells / this$origin.ncells * 100
+    this$ncell.perc  <- ncells / this$origin.ncells * 100
     if (checkGATED == "1") {
       ### remove ending from filename
       firstLine <- sprintf("%s * (%0.1f%%): %s/cof=%s", displayfile, this$ncell.perc, checkCALC, this$current.cofactor)
@@ -1426,7 +1431,7 @@ fcs$dotriploTOverview <- function(table=NA) {
   }
   
   if (!this$working) {
-    answer=tkmessageBox(title = "Starting..", message = "Are you sure?", icon = "info", type = "yesno")
+    answer  <- tkmessageBox(title = "Starting..", message = "Are you sure?", icon = "info", type = "yesno")
   }  
   
   if (tclvalue(answer) == "no") stop("OK.")
@@ -1456,7 +1461,7 @@ fcs$dotriploTOverview <- function(table=NA) {
   cutoffs <- vector()
   for (i in 1:len) {
     if (tclvalue(this$cbVal[[i]]) == "1") {
-      colvec <- c(colvec, i);
+      colvec <- c(colvec, i)
       cutoffs <- c(cutoffs, this$checkDigits(cutoff_id=i))
     }
   }
@@ -1485,13 +1490,13 @@ fcs$dotriploTOverview <- function(table=NA) {
   
   if ((tclvalue(titleans) == "yes") | tclvalue(freqans) == "yes") {
     if (this$working) {
-      this$saveinFolder=getwd()
+      this$saveinFolder  <- getwd()
     } else {
       # if path didnt save yet
       if (!exists("lastpath", where=eval(parse(text="fcs")))){
-        this$saveinFolder = tk_choose.dir(default = getwd(), caption = "Select directory to save the PDFs")
+        this$saveinFolder  <- tk_choose.dir(default = getwd(), caption = "Select directory to save the PDFs")
       } else {
-        this$saveinFolder = tk_choose.dir(default = this$lastpath, caption = "Select directory to save the PDFs")
+        this$saveinFolder  <- tk_choose.dir(default = this$lastpath, caption = "Select directory to save the PDFs")
       }
     }
       
@@ -1503,10 +1508,10 @@ fcs$dotriploTOverview <- function(table=NA) {
       max.nhorizplots <- 6
       max.nvertiplots <- 8
         
-      res.nhorizplots <- (len.colvec-2)%%max.nhorizplots
-      if (res.nhorizplots != 0) res.nhorizplots = max.nhorizplots - res.nhorizplots
-      max.nplots <- len.colvec * (len.colvec-1) * (len.colvec-2)
-      max.npages <- ceiling((max.nplots + res.nhorizplots * (len.colvec-1) * len.colvec) / (max.nhorizplots * max.nvertiplots)) # + 1
+      res.nhorizplots <- (len.colvec - 2) %% max.nhorizplots
+      if (res.nhorizplots != 0) res.nhorizplots <- max.nhorizplots - res.nhorizplots
+      max.nplots <- len.colvec * (len.colvec - 1) * (len.colvec - 2)
+      max.npages <- ceiling((max.nplots + res.nhorizplots * (len.colvec - 1) * len.colvec) / (max.nhorizplots * max.nvertiplots)) # + 1
         
       ### Create Progress Bar
       this$pb <- tkProgressBar(title="triploT-Overview", label=paste("Creating page 1 / ", max.npages, sep=""), min = 0, max = max.npages, initial = 1, width = 300)
@@ -1514,7 +1519,7 @@ fcs$dotriploTOverview <- function(table=NA) {
       # set progress bar
       setTkProgressBar(this$pb, 1, label=paste("Creating page 1 / ", max.npages, sep=""))
         
-      timeSTART = Sys.time()
+      timeSTART  <- Sys.time()
         
       if (!this$OverviewGate) {
         cat("\n\n>>>> Start triploT-Overview with total data: \n\n")
@@ -1524,7 +1529,7 @@ fcs$dotriploTOverview <- function(table=NA) {
       
       if (this$working) print(sprintf("w: %s - time started", timeSTART))
         
-      tmp.folder = file.path(this$saveinFolder, "tmp")
+      tmp.folder  <- file.path(this$saveinFolder, "tmp")
       if (grepl("linux", sessionInfo()$R.version$os)) {
         ### on linux
         system(paste("mkdir -p -v ", tmp.folder, sep=""))
@@ -1587,8 +1592,7 @@ fcs$dotriploTOverview <- function(table=NA) {
                 title=sprintf("triploTOverview of %s", displayfile), 
                 width=3.21 * max.nhorizplots, 
                 height=3.5 * max.nvertiplots, 
-                pointsize=11, 
-                {
+                pointsize=11, {
                   
                   ##### start triploT overview
                   ### set label and axes font sizes
@@ -1623,12 +1627,14 @@ fcs$dotriploTOverview <- function(table=NA) {
                         # start plot
                         # mgp: A numeric vector of length 3, which sets the axis label locations relative to the edge of the inner plot window. 
                         # The first value represents the location the labels (i.e. xlab and ylab in plot), the second the tick-mark labels, and third the tick marks. The default is c(3, 1, 0).
-                        plot(1, type="n", frame.plot=FALSE, xlim=c(xminval, xmaxval + 10 * binSize), axes=FALSE
-                             , ylim=c(yminval - 2.5 * binSize, ymaxval + 5 * binSize), xlab=title.axis[1]
-                             , ylab=title.axis[2], cex.lab=label.cex, cex.axis=set.cex.axes, mgp=set.mgp)
+                        plot(1, type = "n", frame.plot = FALSE, axes = FALSE,
+                          xlim = c(xminval - 0.5, xmaxval + 1),
+                          ylim = c(yminval - 0.5, ymaxval + 1),
+                          xlab = title.axis[1], ylab = title.axis[2],
+                          cex.lab=label.cex, cex.axis=set.cex.axes, mgp=set.mgp)
                         box(lwd=0.5, col="darkgrey")
                         
-                        plot.idx = plot.idx + 1
+                        plot.idx  <- plot.idx + 1
                         
                         ### draw axis on the bottom and on the left
                         axis(side=1, at=scale, labels=label, las=1, cex.axis=set.cex.axes, mgp=set.mgp, col="darkgrey")
@@ -1711,7 +1717,11 @@ fcs$dotriploTOverview <- function(table=NA) {
                         } 
                         
                         
-                        tdata.zero <- tdata[apply(tdata[, -1], MARGIN = 1, function(row) {all(row > 0)}), ]
+                        tdata.zero <- tdata[apply(tdata[, -1], MARGIN = 1,    
+                            function(row) {
+                              all(row > 0)
+                              }
+                              ), ]
                         ncells.zero <- nrow(tdata.zero)
                         
                         ### calc quadrants with only positive values
@@ -1726,8 +1736,6 @@ fcs$dotriploTOverview <- function(table=NA) {
                           q4.zero <- abs(100 - q1.zero - q2.zero - q3.zero)
                         }
                         
-                        #this$bintriplot(tdata, cutoffs[c(v1, v2, v3)], set.cex=label.cex, set.cex.axes=set.cex.axes, set.mgp=set.mgp
-                        #	, binSize=binSize, mincells=mincount, quadrants.color = quadrants.col)
                         if (checkCALC == "density") {
                           this$bintriplot(data=tdata, cutoffs=cutoffs[c(v1, v2, v3)], density=TRUE, binSize=binSize, mincells=mincount, overview=TRUE, set.cex=label.cex, set.cex.axes=set.cex.axes, set.mgp=set.mgp)
                         } else if (checkCALC == "MSI(+)") {
@@ -1737,7 +1745,9 @@ fcs$dotriploTOverview <- function(table=NA) {
                         }
                         
                         
-                        if (this$OverviewGate) {this$ncell.perc = this$ncell.sel / this$origin.ncells * 100}
+                        if (this$OverviewGate) {
+                          this$ncell.perc  <- this$ncell.sel / this$origin.ncells * 100
+                        }
                         
                         # add title for single plot
                         if (checkCALC == "freq" | grepl("MSI", checkCALC)) {
@@ -1771,7 +1781,7 @@ fcs$dotriploTOverview <- function(table=NA) {
                         }
                         
                         ### update progress bar
-                        if ((plot.idx != 0) & ((plot.idx-1) %% (max.nhorizplots * max.nvertiplots) == 0)) {
+                        if ((plot.idx != 0) & ((plot.idx - 1) %% (max.nhorizplots * max.nvertiplots) == 0)) {
                           page.idx <- page.idx + 1
                           info <- paste("Creating page ", page.idx, " / ", max.npages, sep="")
                           if (this$working) printf("%s with plot# %s", info, plot.idx)
@@ -1782,7 +1792,6 @@ fcs$dotriploTOverview <- function(table=NA) {
                         if (current.page != page.idx) {
                           mtext(title, outer = TRUE, cex = 1.5, line=1.0, pos=2, xpd=TRUE)
                           if (length(this$coords.info>0)) mtext(sprintf("(%s)", paste(this$coords.info, collapse="; ")), outer=TRUE, cex = 0.8)
-                          #printf("Print on Page %s", page.idx)
                           current.page <- page.idx
                         }
                       }
@@ -1790,7 +1799,7 @@ fcs$dotriploTOverview <- function(table=NA) {
                       ### plot empty plots
                       if ((plot.idx != 0) & (res.nhorizplots > 0)) {
                         for (i in 1:res.nhorizplots) {
-                          plot.new(); 
+                          plot.new()
                           plot.idx <- plot.idx + 1
                         } 
                       }
@@ -1802,7 +1811,7 @@ fcs$dotriploTOverview <- function(table=NA) {
                   this$plotHistograms(plotter="triover", pdf=TRUE)
                   
                   tkmessageBox(title = "Output of overview", 
-                               message = paste ("PDF created in folder ", this$saveinFolder, sep=""))
+                               message = paste("PDF created in folder ", this$saveinFolder, sep=""))
                   
                 }
          )
@@ -1824,14 +1833,13 @@ fcs$dotriploTOverview <- function(table=NA) {
           page.idx <- 0
             
           toPDF(file=sprintf("%s_triploTOverview_%s_%s%s_%s.pdf", displayfile, 
-            colnames(data)[v1], len.colvec-1, checkCALC, this$version), 
+            colnames(data)[v1], len.colvec - 1, checkCALC, this$version), 
             path=this$saveinFolder, 
             title=sprintf("triploTOverview of %s(%s)", displayfile, 
             colnames(data)[v1]), 
             width=3.21 * max.nhorizplots, 
             height=3.5 * max.nvertiplots, 
-            pointsize=11, 
-            {
+            pointsize=11, {
               ### new
               label.cex <- 1.1
               set.cex.axes <- 1
@@ -1866,9 +1874,10 @@ fcs$dotriploTOverview <- function(table=NA) {
                   # start plot
                   # mgp: A numeric vector of length 3, which sets the axis label locations relative to the edge of the inner plot window. 
                   # The first value represents the location the labels (i.e. xlab and ylab in plot), the second the tick-mark labels, and third the tick marks. The default is c(3, 1, 0).
-                  plot(1, type="n", frame.plot=FALSE, 
-                    xlim=c(xminval, xmaxval + 10 * binSize), axes=FALSE, 
-                    ylim=c(yminval - 2.5 * binSize, ymaxval + 5 * binSize), xlab=title.axis[1], ylab=title.axis[2], 
+                  plot(1, type = "n", frame.plot = FALSE, axes = FALSE,
+                    xlim = c(xminval - 0.5, xmaxval + 1),
+                    ylim = c(yminval - 0.5, ymaxval + 1),
+                    xlab=title.axis[1], ylab=title.axis[2], 
                     cex.lab=label.cex, cex.axis=set.cex.axes, mgp=set.mgp)
                   box(lwd=0.5, col="darkgrey")
                         
@@ -1960,9 +1969,10 @@ fcs$dotriploTOverview <- function(table=NA) {
                     }
                   } 
                         
-                  tdata.zero <- tdata[apply(tdata[, -1], MARGIN = 1, function(row) {all(row > 0)}), ]
+                  tdata.zero <- tdata[apply(tdata[, -1], MARGIN = 1, function(row) {
+                    all(row > 0)}), ]
                   ncells.zero <- nrow(tdata.zero)
-                        
+                  
                   ### calc quadrants with only positive values
                   # q1 Quadrant unten links
                   # q2 Quadrant unten rechts
@@ -2024,7 +2034,7 @@ fcs$dotriploTOverview <- function(table=NA) {
                 }
                       
                 ### update progress bar
-                if ((plot.idx != 0) & ((plot.idx-1) %% (max.nhorizplots * max.nvertiplots) == 0)) {
+                if ((plot.idx != 0) & ((plot.idx - 1) %% (max.nhorizplots * max.nvertiplots) == 0)) {
                   page.idx <- page.idx + 1
                   info <- paste("Creating page ", page.idx, " / ", max.npages, sep="")
                   if (this$working) printf("%s with plot# %s", info, plot.idx)
@@ -2084,9 +2094,11 @@ fcs$dotriploTOverview_ALL <- function(table=NA) {
     stop("Set x and y axis with the same range.")
   }
   
-  if (!this$working) answer = tkmessageBox(title = "Starting..", 
-                                           message = "Are you sure? Did you check the setting with fixed features?", 
-                                           icon = "info", type = "yesno")
+  if (!this$working) {
+    answer <- tkmessageBox(title = "Starting..",
+                          message = "Are you sure? Did you check the setting with fixed features?",
+                          icon = "info", type = "yesno")
+  }
   
   if (tclvalue(answer) == "no") stop("OK.");
   
@@ -2178,7 +2190,7 @@ fcs$dotriploTOverview_ALL <- function(table=NA) {
       this$saveinFolder = tk_choose.dir(default = this$lastpath, caption = "Select directory to save the PDFs")
     }
   }
-  
+
   if (!is.na(this$saveinFolder)) {
     tkconfigure(this$tt, cursor = "watch")
     
@@ -2187,10 +2199,10 @@ fcs$dotriploTOverview_ALL <- function(table=NA) {
     max.nhorizplots <- 6
     max.nvertiplots <- 8
     
-    res.nhorizplots <- (len.colvec-2)%%max.nhorizplots
+    res.nhorizplots <- (len.colvec - 2) %% max.nhorizplots
     if (res.nhorizplots != 0) res.nhorizplots <- max.nhorizplots - res.nhorizplots
-    max.nplots <- len.colvec * (len.colvec-1) * (len.colvec-2)
-    max.npages <- ceiling((max.nplots + res.nhorizplots * (len.colvec-1) * len.colvec) / (max.nhorizplots * max.nvertiplots)) # + 1
+    max.nplots <- len.colvec * (len.colvec - 1) * (len.colvec - 2)
+    max.npages <- ceiling((max.nplots + res.nhorizplots * (len.colvec - 1) * len.colvec) / (max.nhorizplots * max.nvertiplots)) # + 1
     
     ### Create Progress Bar
     this$pb <- tkProgressBar(title="triploT-Overview", label=paste("Creating page 1 / ", max.npages, sep=""), min = 0, max = max.npages, initial = 1, width = 300)
@@ -2311,9 +2323,11 @@ fcs$dotriploTOverview_ALL <- function(table=NA) {
                     # start plot
                     # mgp: A numeric vector of length 3, which sets the axis label locations relative to the edge of the inner plot window. 
                     # The first value represents the location the labels (i.e. xlab and ylab in plot), the second the tick-mark labels, and third the tick marks. The default is c(3, 1, 0).
-                    plot(1, type="n", frame.plot=FALSE, xlim=c(xminval, xmaxval + 10 * binSize), axes=FALSE
-                         , ylim=c(yminval - 2.5 * binSize, ymaxval + 5 * binSize), xlab=title.axis[1]
-                         , ylab=title.axis[2], cex.lab=label.cex, cex.axis=set.cex.axes, mgp=set.mgp)
+                    plot(1, type = "n", frame.plot = FALSE, axes = FALSE,
+                        xlim = c(xminval - 0.5, xmaxval + 1),
+                        ylim = c(yminval - 0.5, ymaxval + 1),
+                        xlab = title.axis[1], ylab = title.axis[2],
+                        cex.lab=label.cex, cex.axis=set.cex.axes, mgp=set.mgp)
                     box(lwd=0.5, col="darkgrey")
                     
                     plot.idx <- plot.idx + 1
@@ -2459,7 +2473,7 @@ fcs$dotriploTOverview_ALL <- function(table=NA) {
                     }
                     
                     ### update progress bar
-                    if ((plot.idx != 0) & ((plot.idx-1) %% (max.nhorizplots * max.nvertiplots) == 0)) {
+                    if ((plot.idx != 0) & ((plot.idx - 1) %% (max.nhorizplots * max.nvertiplots) == 0)) {
                       page.idx <- page.idx + 1
                       info <- paste("Creating page ", page.idx, " / ", max.npages, sep="")
                       if (this$working) printf("%s with plot# %s", info, plot.idx)
@@ -2524,7 +2538,7 @@ fcs$dotriploTOverview_ALL <- function(table=NA) {
         #print(info)
         
         #setTkProgressBar(this$pb, v1 + 1, label=info)
-        toPDF(file=sprintf("%s_triploTOverview_%s_%s%s_%s.pdf", displayfile, colnames(data)[v1], len.colvec-1, checkCALC, this$version), 
+        toPDF(file=sprintf("%s_triploTOverview_%s_%s%s_%s.pdf", displayfile, colnames(data)[v1], len.colvec - 1, checkCALC, this$version), 
               #toPDF(file=sprintf("%s_triploTOverview_%s%s_%s_%s.pdf", displayfile, len.colvec, checkCALC, colnames(data)[v1], this$version), 
               path=this$saveinFolder, 
               title=sprintf("triploTOverview of %s(%s)", displayfile, colnames(data)[v1]), 
@@ -2570,7 +2584,11 @@ fcs$dotriploTOverview_ALL <- function(table=NA) {
                     # start plot
                     # mgp: A numeric vector of length 3, which sets the axis label locations relative to the edge of the inner plot window. 
                     # The first value represents the location the labels (i.e. xlab and ylab in plot), the second the tick-mark labels, and third the tick marks. The default is c(3, 1, 0).
-                    plot(1, type="n", frame.plot=FALSE, xlim=c(xminval, xmaxval + 10 * binSize), axes=FALSE, ylim=c(yminval - 2.5 * binSize, ymaxval + 5 * binSize), xlab=title.axis[1], ylab=title.axis[2], cex.lab=label.cex, cex.axis=set.cex.axes, mgp=set.mgp)
+                    plot(1, type = "n", frame.plot = FALSE, axes = FALSE,
+                      xlim = c(xminval - 0.5, xmaxval + 1),
+                      ylim = c(yminval - 0.5, ymaxval + 1),
+                      xlab = title.axis[1], ylab = title.axis[2],
+                      cex.lab=label.cex, cex.axis=set.cex.axes, mgp=set.mgp)
                     box(lwd=0.5, col="darkgrey")
                     
                     #add title for page in 3D-Overview tab
@@ -2717,7 +2735,7 @@ fcs$dotriploTOverview_ALL <- function(table=NA) {
                     }
                   }
                   ### update progress bar
-                  if ((plot.idx != 0) & ((plot.idx-1) %% (max.nhorizplots * max.nvertiplots) == 0)) {
+                  if ((plot.idx != 0) & ((plot.idx - 1) %% (max.nhorizplots * max.nvertiplots) == 0)) {
                     page.idx <- page.idx + 1
                     info <- paste("Creating page ", page.idx, " / ", max.npages, sep="")
                     if (this$working) printf("%s with plot# %s", info, plot.idx)
@@ -2779,12 +2797,15 @@ fcs$dotriploTOverviewX <- function(table=NA) {
     stop("Set x and y axis with the same range.")
   }
   
-  if (!this$working) answer=tkmessageBox(title = "Starting..", message = "Are you sure?", icon = "info", type = "yesno")
+  if (!this$working) {
+    answer <- tkmessageBox(title = "Starting..", message = "Are you sure?",
+    icon = "info", type = "yesno")
+  }
   
   if (tclvalue(answer) == "yes") {
-    var1 = this$checkMarker(tclvalue(tkget(this$cbvar1)))
+    var1 <- this$checkMarker(tclvalue(tkget(this$cbvar1)))
     ### if features are not in sample
-    if (length(var1) == 0 ){
+    if (length(var1) == 0){
       tkmessageBox(title = "An error has occured!", 
                    message = "Check your Feature A.")
       stop("One of the features are not existent.")
@@ -2862,10 +2883,10 @@ fcs$dotriploTOverviewX <- function(table=NA) {
         
         max.nhorizplots <- 6
         max.nvertiplots <- 8
-        res.nhorizplots <- (len.colvec-2)%%max.nhorizplots
+        res.nhorizplots <- (len.colvec - 2) %% max.nhorizplots
         if (res.nhorizplots != 0) res.nhorizplots <- max.nhorizplots - res.nhorizplots
-        max.nplots <- (len.colvec-2) * (len.colvec-3)
-        max.npages <- ceiling((max.nplots + res.nhorizplots * (len.colvec-1)) / (max.nhorizplots * max.nvertiplots))
+        max.nplots <- (len.colvec - 2) * (len.colvec - 3)
+        max.npages <- ceiling((max.nplots + res.nhorizplots * (len.colvec - 1)) / (max.nhorizplots * max.nvertiplots))
         
         ### Create Progress Bar
         this$pb <- tkProgressBar(title="triploT overview", label=paste("Creating page 1 / ", max.npages, sep=""), min = 0, max = max.npages, initial = 1, width = 300)
@@ -2936,15 +2957,13 @@ fcs$dotriploTOverviewX <- function(table=NA) {
         title <- as.character(tclvalue(tkget(this$title, "1.0", "end-1c")))
         
         
-        toPDF(file=sprintf("%s_triploTOverviewX_%s_%s%s_%s.pdf", displayfile, var1, len.colvec-1, checkCALC, this$version), 
+        toPDF(file=sprintf("%s_triploTOverviewX_%s_%s%s_%s.pdf", displayfile, var1, len.colvec - 1, checkCALC, this$version), 
               path=tmp.folder, 
               title=sprintf("triploTOverviewX of %s", displayfile), 
               ### 
               width=3.21 * max.nhorizplots, 
               height=3.5 * max.nvertiplots, 
-              pointsize=11, 
-              ###
-              {
+              pointsize=11, {
                 # set progress bar
                 #setTkProgressBar(this$pb, 2, label=paste("Creating page 2 / ", max.npages + 2, sep=""))
                 # plot density plot
@@ -2993,7 +3012,11 @@ fcs$dotriploTOverviewX <- function(table=NA) {
                     # start plot
                     # mgp: A numeric vector of length 3, which sets the axis label locations relative to the edge of the inner plot window. 
                     # The first value represents the location the labels (i.e. xlab and ylab in plot), the second the tick-mark labels, and third the tick marks. The default is c(3, 1, 0).
-                    plot(1, type="n", frame.plot=FALSE, xlim=c(xminval, xmaxval + 10 * binSize), axes=FALSE, ylim=c(yminval - 2.5 * binSize, ymaxval + 5 * binSize), xlab=title.axis[1], ylab=title.axis[2], cex.lab=label.cex, cex.axis=set.cex.axes, mgp=set.mgp)
+                    plot(1, type = "n", frame.plot = FALSE, axes = FALSE,
+                      xlim = c(xminval - 0.5, xmaxval + 1),
+                      ylim = c(yminval - 0.5, ymaxval + 1),
+                      xlab = title.axis[1], ylab = title.axis[2],
+                      cex.lab=label.cex, cex.axis=set.cex.axes, mgp=set.mgp)
                     box(lwd=0.5, col="darkgrey")
                     
                     plot.idx <- plot.idx + 1
@@ -3094,8 +3117,6 @@ fcs$dotriploTOverviewX <- function(table=NA) {
                       q4.zero <- abs(100 - q1.zero - q2.zero - q3.zero)
                     }
                     
-                    #this$bintriplot(tdata, c(cutoff.var1, cutoffs[c(v2, v3)]), set.cex=label.cex, set.cex.axes=set.cex.axes, set.mgp=set.mgp
-                    #	, binSize=binSize, mincells=mincount, quadrants.color = quadrants.col)
                     if (checkCALC == "density") {
                       this$bintriplot(data=tdata, cutoffs=c(cutoff.var1, cutoffs[c(v2, v3)]), density=TRUE, binSize=binSize, mincells=mincount, overview=TRUE, set.cex=label.cex, set.cex.axes=set.cex.axes, set.mgp=set.mgp)
                     } else if (checkCALC == "MSI(+)") {
@@ -3104,15 +3125,20 @@ fcs$dotriploTOverviewX <- function(table=NA) {
                       this$bintriplot(data=tdata, cutoffs=c(cutoff.var1, cutoffs[c(v2, v3)]), binSize=binSize, mincells=mincount, overview=TRUE, set.cex=label.cex, set.cex.axes=set.cex.axes, set.mgp=set.mgp)
                     }
                     
-                    if (this$OverviewGate) {this$ncell.perc = this$ncell.sel / this$origin.ncells * 100}
+                    if (this$OverviewGate) {
+                    this$ncell.perc <- this$ncell.sel / this$origin.ncells * 100
+                    }
                     
                     # add title for single plot
                     if (checkCALC == "freq" | grepl("MSI", checkCALC)) {
                       if (this$OverviewGate) firstLine <- sprintf("%s(%0.1f%%): %s(%s)/cof=%s", displayfile, this$ncell.perc, checkCALC, this$cnames[3], this$current.cofactor)
                       else firstLine <- sprintf("%s: %s(%s)/cof=%s", displayfile, checkCALC, this$cnames[3], this$current.cofactor)
                     } else {
-                      if (this$OverviewGate) firstLine <- sprintf("%s(%0.1f%%): %s/cof=%s", displayfile, this$ncell.perc, checkCALC, this$current.cofactor)
-                      else firstLine <- sprintf("%s: %s/cof=%s", displayfile, checkCALC, this$current.cofactor)
+                      if (this$OverviewGate) {
+                        firstLine <- sprintf("%s(%0.1f%%): %s/cof=%s", displayfile, this$ncell.perc, checkCALC, this$current.cofactor)
+                      } else {
+                        firstLine <- sprintf("%s: %s/cof=%s", displayfile, checkCALC, this$current.cofactor)
+                      }
                     }
                     title(main=firstLine, line=3.2, cex.main=1.0 * label.cex, adj=0)
                     
@@ -3168,7 +3194,7 @@ fcs$dotriploTOverviewX <- function(table=NA) {
       }
     }
   }	
-  this$OverviewGate=FALSE
+  this$OverviewGate <- FALSE
 }
 
 fcs$dotriploTOverviewXY <- function(table=NA) {
@@ -3364,7 +3390,11 @@ fcs$dotriploTOverviewXY <- function(table=NA) {
       # start plot
       # mgp: A numeric vector of length 3, which sets the axis label locations relative to the edge of the inner plot window. 
       # The first value represents the location the labels (i.e. xlab and ylab in plot), the second the tick-mark labels, and third the tick marks. The default is c(3, 1, 0).
-      plot(1, type="n", frame.plot=FALSE, xlim=c(xminval, xmaxval + 10 * binSize), axes=FALSE, ylim=c(yminval - 2.5 * binSize, ymaxval + 5 * binSize), xlab=title.axis[1], ylab=title.axis[2], cex.lab=label.cex, cex.axis=set.cex.axes, mgp=set.mgp)
+      plot(1, type = "n", frame.plot = FALSE, axes = FALSE,
+        xlim = c(xminval - 0.5, xmaxval + 1),
+        ylim = c(yminval - 0.5, ymaxval + 1),
+        xlab = title.axis[1], ylab = title.axis[2],
+        cex.lab=label.cex, cex.axis=set.cex.axes, mgp=set.mgp)
       box(lwd=0.5, col="darkgrey")
       
       plot.idx <- plot.idx + 1
@@ -3526,25 +3556,23 @@ fcs$dotriploTOverviewXY <- function(table=NA) {
         tkconfigure(this$tt, cursor = "watch")
         
         max.nhorizplots <- 6
-        max.nvertiplots <- ceiling((len.colvec-2) / max.nhorizplots)
+        max.nvertiplots <- ceiling((len.colvec - 2) / max.nhorizplots)
         
         timeSTART <- Sys.time()
         cat("\n\n>>>> Start triploTOverviewXY with total data: \n\n")
         if (this$working) printf("w: %s - time started", timeSTART)
         
-        toPDF(file=sprintf("%s_triploTOverviewXY_%s_%s_%s%s_%s.pdf", displayfile, var1, var2, len.colvec-2, checkCALC, this$version), 
+        toPDF(file=sprintf("%s_triploTOverviewXY_%s_%s_%s%s_%s.pdf", displayfile, var1, var2, len.colvec - 2, checkCALC, this$version), 
               path=this$saveinFolder, 
               title=sprintf("triploTOverviewXY of %s", displayfile), 
               ### 
               width=3.21 * max.nhorizplots, 
               height=3.5 * max.nvertiplots, 
-              pointsize=11, 
-              ###
-              {
+              pointsize=11, {
                 ##### start triploT-OverviewXY
                 par(mfrow=c(max.nvertiplots, max.nhorizplots), oma=c(0.5, 1, 5, 1), mar=c(3, 4, 5, 1))
                 ###
-                
+              
                 #add title for page in 3D-Overview tab
                 #mtext(title, outer = TRUE, cex = 1.5, line=1.3, pos=2, xpd=TRUE)
                 if (length(this$coords.info>0)) mtext(sprintf("(%s)", paste(this$coords.info, collapse="; ")), outer=TRUE, cex = 0.8)
@@ -3575,7 +3603,11 @@ fcs$dotriploTOverviewXY <- function(table=NA) {
                   # start plot
                   # mgp: A numeric vector of length 3, which sets the axis label locations relative to the edge of the inner plot window. 
                   # The first value represents the location the labels (i.e. xlab and ylab in plot), the second the tick-mark labels, and third the tick marks. The default is c(3, 1, 0).
-                  plot(1, type="n", frame.plot=FALSE, xlim=c(xminval, xmaxval + 10 * binSize), axes=FALSE, ylim=c(yminval - 2.5 * binSize, ymaxval + 5 * binSize), xlab=title.axis[1], ylab=title.axis[2], cex.lab=label.cex, cex.axis=set.cex.axes, mgp=set.mgp)
+                  plot(1, type = "n", frame.plot = FALSE, axes = FALSE,
+                    xlim = c(xminval - 0.5, xmaxval + 1),
+                    ylim = c(yminval - 0.5, ymaxval + 1),
+                    xlab = title.axis[1], ylab = title.axis[2],
+                    cex.lab=label.cex, cex.axis=set.cex.axes, mgp=set.mgp)
                   box(lwd=0.5, col="darkgrey")
                   
                   plot.idx <- plot.idx + 1
@@ -3754,8 +3786,7 @@ fcs$bintriplot <- function(
   checkCALC=NA, 
   quadrants.color="black", 
   data.origin=NA, 
-  file=NA) 
-{
+  file=NA) {
   this <- fcs
   
   prodcells.color <- "red"
@@ -3769,6 +3800,7 @@ fcs$bintriplot <- function(
   if (!file.exists(metadatafile)) {
     header <- c("date", "sample", "cofactor", "calc",
               "feat.A", "feat.B", "feat.C", "absRange.C",
+              "min.A", "max.A", "min.B", "max.B",
               "cutoff.A", "cutoff.B", "cutoff.C",
               "q1.total", "q2.total", "q3.total", "q4.total",
               "q1.prodcells", "q2.prodcells", "q3.prodcells", "q4.prodcells", "q1.prodcellsplus", "q2.prodcellsplus", "q3.prodcellsplus", "q4.prodcellsplus")
@@ -3921,9 +3953,6 @@ fcs$bintriplot <- function(
     #range <- ""
     col.minmax <- "black"
     if (checkCALC == "freq" & !density) {
-      #min.legend <- ymin.val + 3 * binSize
-      #max.legend <- max.range <- (ymax.val-ymin.val) / 2 #- (ymax.val-ymin.val) / 10
-      #max.legend <- max.range <- ymin.val + 3 * binSize + diff(c(ymin.val, ymax.val)) / 2
       max.range <- ymin.val + 3 * binSize + diff(c(ymin.val, ymax.val)) / 2
       
       label.steps <- seq(0, 100, by=10)
@@ -3990,14 +4019,19 @@ fcs$bintriplot <- function(
       # get steps
       step <- round(diff(range(max.range, min.range)) / 10, 2) 
       steps <- seq(min.range, max.range, by=step)
-      label.steps <- steps[1:11]
+      label.steps <- range.steps <- steps[1:11]
+      range.step <- diff(c(range.steps[1], range.steps[2]))
       if (density | checkTRANS == "biex") {
-        if (max.range>500) label.steps <- round(label.steps, -2)
+        if (max.range > 500) label.steps <- round(label.steps,  - 2)
         else label.steps <- round(label.steps)
         if (density) label.steps[1] <- min.range
       } else if (checkDYNRANGE != "1") {
-        if (label.steps[1] != "0") label.steps[1] <- sprintf("<=%s", label.steps[1])
-        label.steps[11] <- sprintf(" >= %s", label.steps[11])
+        if (label.steps[1] != "0") {
+          label.steps[1] <- sprintf("<=%s", label.steps[1])
+        }
+        if (label.steps[11] != "100") {
+          label.steps[11] <- sprintf(">=%s", label.steps[11])
+        }
       } else {
         label.steps <- round(label.steps, 1)
       }
@@ -4007,12 +4041,19 @@ fcs$bintriplot <- function(
       
       levels(my.calc.fac) <- c(0, levels(my.calc.fac), 12)
       # if x < min.range
-      my.calc.fac[which(my.calc$x<steps[1] & my.calc$ncells >= mincells)]=0
+      my.calc.fac[which(my.calc$x < steps[1] & my.calc$ncells >= mincells)] <- 0
       # if x > max.range
-      my.calc.fac[which(my.calc$x>steps[11] & my.calc$ncells >= mincells)]=11
+      my.calc.fac[which(my.calc$x > steps[11] & my.calc$ncells >= mincells)] <- 11
     }
     my.calc <- cbind(my.calc, fac=as.numeric(my.calc.fac) + 1)
+
     
+    ### get rect steps
+    rect.step <- round(diff(c(par()$usr[3], par()$usr[4])) / 37, 2)
+    min.legend.y <- par()$usr[3] + 8 * rect.step
+    max.legend.y <- par()$usr[3] + 18 * rect.step
+    rect.steps <- seq(min.legend.y, max.legend.y, by = rect.step)
+      
     ### get absolute bin range of all bins with mincells
     absRange <- round(diff(range(my.calc$x[which(my.calc$ncells >= mincells)])), 3)
     
@@ -4054,13 +4095,8 @@ fcs$bintriplot <- function(
       }
     }
     
-    ### space calculation
-    rect.size <- diff(c(xmin.val, xmax.val)) / 25
-    rect.size <- 0.2
-    
     ### add production line
     this$addProdline(cutoffs)
-    
     
     ###### legend plot + label
     #if (density | checkCALC == "SEM" | checkCALC == "SD") {
@@ -4099,11 +4135,13 @@ fcs$bintriplot <- function(
         text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
         text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.14 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
         
-        
-        quadrant.percs <- cbind(current.date, displayfile, this$current.cofactor, checkCALC, colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange, cutoffs[1], cutoffs[2], cutoffs[3], round(this$q1.total, 1), round(this$q2.total, 1), round(this$q3.total, 1), round(this$q4.total, 1), round(this$q1.prodcells, 1), round(this$q2.prodcells, 1), round(this$q3.prodcells, 1), round(this$q4.prodcells, 1), round(this$q1.prodcellsplus, 1), round(this$q2.prodcellsplus, 1), round(this$q3.prodcellsplus, 1), round(this$q4.prodcellsplus, 1))
-        
-        write.table(quadrant.percs, sprintf("%s_PRItri_metadata.csv", this$current.project), sep = "\t", col.names = FALSE, row.names = FALSE, append = TRUE)
-        printf("Quadrant percs written in %s", sprintf("%s_PRItri_metadata.csv", this$current.project))
+        csv.content <- cbind(current.date, displayfile, this$current.cofactor, checkCALC,
+        colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange, 
+        xmin.val, xmax.val, ymin.val, ymax.val,
+        cutoffs[1], cutoffs[2], cutoffs[3],
+        round(this$q1.total, 1), round(this$q2.total, 1), round(this$q3.total, 1), round(this$q4.total, 1),
+        round(this$q1.prodcells, 1), round(this$q2.prodcells, 1), round(this$q3.prodcells, 1), round(this$q4.prodcells, 1),
+        round(this$q1.prodcellsplus, 1), round(this$q2.prodcellsplus, 1), round(this$q3.prodcellsplus, 1), round(this$q4.prodcellsplus, 1))
         
       } else if (cutoffs[1] > 0 & cutoffs[2]) {
         text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[3] + 0.03 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q1.total), col=quadrants.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
@@ -4111,70 +4149,75 @@ fcs$bintriplot <- function(
         text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q3.total), col=quadrants.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
         text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.total), col=quadrants.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
         
-        quadrant.percs <- cbind(current.date, displayfile, this$current.cofactor, checkCALC, colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange, cutoffs[1], cutoffs[2], "NA", round(this$q1.total, 1), round(this$q2.total, 1), round(this$q3.total, 1), round(this$q4.total, 1))
+        csv.content <- cbind(current.date, displayfile, this$current.cofactor, checkCALC,
+        colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange,
+        xmin.val, xmax.val, ymin.val, ymax.val,
+        cutoffs[1], cutoffs[2], "NA", round(this$q1.total, 1), round(this$q2.total, 1), round(this$q3.total, 1), round(this$q4.total, 1))
         
-        write.table(quadrant.percs, sprintf("%s_PRItri_metadata.csv", this$current.project), sep = "\t", col.names = FALSE, row.names = FALSE, append = TRUE)
-        printf("Quadrant percs written in %s", sprintf("%s_PRItri_metadata.csv", this$current.project))
       } else {
-        ### no cutoffs are set
-        ### write in csv at least the absRange
-        quadrant.percs <- cbind(current.date, displayfile, this$current.cofactor, checkCALC, colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange)
+        ### no cutoffs are set, at least the absRange
+        csv.content <- cbind(current.date, displayfile, this$current.cofactor, checkCALC,
+        colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange,
+        xmin.val, xmax.val, ymin.val, ymax.val,
+        )
         
-        write.table(quadrant.percs, sprintf("%s_PRItri_metadata.csv", this$current.project), sep = "\t", col.names = FALSE, row.names = FALSE, append = TRUE)
       }
+      ### write in csv
+      write.table(csv.content, metadatafile, sep = "\t", col.names = FALSE, row.names = FALSE, append = TRUE)
+      printf("Quadrant percs written in %s", metadatafile)
       
       
       checkLEGEND <- tclvalue(this$cbtshowLegend)
       this$step <- step
       this$label.steps <- label.steps
-      space <- 0.08 * (par()$usr[4] - par()$usr[3])
       
       ### not for history png
       #if (!png) {
       if (checkLEGEND == "1") {
         ##### legend title
-        if (density) legend.title = "# cells "
-        if (!bg) text(par()$usr[2] + 0.02 * (par()$usr[2] - par()$usr[1]), steps[10] + 4.7 * rect.size + this$legend.space + space, label=legend.title, cex=0.85 * set.cex, pos=2)
-        
+        if (density) legend.title <- "# cells "
+        if (!bg) {
+          text(x = par()$usr[2] + 0.02 * (par()$usr[2] - par()$usr[1]), 
+            y  = rect.steps[10] + 3.0 * rect.step,
+            label = legend.title, cex = 0.85 * set.cex, pos = 2)
+        }
         label.pos.x <- par()$usr[2] - 0.12 * (par()$usr[2] - par()$usr[1])
         
         for (i in 1:11) {
           ## print legend rectangles
-          if (i<11) {
+          if (i < 11) {
             rect(xleft = par()$usr[2] - 0.13 * (par()$usr[2] - par()$usr[1]), 
-                 ybottom = steps[i] + space, 
+                 ybottom = rect.steps[i], 
                  xright = par()$usr[2] - 0.105 * (par()$usr[2] - par()$usr[1]), 
-                 ytop = steps[i] + space + step, 
+                 ytop = rect.steps[i] + rect.step, 
                  col=cols[i + 1], border=NA, pos=2)
           }
           
-          if (checkDYNRANGE != "1" & (i == 1 | i == 11)) {
-            displaylabel <- label.steps[i]
-          } else {
-            displaylabel <- sprintf("%.1f", as.numeric(label.steps[i]))
-          }
+          display.label <- label.steps[i]
           
           if (checkCALC == "RSEM" & !density) {
-            text(x=label.pos.x, y=steps[i] + space, label=displaylabel, col=col.minmax, cex=0.65 * set.cex, pos=4)
+            text(x=label.pos.x, y=rect.steps[i], label=display.label, col=col.minmax, cex=0.75 * set.cex, pos=4)
           } else if (i == 1 | i == 11) {
-            text(x=label.pos.x, y=steps[i] + space, label=displaylabel, col=col.minmax, cex=0.65 * set.cex, pos=4)
-          } else if (i == 6 & step >= (0.65 * binSize)) {
-            text(x=label.pos.x, y=steps[i] + space, label=displaylabel, col=col.minmax, cex=0.65 * set.cex, pos=4)
-          } else if (step >= (1.8 * binSize)) { 
+            text(x=label.pos.x, y=rect.steps[i], label=display.label, col=col.minmax, cex=0.75 * set.cex, pos=4)
+          } else if (i == 6 & rect.step >= 0.3) {
+            text(x=label.pos.x, y=rect.steps[i], label=display.label, col=col.minmax, cex=0.75 * set.cex, pos=4)
+          } else if (rect.step >= 0.2) { 
             if (i == 3) {
-              display.label <- sprintf("%.1f", (as.numeric(label.steps[i]) + (step / 2)))
-              text(label.pos.x, steps[i] + space + 0.5 * step, label=display.label, col=col.minmax, cex=0.65 * set.cex, pos=4)
+              if (grepl(checkCALC, "MSI")) {
+                display.label <- sprintf("%.1f", (as.numeric(label.steps[i]) + (range.step / 2)))
+              }
+              text(label.pos.x, rect.steps[i] + 0.5 * rect.step, label=display.label, col=col.minmax, cex=0.75 * set.cex, pos=4)
             }
             if (i == 9) {
-              display.label <- sprintf("%.1f", (as.numeric(label.steps[i]) - (step / 2)))
-              text(label.pos.x, steps[i] + space-0.5 * step, label=display.label, col=col.minmax, cex=0.65 * set.cex, pos=4)
+              if (grepl(checkCALC, "MSI")) {
+                display.label <- sprintf("%.1f", (as.numeric(label.steps[i]) - (range.step / 2)))
+              }
+              text(label.pos.x, rect.steps[i] - 0.5 * rect.step, label=display.label, col=col.minmax, cex=0.75 * set.cex, pos=4)
             }
           } 
         }
       }
-      
     }
-    
   }
   
   # if there are no bins to display in MSI(+) mode
@@ -4197,10 +4240,15 @@ fcs$bintriplot <- function(
     text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.total), col=quadrants.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
     text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
     
-    quadrant.percs <- cbind(current.date, displayfile, this$current.cofactor, checkCALC, colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange, cutoffs[1], cutoffs[2], cutoffs[3], round(this$q1.total, 1), round(this$q2.total, 1), round(this$q3.total, 1), round(this$q4.total, 1), round(this$q1.prodcells, 1), round(this$q2.prodcells, 1), round(this$q3.prodcells, 1), round(this$q4.prodcells, 1))
+    csv.content <- cbind(current.date, displayfile, this$current.cofactor, checkCALC,
+    colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange, 
+      xmin.val, xmax.val, ymin.val, ymax.val,
+      cutoffs[1], cutoffs[2], cutoffs[3],
+      round(this$q1.total, 1), round(this$q2.total, 1), round(this$q3.total, 1), round(this$q4.total, 1),
+      round(this$q1.prodcells, 1), round(this$q2.prodcells, 1), round(this$q3.prodcells, 1), round(this$q4.prodcells, 1))
     
-    write.table(quadrant.percs, sprintf("%s_PRItri_metadata.csv", this$current.project), sep = "\t", col.names = FALSE, row.names = FALSE, append = TRUE)
-    #printf("Quadrant percs written in %s", sprintf("%s_PRItri_metadata.csv", this$current.project))
+    write.table(csv.content, metadatafile, sep = "\t", col.names = FALSE, row.names = FALSE, append = TRUE)
+    #printf("Quadrant percs written in %s", metadatafile)
     
     if (!bg & !png & !overview) {
       tkmessageBox(title = "Insufficient cell count.", message = sprintf("No bins to display (ncells=%s). Lower cutoff(z).", ncells), icon = "info", type = "ok")

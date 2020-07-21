@@ -368,7 +368,7 @@ fcs$GUIquadruploT <- function(tab) {
     ttfbut <- tkframe(ttftopframe)
       btplot <- tkbutton(ttfbut, text="Plot quadruploT", command=this$doquadruploT)
       bthist <- tkbutton(ttfbut, text = "Plot histograms", command = function(){
-        this$plotHistograms(plotter = "tri", pdf = FALSE)
+        this$plotHistograms(plotter = "quadru", pdf = FALSE)
         })
     
       tkgrid(btplot, sticky="snwe", padx=2, pady=1)
@@ -387,9 +387,9 @@ fcs$GUIquadruploT <- function(tab) {
         ttfRangeLabel <- tkframe(ttfRange)
         tkgrid(tklabel(ttfRangeLabel, text="Range x-axis (min/max):"), padx=10, pady=1)
         tkgrid(tklabel(ttfRangeLabel, text="Range y-axis (min/max):"), padx=10, pady=1)
-        cbtdynrange <- tkcheckbutton(ttfRangeLabel, variable=this$cbtdynRange, text="Dynamic frequency range")
-        tkgrid(cbtdynrange, sticky="ews", padx=10, pady=10)
-        tk2tip(cbtdynrange, "Uncheck for manual input")
+        cbtdynrangefreq <- tkcheckbutton(ttfRangeLabel, variable=this$cbtdynRangeFreq, text="Dynamic frequency range")
+        tkgrid(cbtdynrangefreq, sticky="ews", padx=10, pady=10)
+        tk2tip(cbtdynrangefreq, "Check for dynamic range, but should be usually unchecked.")
         # checkbox axes range value -------------------------------------------
         ttfRangeValue <- tkframe(ttfRange)
         # X axis
@@ -401,9 +401,7 @@ fcs$GUIquadruploT <- function(tab) {
         this$maxvalY <- tkentry(ttfRangeValue, width=6, textvariable=this$vmaxvalY)
         tkgrid(this$minvalY, this$maxvalY, padx=5, pady=1, sticky="e")
         # Z range
-        this$minfreq <- tkentry(ttfRangeValue, width=4, textvariable=this$vminfreq)
         this$maxfreq <- tkentry(ttfRangeValue, width=4, textvariable=this$vmaxfreq)
-        tkgrid(tklabel(ttfRangeValue, text="min(freq):"), this$minfreq, padx=5, pady=1, sticky="e")
         tkgrid(tklabel(ttfRangeValue, text="max(freq):"), this$maxfreq, padx=5, pady=1, sticky="e")
         tkgrid(ttfRangeLabel, ttfRangeValue, sticky="w")
         tkgrid(ttfRange)
@@ -433,24 +431,12 @@ fcs$GUIquadruploT <- function(tab) {
         tkbind(rb1, "<Button-1>", function() {
             this$changeFI.range(1)
         })
-      
-      # add radio buttons for calculation type
-      ttfradiosright2 <- tkframe(ttfradios)
-        rb1 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="density")
-        rbl1 <- tklabel(ttfradiosright2, text="density")
-        rb2 <- tkradiobutton(ttfradiosright2, variable=this$rbcalc, value="freq")
-        rbl2 <- tklabel(ttfradiosright2, text="frequency")
-        tkgrid(rb1, rbl1, rb2, rbl2, sticky="w")
-        tk2tip(rb1, "Cell count")
-        tk2tip(rbl1, "Cell count")
-        tk2tip(rb2, "Frequency of Feature C1/C2 cells")
-        tk2tip(rbl2, "Frequency of Feature C1/C2 cells")
-      tkgrid(tklabel(ttfradios, text = "Statistical method:"), ttfradiosright2, sticky = "nw")
 
+      # add radio buttons for population selection pos/neg
       ttfradiospopC1 <- tkframe(ttfradios)
-        rb1 <- tkradiobutton(ttfradiospopC1, variable = this$popC1, value = "pos")
+        rb1 <- tkradiobutton(ttfradiospopC1, variable = this$rbpopC1, value = "pos")
         rbl1 <- tklabel(ttfradiospopC1, text = "pos")
-        rb2 <- tkradiobutton(ttfradiospopC1, variable = this$popC1, value = "neg")
+        rb2 <- tkradiobutton(ttfradiospopC1, variable = this$rbpopC1, value = "neg")
         rbl2 <- tklabel(ttfradiospopC1, text = "neg")
         tkgrid(rb1, rbl1, rb2, rbl2, sticky = "w")
         tk2tip(rb1, "Choose neg/pos population.")
@@ -458,6 +444,18 @@ fcs$GUIquadruploT <- function(tab) {
         tk2tip(rb2, "Choose neg/pos population.")
         tk2tip(rbl2, "Choose neg/pos population.")
       tkgrid(tklabel(ttfradios, text = "Population C1:"), ttfradiospopC1, sticky = "nw")
+  
+      ttfradiospopC2 <- tkframe(ttfradios)
+        rb1 <- tkradiobutton(ttfradiospopC2, variable = this$rbpopC2, value = "pos")
+        rbl1 <- tklabel(ttfradiospopC2, text = "pos")
+        rb2 <- tkradiobutton(ttfradiospopC2, variable = this$rbpopC2, value = "neg")
+        rbl2 <- tklabel(ttfradiospopC2, text = "neg")
+        tkgrid(rb1, rbl1, rb2, rbl2, sticky = "w")
+        tk2tip(rb1, "Choose neg/pos population.")
+        tk2tip(rbl1, "Choose neg/pos population.")
+        tk2tip(rb2, "Choose neg/pos population.")
+        tk2tip(rbl2, "Choose neg/pos population.")
+      tkgrid(tklabel(ttfradios, text = "Population C2:"), ttfradiospopC2, sticky = "nw")
   
 
       
@@ -470,9 +468,7 @@ fcs$GUIquadruploT <- function(tab) {
         tk2tip(btremovdub, "Only possible with FSH/SSH channels")
         cbttrimming <- tkcheckbutton(ttfbuttons, variable=this$cbttrimming, text="Trim first")
         tk2tip(cbttrimming, sprintf("Trims %s of each column.", this$trim.num))
-        cbtshowMinBins <- tkcheckbutton(ttfbuttons, variable=this$cbtshowMinBins, text="Bins<minCount")
-        tk2tip(cbtshowMinBins, "Show bins in pale color.")
-        tkgrid(btremovdub, cbttrimming, cbtshowMinBins, padx=5, pady=1, sticky="we")
+        tkgrid(btremovdub, cbttrimming, padx=5, pady=1, sticky="we")
       tkgrid(ttfbuttons, sticky="w")
     tkgrid(ttlfFI, ttlfinfo, padx=5, pady=1, sticky="nsew")
   tkgrid(ttfvals)

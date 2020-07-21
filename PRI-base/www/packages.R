@@ -8,7 +8,7 @@ library(shinyjs, quietly = TRUE, warn.conflicts = FALSE, lib = Lib.path)
 library(V8, quietly = TRUE, warn.conflicts = FALSE, lib = Lib.path)
 library(shinyBS, quietly = TRUE, warn.conflicts = FALSE, lib = Lib.path)
 library(rChoiceDialogs, quietly = TRUE, warn.conflicts = FALSE, lib = Lib.path)
-library(rJava,quietly=TRUE, lib = Lib.path)
+library(rJava, quietly=TRUE, lib = Lib.path)
 library(flowCore, quietly = TRUE, warn.conflicts = FALSE, lib = Lib.path)
 # For digest(). Calculates unique ID for files.
 library(digest, quietly = TRUE, warn.conflicts = FALSE, lib = Lib.path)

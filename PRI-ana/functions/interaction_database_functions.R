@@ -241,7 +241,6 @@ fcs$getDFtable <- function (table){
   return(table.df)
 }
 
-
 fcs$saveCutoffsToDB <- function(){
   this <- fcs
   
@@ -437,8 +436,6 @@ fcs$exit <- function(){
     param$minMSI <- minMSI
     maxMSI <- tclvalue(this$vmaxMSI)
     param$maxMSI <- maxMSI
-    minfreq <- tclvalue(this$vminfreq)
-    param$minfreq <- minMSI
     maxfreq <- tclvalue(this$vmaxfreq)
     param$maxfreq <- maxfreq
 
@@ -447,9 +444,9 @@ fcs$exit <- function(){
     param$rbcalc <- checkCALC
     checkTRANS <- tclvalue(this$rbtrans)
     param$rbtrans <- checkTRANS
-    checkpopC1 <- tclVar(param$rbpopC1)
+    checkpopC1 <- tclvalue(this$rbpopC1)
     param$rbpopC1 <- checkpopC1
-    checkpopC2 <- tclVar(param$rbpopC2)
+    checkpopC2 <- tclvalue(this$rbpopC2)
     param$rbpopC2 <- checkpopC2
 
     checkfeatA <- tclvalue(this$cbtfeatA) # fix feature
@@ -474,6 +471,8 @@ fcs$exit <- function(){
     param$cbtmanRect <- checkMANRECT
     checkDYNRANGE <- tclvalue(this$cbtdynRange)
     param$cbtdynRange <- checkDYNRANGE
+    checkDYNRANGEFREQ <- tclvalue(this$cbtdynRangeFreq)
+    param$cbtdynRangeFreq <- checkDYNRANGEFREQ
     checkLEGEND <- tclvalue(this$cbtshowLegend)
     param$cbtshowLegend <- checkLEGEND
     checkSHOWMINBIN <- tclvalue(this$cbtshowMinBins)

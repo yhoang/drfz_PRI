@@ -12,7 +12,7 @@ fcs$doquadruploT <- function() {
   this$refreshPlotters()
   
   checkGATED <- tclvalue(this$cbtgateData)
-  checkCALC <- tclvalue(this$rbcalc)
+  checkCALC <- "freq"
   checkTRANS <- tclvalue(this$rbtrans)
   checkGRID <- tclvalue(this$cbtshowGrid)
   checkDATE <- tclvalue(this$cbtaddDate)
@@ -20,8 +20,8 @@ fcs$doquadruploT <- function() {
   if (checkTRIMMING == "1") {
     this$preprocData(mode="trim")
   }
-  checkDYNRANGE <- tclvalue(this$cbtdynRange)
-  if (checkDYNRANGE != "1") {
+  checkDYNRANGEFREQ <- tclvalue(this$cbtdynRangeFreq)
+  if (checkDYNRANGEFREQ != "1") {
     min.MSI <- this$checkDigits(num=tkget(this$minMSI))
     max.MSI <- this$checkDigits(num=tkget(this$maxMSI))
     if (max.MSI <= min.MSI) {
@@ -40,18 +40,17 @@ fcs$doquadruploT <- function() {
     label <- this$biex$label
     grid.step <- this$biex$step
   } 
-  popul <- c(1, 1)
   
   quadrants.col <- "black"
   
   v1 <- this$checkMarker(tclvalue(tkget(this$cbvar1quad)))
-  tkset(this$cbvar1, v1)
+  tkset(this$cbvar1quad, v1)
   v2 <- this$checkMarker(tclvalue(tkget(this$cbvar2quad)))
-  tkset(this$cbvar2, v2)
+  tkset(this$cbvar2quad, v2)
   v3 <- this$checkMarker(tclvalue(tkget(this$cbvar3quad)))
-  tkset(this$cbvar3, v3)
+  tkset(this$cbvar3quad, v3)
   v4 <- this$checkMarker(tclvalue(tkget(this$cbvar4quad)))
-  tkset(this$cbvar3, v4)
+  tkset(this$cbvar4quad, v4)
   vars <- c(v1, v2, v3, v4)
   
   ### if Feature A is not in sample
@@ -62,10 +61,10 @@ fcs$doquadruploT <- function() {
   }
   
   ### if manual range for z-axis is checked but no input
-  if (tclvalue(this$cbtdynRange) == "0" & tclvalue(this$vmaxMSI) == "0") {
+  if (tclvalue(this$cbtdynRange) == "0" & tclvalue(this$vmaxfreq) == "0") {
     tkmessageBox(title = "An error has occured!", 
                  message = "You forgot to set maximum manual range for Feature C (It is still zero).", icon = "error", type = "ok")
-    stop("Set maximum manual range for Feature C (It is still zero).")
+    stop("Set maximum manual range for Features C1/C2 (It is still zero).")
   }
   
   cutoffz1 <- this$checkDigits(cutoff_id=which(this$selected.vars == v3))
@@ -198,7 +197,12 @@ fcs$doquadruploT <- function() {
     title.axis <- c(title.axis, v2)
   }
   
-  plot(1, type="n", frame.plot=FALSE, xlim=c(xminval, xmaxval + 10 * binSize), axes=FALSE, ylim=c(yminval - 2.5 * binSize, ymaxval + 5 * binSize), xlab=title.axis[1], ylab=title.axis[2], cex.lab=set.cex, cex.axis=0.5 * set.cex.axes, mgp=set.mgp)
+  plot(1, type = "n", frame.plot = FALSE, axes = FALSE,
+      xlim = c(xminval - 0.5, xmaxval + 1),
+      ylim = c(yminval - 0.5, ymaxval + 1),
+      xlab = title.axis[1], ylab = title.axis[2],
+      cex.lab = set.cex, cex.axis = 0.5 * set.cex.axes, mgp = set.mgp
+  )
   box(lwd=0.8, col="darkgrey")
   
   ### draw axis on the bottom and on the left
@@ -241,23 +245,17 @@ fcs$doquadruploT <- function() {
 
 
   ######## NEW: SWITCH SIGNS FOR POPULATION OF INTEREST ---------------------------
-  if (popul[1] == 1) {
+  if (tclvalue(fcs$rbpopC1) == "pos") {
     sign.C1 <- c(" >= ", "<")
-    feat.label.C1 <- paste0(v3, "+")
   } else {
     sign.C1 <- c("<=", ">")
-    feat.label.C1 <- paste0(v3, "-")
   }
   
-  if (popul[2] == 1) {
+  if (tclvalue(fcs$rbpopC2) == "pos") {
     sign.C2 <- c(" >= ", "<")
-    feat.label.C2 <- paste0(v4, "+")
   } else {
     sign.C2 <- c("<=", ">")
-    feat.label.C2 <- paste0(v4, "-")
   }
-  feat.label.C1 <- paste(sprintf("%s(%s)", feat.label.C1, cutoffs[3]))
-  feat.label.C2 <- paste(sprintf("%s(%s)", feat.label.C2, cutoffs[4]))
   #########
 
   ### this$q[x].prodcells [ink=red]
@@ -337,15 +335,10 @@ fcs$doquadruploT <- function() {
     firstLine <- sprintf("%s: %s/cof=%s", displayfile, checkCALC, this$current.cofactor)
   }
   title(main=firstLine, line=3.2, cex.main=0.9, adj=0)
-  
-  if (checkCALC == "freq" | grepl("MSI", checkCALC)) {
-    secondLine <- sprintf("cells(min/max)=%s/%s; %s", mincount, this$maxcells, v3)
-  } else {
-    secondLine <- sprintf("cells(min/max)=%s/%s", mincount, this$maxcells)
-  }
+  secondLine <- sprintf("cells(min/max)=%s/%s; %s/%s", mincount, this$maxcells, v3, v4)
   title(main=secondLine, line=2.4, cex.main=0.9, adj=0)
   
-  thirdLine <- sprintf("%s-%s(%0.1f%%); binSize=%s, #bins=%s", ncells.total, ncells.zero, (ncells.zero / ncells.total * 100), binSize, this$bincount)
+  thirdLine <- sprintf("%s-%s(%0.1f%%); binSize=%s, #bins=%s; maxfreq=%s", ncells.total, ncells.zero, (ncells.zero / ncells.total * 100), binSize, this$bincount, this$max.freq.real)
   title(main=thirdLine, line=1.6, cex.main=0.7, adj=0)
   
   if (checkGATED == "1" | grepl("temp", file)) {
@@ -403,7 +396,7 @@ fcs$binquadruplot <- function(
     # for debugging run manual
     data <- tdata
     set.cex <- 1.1
-    set.cex.axes <- 1 - 0
+    set.cex.axes <- 1.0
     set.mgp <- c(1.5, 0.3, 0)
     png <- FALSE
     overview <- FALSE
@@ -411,11 +404,11 @@ fcs$binquadruplot <- function(
     quadrants.color <- "black"
     data.origin <- NA
     file <- NA
-    popul <- c(1, 1)
   }
   
   prodcells.color <- "red"
   prodpluscells.color <- "chartreuse4"
+  col.maxwarn <- "black"
   
   if (is.na(file)) file <- tclvalue(tkget(this$tkchoosefile))
   
@@ -425,6 +418,7 @@ fcs$binquadruplot <- function(
   if (!file.exists(metadatafile)) {
     header <- c("date", "sample", "cofactor", "calc",
               "feat.A", "feat.B", "feat.C1", "feat.C2", 
+              "min.A", "max.A", "min.B", "max.B", "maxfreq",
               "cutoff.A", "cutoff.B", "cutoff.C1", "cutoff.C2",
               "q1.total", "q2.total", "q3.total", "q4.total",
               "q1.prodcells", "q2.prodcells", "q3.prodcells", "q4.prodcells", "q1.prodcellsplus", "q2.prodcellsplus", "q3.prodcellsplus", "q4.prodcellsplus")
@@ -443,27 +437,38 @@ fcs$binquadruplot <- function(
   min.freq <- 0
   max.freq <- as.double(tclvalue(this$vmaxfreq))
   
-  if (max.freq < min.freq) {
-    tmp <- min.freq 
-    min.freq <- max.freq
-    max.freq <- tmp
-  }
-
-  if (popul[2] == 1) {
-    sign.C2 <- c(" >= ", "<")
-    feat.label.C2 <- paste0(v4, "+")
+  ### legend title
+  if (density) {
+    legend.title.C1 <- "# cells"
+    legend.title.C2 <- ""
   } else {
-    sign.C2 <- c("<=", ">")
-    feat.label.C2 <- paste0(v4, "-")
+    ######## NEW: SWITCH SIGNS FOR POPULATION OF INTEREST ----------------------
+    # v3 <- this$checkMarker(tclvalue(tkget(this$cbvar3quad)))
+    # v4 <- this$checkMarker(tclvalue(tkget(this$cbvar4quad)))
+    v3 <- colnames(data)[3]
+    v4 <- colnames(data)[4]
+    if (tclvalue(this$rbpopC1) == "pos") {
+      sign.C1 <- c(" >= ", "<")
+      legend.title.C1 <- sprintf("%s+(%s)", v3, cutoffs[3])
+    } else {
+      sign.C1 <- c("<=", ">")
+      legend.title.C1 <- sprintf("%s-(%s)", v3, cutoffs[3])
+    }
+    if (tclvalue(this$rbpopC2) == "pos") {
+      sign.C2 <- c(" >= ", "<")
+      legend.title.C2 <- sprintf("%s+(%s)", v4, cutoffs[4])
+    } else {
+      sign.C2 <- c("<=", ">")
+      legend.title.C2 <- sprintf("%s-(%s)", v4, cutoffs[4])
+    }
   }
+  
 
   # checkbutton options
-  checkDYNRANGE <- tclvalue(this$cbtdynRange)
+  checkDYNRANGEFREQ <- tclvalue(this$cbtdynRangeFreq)
   checkTRANS <- tclvalue(this$rbtrans)
   if (checkTRANS  == "") checkTRANS <- tclvalue(this$rbtrans) <- "asinh"
-  checkCALC <- tclvalue(this$rbcalc)
-  if (checkCALC == "") checkCALC <- tclvalue(this$rbcalc) <- "MSI"
-  if (checkCALC == "density") density <- TRUE
+  checkCALC <- "freq"
   checkPERCENTAGE <- tclvalue(this$cbtshowPercentage)
   if (checkPERCENTAGE == "1") {
     this$plot.percentage <- TRUE
@@ -480,24 +485,14 @@ fcs$binquadruplot <- function(
   }
   options(scipen = scipen)
   
-  # legend from blue to red
+  # legend colors from blue to red
   if (bg) {
     cols <- rep("gray", 12)
   } else {
     cols <- this$col.green
   }
   
-  # legend title
-  tmp <- unlist(strsplit(colnames(data)[3], "\\."))
-  if (length(tmp) > 1 & all(lengths(tmp) > 1)) {
-    if (cutoffs[3] > 0) legend.title <- sprintf("%s(%s)", tmp[1], cutoffs[3]) 
-    else legend.title <- tmp[1]
-  } else {
-    if (cutoffs[3] > 0) legend.title <- sprintf("%s(%s)", colnames(data)[3], cutoffs[3]) 
-    else legend.title <- colnames(data)[3]
-  }
-  
-  # set negative values of z-axis (colnum=3) to zero
+  ### set negative values of z-axis (colnum=3) to zero
   if (!density) data[which(data[, 3] < 0), 3] <- 0
   
   ncells <- nrow(data)
@@ -526,9 +521,9 @@ fcs$binquadruplot <- function(
             y = round(100 * length(which(x", sign.C1[1], " cutoffs[3])) / length(x))
             return(y)
           })", sep="")))
+    colnames(my.calc)[2] <- "freq.C1"
     # bin color factor Z1
-    my.calc.fac.C1 <- cut(my.calc$x, breaks=seq(0, 100, by=10), labels=1:10, include.lowest=TRUE)
-    names(my.calc.fac.C1) <- my.calc$x
+    my.calc.fac.C1 <- cut(my.calc$freq.C1, breaks=seq(0, 100, by=10), labels=1:10, include.lowest=TRUE)
 
     ### frequency of feature Z2        
     eval(parse(text=paste("freq.C2 = aggregate(tdata[, 4], by=list(fXY), 
@@ -538,86 +533,105 @@ fcs$binquadruplot <- function(
           })", sep="")))
     # bin color factor Z2
     my.calc.fac.C2 <- cut(freq.C2$x, breaks=seq(0, 100, by=10), labels=1:10, include.lowest=TRUE)
-    names(my.calc.fac.C2) <- freq.C2$x
 
     ### get only data table where Z1 and Z2 is produced
-    eval(parse(text=paste("tdata.touble = data[ which((data[, 3]", sign.C1[1], " cutoffs[3]) ", "& (data[, 4]", sign.C2[1], " cutoffs[4])), ]", sep="")))
+    eval(parse(text=paste("tdata.double = data[ which((data[, 3]", sign.C1[1], " cutoffs[3]) ", "& (data[, 4]", sign.C2[1], " cutoffs[4])), ]", sep="")))
     ### construct bin table with number of cells per bin
-    fX.double <- cut(tdata.touble[, 1], breaks=seq(xmin.val, xmax.val, by=binSize), include.lowest=TRUE, dig.lab=5)
-    fY.double <- cut(tdata.touble[, 2], breaks=seq(ymin.val, ymax.val, by=binSize), include.lowest=TRUE, dig.lab=5)
+    fX.double <- cut(tdata.double[, 1], breaks=seq(xmin.val, xmax.val, by=binSize), include.lowest=TRUE, dig.lab=5)
+    fY.double <- cut(tdata.double[, 2], breaks=seq(ymin.val, ymax.val, by=binSize), include.lowest=TRUE, dig.lab=5)
     fXY.double <- as.factor(paste(fX.double, fY.double))
-    
-    length.double <- aggregate(tdata.touble[, 1], by=list(fXY.double), length)
+
+    ### count cells of double frequencies C1 + C2 in each bin
+    length.double <- aggregate(tdata.double[, 3], by=list(fXY.double), length)
     rownames(length.double) <- length.double$Group.1
-    
-    length.all <- aggregate(tdata[, 3], by=list(fXY), length)
+
+    ### count total cells in each bin
+    length.all <- aggregate(tdata[, 4], by=list(fXY), length)
     rownames(length.all) <- length.all$Group.1
-    
+
+    ### merge and calculate cells of double frequencies to total
     freq.double <- merge(length.all, length.double, by="row.names", all.x=TRUE)
     freq.double <- freq.double[, -c(2, 4)]
     freq.double <- cbind(freq.double, round(freq.double[, 3] / freq.double[, 2] * 100))
     
-    # bin color factor double producer Z1 + Z2
-    my.calc.fac.double <- cut(freq.double[, 4], breaks=seq(0, max.freq, by=max.freq / 10), labels=1:10, include.lowest=TRUE)
-    names(my.calc.fac.double) <- freq.double[, 4]
+    ### bin color factor double producer C1 + C2
+    my.calc.fac.double <- cut(freq.double[, 4], breaks = seq(0, max.freq, by = max.freq / 10), labels = 1:10, include.lowest = TRUE)
+    ### set factor to 10 if real max frequency is higher than set and cells of double frequencies are higher than mincells
+    my.calc.fac.double[which(freq.double[, 4] >= max.freq & freq.double[, 3] >= mincells)] <- 10
 
     ### combine all frequencies in one table
-    my.calc <- cbind(my.calc, fac.C1=as.numeric(my.calc.fac.C1))
+    my.calc <- cbind(my.calc, fac.C1=as.numeric(as.character(my.calc.fac.C1)))
     my.calc <- cbind(my.calc, freq.C2=freq.C2$x)
-    my.calc <- cbind(my.calc, fac.C2=as.numeric(my.calc.fac.C2))
+    my.calc <- cbind(my.calc, fac.C2=as.numeric(as.character(my.calc.fac.C2)))
     my.calc <- cbind(my.calc, freq.double=freq.double[, 4])
-    my.calc <- cbind(my.calc, fac.double=as.numeric(my.calc.fac.double))
+    my.calc <- cbind(my.calc, fac.double=as.numeric(as.character(my.calc.fac.double)))
     my.calc <- cbind(my.calc, ncells=length.all$x)
     my.calc <- cbind(my.calc, ncells.double = freq.double[, 3])
 
-    max.freq.real <- max(my.calc$freq.double[which(!is.na(my.calc$freq.double) & my.calc$ncells > 9)])
-    printf("MAXIMUM FREQUENCY = %s", max.freq.real)
-    if (max.freq.real > max.freq) print("  !!!!! MAXFREQ SHOULD BE HIGHER !!!!!")
+    this$max.freq.real <- max(my.calc$freq.double[which(!is.na(my.calc$freq.double) & my.calc$ncells >= mincells)])
+    printf("MAXIMUM FREQUENCY = %s", this$max.freq.real)
+    max.freq <- as.double(tclvalue(this$vmaxfreq))
+    if (checkDYNRANGEFREQ == "1") {
+      this$vmaxfreq <- tclVar(this$max.freq.real)
+      tkconfigure(this$maxfreq, textvariable = this$vmaxfreq)
+
+      ### recalculate the bin factors
+      max.freq <- this$max.freq.real
+      # bin color factor double producer Z1 + Z2
+      my.calc.fac.double <- cut(freq.double[, 4], breaks=seq(0, max.freq, by=max.freq / 10), labels=1:10, include.lowest=TRUE)
+      my.calc$fac.double <- as.numeric(as.character(my.calc.fac.double))
+    } else if (checkDYNRANGEFREQ == "0" & (this$max.freq.real > max.freq)) {
+      print("!!!!! WARNING: MAXFREQ IS SET LOWER THAN IT COULD !!!!!")
+      
+      ### set factors of frequencies higher than set to 10
+      my.calc$fac.double[which(my.calc$freq.double >= max.freq)] <- 10
+      col.maxwarn <- "red"
+    }
     
     this$my.calc.fac.C1 <- my.calc.fac.C1
     this$my.calc.fac.C2 <- my.calc.fac.C2
     this$my.calc.fac.double <- my.calc.fac.double
   }
   
-  my.lengths <- aggregate(tdata[, 3], by=list(fXY), length)
-  my.LENGTHS <- any(my.lengths[, 2] >= mincells)
-   
-  absRange <- 0
   ### if there are bins to display
-  if (my.LENGTHS) {
-    # there are bins to plot, so set grey.label to FALSE
-    grey.label <- FALSE
-    
-    my.calc <- cbind(my.calc, ncells=my.lengths$x)
-    ### get steps for legend and plot in mode "freq"
-    decim <- 0
-    #range <- ""
+  if (any(my.calc$ncells >= mincells)) {
     col.minmax <- "black"
+    
+    rect.step <- round(diff(c(par()$usr[3], par()$usr[4])) / 37, 2)
+    min.legend.y <- par()$usr[3] + 8 * rect.step
+    max.legend.y <- par()$usr[3] + 18 * rect.step
+    
+    ### get rect steps
+    rect.steps <- seq(min.legend.y, max.legend.y, by = rect.step)
+
     if (density) {
       idx <- which(my.calc$ncells >= mincells)
-      min.range <- floor(min(my.calc[idx, "x"]) * 10) / 10
-      max.range <- max(tab)
+      min.range <- min(my.calc$ncells[idx])
+      max.range <- max(my.calc$ncells[idx])
 
       if (max.range < 200) {
-        col.minmax <- "red"
+        col.minmax <- col.maxwarn <- "red"
       }
+
+      # bin color factor
+      my.calc.fac <- cut(my.calc$x, breaks = seq(min.range, max.range, length.out = 11), labels = 1:10, include.lowest = TRUE)
     } else {
-      # frequency
+      ### get steps for legend and plot in mode "freq"
       min.range <- min.freq
-      max.range <- ymin.val + 3 * binSize + diff(c(ymin.val, ymax.val)) / 2
-      
-      label.steps <- seq(min.freq, max.freq, length.out = 11)
+      max.range <- max.freq
       
       # bin color factor
-      my.calc.fac <- cut(my.calc$x, breaks=seq(min.freq, max.freq, length.out = 11), labels=1:10, include.lowest=TRUE)
-      levels(my.calc.fac) <- c(0, levels(my.calc.fac), 11, 12)
-      
+      my.calc.fac <- cut(my.calc$freq.double, breaks = seq(min.range, max.range, length.out = 11), labels = 1:10, include.lowest = TRUE)
+      # my.calc.fac <- cut(my.calc$freq.double, breaks=seq(min.freq, max.freq, length.out = 11), labels=1:10, include.lowest=TRUE)
+      # levels(my.calc.fac) <- c(0, levels(my.calc.fac), 11, 12)
     }
-    
-    # get steps
-    step <- round(diff(range(max.range, min.range)) / 10, 2) 
-    steps <- seq(min.range, max.range, by=step)
-    label.steps <- steps[1:11]
+    my.calc <- cbind(my.calc, fac=as.numeric(as.character(my.calc.fac)))
+    this$my.calc <- my.calc
+
+
+    ### get labels for rect steps
+    label.steps <- range.steps <- seq(min.range, max.range, length.out = 11)
+    range.step <- diff(c(range.steps[1], range.steps[2]))
     if (density | checkTRANS == "biex") {
       if (max.range > 500) {
         label.steps <- round(label.steps, -2)
@@ -625,29 +639,19 @@ fcs$binquadruplot <- function(
         label.steps <- round(label.steps)
       }
       if (density) label.steps[1] <- min.range
-    } else if (checkDYNRANGE != "1") {
-      if (label.steps[1] != "0") label.steps[1] <- sprintf("<=%s", label.steps[1])
-      label.steps[11] <- sprintf(" >= %s", label.steps[11])
-    } else {
-      label.steps <- round(label.steps, 1)
+    } else if (checkDYNRANGEFREQ != "1") {
+      if (label.steps[1] != "0") {
+        label.steps[1] <- sprintf("<=%s", label.steps[1])
+      }
+      if (label.steps[11] != "100") {
+        label.steps[11] <- sprintf(">=%s", label.steps[11])
+      }
     }
-      
-    # bin color factor
-    my.calc.fac <- cut(my.calc$x, breaks=steps, labels=2:11, include.lowest=TRUE)
-      
-    levels(my.calc.fac) <- c(0, levels(my.calc.fac), 12)
-    # if x < min.range
-    my.calc.fac[which(my.calc$x < steps[1] & my.calc$ncells >= mincells)] <- 0
-    # if x > max.range
-    my.calc.fac[which(my.calc$x > steps[11] & my.calc$ncells >= mincells)] <- 11
-    my.calc <- cbind(my.calc, fac=as.numeric(my.calc.fac) + 1)
-    
-    this$my.calc <- my.calc
+
+    ##### plot bins
     this$bincount <- 0
     this$maxcells <- 0
-    
-    cols.heat <- cols[, as.numeric(my.calc.fac.double)]
-    ##### plot bins
+    cols.heat <- cols[, as.numeric(as.character(my.calc.fac.double))]
     for (x in rownames(tab)) {
       for (y in colnames(tab)) {
         brackets.open <- c("(", "[")
@@ -661,137 +665,140 @@ fcs$binquadruplot <- function(
           fact <- as.factor(paste(brackets.open[brackets.1], x, ",", as.numeric(x) + binSize, "] ", brackets.open[brackets.2], y, ",", as.numeric(y) + binSize, "]", sep = ""))
           idx <- which(as.character(fact) == as.character(my.calc$Group.1))
 
-          if ((length(cols.heat[, idx]) != 0) & (!is.na(cols.heat[1, idx]))) {
+          if (length(cols.heat[, idx]) != 0) {
+            if (!is.na(cols.heat[1, idx])) {
             rect(x, y, as.numeric(x) + binSize, as.numeric(y) + binSize,
               col = eval(parse(text = paste0("rgb(", paste0(cols.heat[, idx], collapse = ", "), ", maxColorValue=255)"))),
               border = NA)
 
             this$bincount <- this$bincount + 1
             if (tab[x, y] > this$maxcells) {
-              this$maxcells <- tab[x, y]
+            this$maxcells <- tab[x, y]
+            }
             }
           }
         }
       }
     }
-    ### space calculation
-    rect.size <- diff(c(xmin.val, xmax.val)) / 25
-    rect.size <- 0.2
     
     ### add production line
     this$addProdline(cutoffs)
+
+    ###### legend plot + label ----------------------------------------------------
     
+    ### q1: quadrant left lower black ink
+    text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), 
+    y = par()$usr[3] + 0.03 * (par()$usr[4] - par()$usr[3]), 
+    label = sprintf("%0.1f%%", this$q1.total), col = quadrants.color, cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
+    ### q2: quadrant right lower black ink
+      text(x = par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]),
+    y = par()$usr[3] + 0.03 * (par()$usr[4] - par()$usr[3]),
+    label = sprintf("%0.1f%%", this$q2.total), col = quadrants.color, cex = 1.00 * set.cex, pos = 2, xpd = TRUE)
+    ### q3 quadrant right upper black ink
+      text(x = par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]),
+    y = par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]),
+    label=sprintf("%0.1f%%", this$q3.total), col=quadrants.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
+    ### q4 quadrant left upper black ink
+      text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]),
+    y = par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]),
+    label = sprintf("%0.1f%%", this$q4.total), col = quadrants.color, cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
+
+    ### q1: quadrant left lower red and green ink
+    text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]),
+        y = par()$usr[3] + 0.08 * (par()$usr[4] - par()$usr[3]),
+        label=sprintf("%0.1f%%", this$q1.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
+    text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]),
+        y = par()$usr[3] + 0.13 * (par()$usr[4] - par()$usr[3]),
+        label=sprintf("%0.1f%%", this$q1.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
+
+    ### q2: quadrant right lower red and green ink
+    text(x = par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]),
+        y = par()$usr[3] + 0.08 * (par()$usr[4] - par()$usr[3]),
+        label=sprintf("%0.1f%%", this$q2.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
+    text(x = par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]),
+        y = par()$usr[3] + 0.13 * (par()$usr[4] - par()$usr[3]),
+        label=sprintf("%0.1f%%", this$q2.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
+
+    ### q3 quadrant right upper red and green ink
+    text(x = par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]),
+        y = par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]),
+        label=sprintf("%0.1f%%", this$q3.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
+    text(x = par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]),
+        y = par()$usr[4] - 0.14 * (par()$usr[4] - par()$usr[3]),
+        label=sprintf("%0.1f%%", this$q3.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
+        
+    ### q4 quadrant left upper red and green ink
+    text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]),
+        y = par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]),
+        label=sprintf("%0.1f%%", this$q4.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
+    text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), 
+        y = par()$usr[4] - 0.14 * (par()$usr[4] - par()$usr[3]), 
+        label=sprintf("%0.1f%%", this$q4.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
+
+    ### save meta table values -------------------------------------------
+    csv.content <- c(current.date, displayfile,
+      this$current.cofactor, checkCALC,
+      colnames(data)[1], colnames(data)[2], colnames(data)[3], colnames(data)[4],
+      xmin.val, xmax.val, ymin.val, ymax.val, max.freq,
+      cutoffs[1], cutoffs[2], cutoffs[3], cutoffs[4],
+      round(this$q1.total, 1), round(this$q2.total, 1), round(this$q3.total, 1), round(this$q4.total, 1),
+      round(this$q1.prodcells, 1), round(this$q2.prodcells, 1), round(this$q3.prodcells, 1), round(this$q4.prodcells, 1),
+      round(this$q1.prodcellsplus, 1), round(this$q2.prodcellsplus, 1), round(this$q3.prodcellsplus, 1), round(this$q4.prodcellsplus, 1))
+    ###
+
+    ### write meta table values -------------------------------------------
+    write.table(csv.content, metadatafile, sep = "\t", col.names = FALSE, row.names = FALSE, append = TRUE)
+    printf("Quadrant percs written in %s", metadatafile)
     
-    ###### legend plot + label
-    if (density) {
-      min.legend <- ymin.val + 3 * binSize
-      max.legend <- ymin.val + 3 * binSize + diff(c(ymin.val, ymax.val)) / 2 
+    this$rect.step <- rect.step
+    this$rect.steps <- rect.steps
+    this$label.steps <- label.steps
+
+    checkLEGEND <- tclvalue(this$cbtshowLegend)
       
-      step <- round(diff(range(max.legend, min.legend)) / 11, 1)
-      steps <- seq(min.legend, max.legend + step, by=step)
-      set.cex <- 1.2
-    }
-    
-    ##### if its not background and not a png minimalistic picture, then print legend and label
-    if ((!bg | density) & !png & this$plot.percentage) {
-      if (cutoffs[1] > 0 & cutoffs[2] > 0 & cutoffs[3] > 0 & !density) {
-        #if (this$working) print("w: add quadrant and product percentages on quadruplot")
-        ### quadrant left lower
-        text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[3] + 0.03 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q1.total), col=quadrants.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
-        text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[3] + 0.08 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q1.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
-        text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[3] + 0.13 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q1.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
-        
-        ### quadrant right lower
-        text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[3] + 0.03 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q2.total), col=quadrants.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
-        text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[3] + 0.08 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q2.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
-        text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[3] + 0.13 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q2.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
-        
-        ### quadrant right upper
-        text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q3.total), col=quadrants.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
-        text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q3.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
-        text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.14 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q3.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
-        
-        ### quadrant left upper
-        text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.total), col=quadrants.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
-        text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
-        text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.14 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
-        
-        
-        quadrant.percs <- cbind(current.date, displayfile, this$current.cofactor, checkCALC, colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange, cutoffs[1], cutoffs[2], cutoffs[3], round(this$q1.total, 1), round(this$q2.total, 1), round(this$q3.total, 1), round(this$q4.total, 1), round(this$q1.prodcells, 1), round(this$q2.prodcells, 1), round(this$q3.prodcells, 1), round(this$q4.prodcells, 1), round(this$q1.prodcellsplus, 1), round(this$q2.prodcellsplus, 1), round(this$q3.prodcellsplus, 1), round(this$q4.prodcellsplus, 1))
-        
-        write.table(quadrant.percs, sprintf("%s_PRIquadru_metadata.csv", this$current.project), sep = "\t", col.names = FALSE, row.names = FALSE, append = TRUE)
-        printf("Quadrant percs written in %s", sprintf("%s_PRIquadru_metadata.csv", this$current.project))
-        
-      } else if (cutoffs[1] > 0 & cutoffs[2]) {
-        text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[3] + 0.03 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q1.total), col=quadrants.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
-        text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[3] + 0.03 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q2.total), col=quadrants.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
-        text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q3.total), col=quadrants.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
-        text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.total), col=quadrants.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
-        
-        quadrant.percs <- cbind(current.date, displayfile, this$current.cofactor, checkCALC, colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange, cutoffs[1], cutoffs[2], "NA", round(this$q1.total, 1), round(this$q2.total, 1), round(this$q3.total, 1), round(this$q4.total, 1))
-        
-        write.table(quadrant.percs, sprintf("%s_PRIquadru_metadata.csv", this$current.project), sep = "\t", col.names = FALSE, row.names = FALSE, append = TRUE)
-        printf("Quadrant percs written in %s", sprintf("%s_PRIquadru_metadata.csv", this$current.project))
-      } else {
-        ### no cutoffs are set
-        ### write in csv at least the absRange
-        quadrant.percs <- cbind(current.date, displayfile, this$current.cofactor, checkCALC, colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange)
-        
-        write.table(quadrant.percs, sprintf("%s_PRIquadru_metadata.csv", this$current.project), sep = "\t", col.names = FALSE, row.names = FALSE, append = TRUE)
-      }
+    if (checkLEGEND == "1") {
+      ##### legend title C1
+      text(x = par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]),
+          y = rect.steps[10] + 3.0 * rect.step,
+          label = legend.title.C1, cex = 0.9 * set.cex, pos = 2
+      )
+      ##### legend title C2
+      text(x = par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]),
+          y = rect.steps[10] + 4.8 * rect.step,
+          label = legend.title.C2, cex = 0.9 * set.cex, pos = 2
+      )
       
-      
-      checkLEGEND <- tclvalue(this$cbtshowLegend)
-      this$step <- step
-      this$label.steps <- label.steps
-      space <- 0.08 * (par()$usr[4] - par()$usr[3])
-      
-      ### not for history png
-      #if (!png) {
-      if (checkLEGEND == "1") {
-        ##### legend title
-        if (density) legend.title <- "# cells "
-        if (!bg) text(par()$usr[2] + 0.02 * (par()$usr[2] - par()$usr[1]), steps[10] + 4.7 * rect.size + this$legend.space + space, label=legend.title, cex=0.85 * set.cex, pos=2)
-        
-        label.pos.x <- par()$usr[2] - 0.12 * (par()$usr[2] - par()$usr[1])
-        
-        for (i in 1:11) {
-          ## print legend rectangles
-          if (i < 11) {
-            rect(xleft = par()$usr[2] - 0.13 * (par()$usr[2] - par()$usr[1]), 
-                 ybottom = steps[i] + space, 
-                 xright = par()$usr[2] - 0.105 * (par()$usr[2] - par()$usr[1]), 
-                 ytop = steps[i] + space + step, 
-                 col=cols[i + 1], border=NA, pos=2)
-          }
-          
-          if (checkDYNRANGE != "1" & (i == 1 | i == 11)) {
-            displaylabel <- label.steps[i]
-          } else {
-            displaylabel <- sprintf("%.1f", as.numeric(label.steps[i]))
-          }
-          
-          if (checkCALC == "RSEM" & !density) {
-            text(x=label.pos.x, y=steps[i] + space, label=displaylabel, col=col.minmax, cex=0.65 * set.cex, pos=4)
-          } else if (i == 1 | i == 11) {
-            text(x=label.pos.x, y=steps[i] + space, label=displaylabel, col=col.minmax, cex=0.65 * set.cex, pos=4)
-          } else if (i == 6 & step >= (0.65 * binSize)) {
-            text(x=label.pos.x, y=steps[i] + space, label=displaylabel, col=col.minmax, cex=0.65 * set.cex, pos=4)
-          } else if (step >= (1.8 * binSize)) { 
-            if (i == 3) {
-              display.label <- sprintf("%.1f", (as.numeric(label.steps[i]) + (step / 2)))
-              text(label.pos.x, steps[i] + space + 0.5 * step, label=display.label, col=col.minmax, cex=0.65 * set.cex, pos=4)
-            }
-            if (i == 9) {
-              display.label <- sprintf("%.1f", (as.numeric(label.steps[i]) - (step / 2)))
-              text(label.pos.x, steps[i] + space - 0.5 * step, label=display.label, col=col.minmax, cex=0.65 * set.cex, pos=4)
-            }
-          } 
+      label.pos.x <- par()$usr[2] - 0.12 * (par()$usr[2] - par()$usr[1])
+      for (i in 1:11) {
+        ## print legend rectangles
+        if (i < 11) {
+          rect(xleft = par()$usr[2] - 0.13 * (par()$usr[2] - par()$usr[1]),
+              ybottom = rect.steps[i],
+              xright = par()$usr[2] - 0.105 * (par()$usr[2] - par()$usr[1]),
+              ytop = rect.steps[i] + rect.step,
+              col = eval(parse(text = paste0("rgb(", paste0(cols[, i], collapse = ", "), ", maxColorValue=255)"))),
+              border = NA, pos = 2)
         }
+
+        if (i == 1) {
+          text(x = label.pos.x, y = rect.steps[i], label = label.steps[i], col = col.minmax, cex = 0.9 * set.cex, pos = 4)
+        } else if (i == 11) {
+          text(x = label.pos.x, y = rect.steps[i], label = label.steps[i], col = col.maxwarn, cex = 0.9 * set.cex, pos = 4)
+        } else if (i == 6 & rect.step >= 0.3) {
+          text(x=label.pos.x, y=rect.steps[i], label=label.steps[i], col=col.minmax, cex=0.9 * set.cex, pos=4)
+        } else if (rect.step >= 0.2) { 
+          if (i == 3) {
+            display.label <- sprintf("%.0f", (range.steps[i] + (range.step / 2)))
+            text(label.pos.x, rect.steps[i] + 0.5 * rect.step, label=display.label, col=col.minmax, cex=0.9 * set.cex, pos=4)
+          }
+          if (i == 9) {
+            display.label <- sprintf("%.0f", (range.steps[i] - (range.step / 2)))
+            text(label.pos.x, rect.steps[i] - 0.5 * rect.step, label=display.label, col=col.minmax, cex=0.9 * set.cex, pos=4)
+          }
+        } 
       }
     }
   }
-
   # in mode quadruploT: if autorect was selected
   if (tclvalue(this$cbtautoRect) == "1") {
     this$addRectInfo(setcex=set.cex)

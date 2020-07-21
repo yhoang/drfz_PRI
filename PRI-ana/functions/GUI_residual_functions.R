@@ -236,6 +236,7 @@ fcs$refreshMarker <- function(tab=FALSE, openProject=FALSE) {
     ### go here if you swith between the tabs
     ### tab 0 = diploT
     ### tab 1 = triploT
+    ### tab 2 = quadruploT
     
     ### tab numbering starts with "0"
     tab.old <- this$current.tab
@@ -250,13 +251,16 @@ fcs$refreshMarker <- function(tab=FALSE, openProject=FALSE) {
       ### set combobox
       var1 <- this$checkMarker(tclvalue(tkget(this$cbvar1di)))
       tkset(this$cbvar1, var1)
+      tkset(this$cbvar1quad, var1)
       
       var2 <- this$checkMarker(tclvalue(tkget(this$cbvar2di)))
       tkset(this$cbvar2, var2)
-      
+      tkset(this$cbvar2quad, var2)
+
       ### if z variable is the same as in x and y, then go one var up
       # in other words:
       # if cbvar3 == cbvar1/2, then set cbvar3 randomly but different
+      ### triplot ------------------------------------------------------
       idx <- which(tclvalue(tkget(this$cbvar1)) == this$selected.vars)
       idy <- which(tclvalue(tkget(this$cbvar2)) == this$selected.vars)
       idz <- which(tclvalue(tkget(this$cbvar3)) == this$selected.vars)
@@ -270,6 +274,25 @@ fcs$refreshMarker <- function(tab=FALSE, openProject=FALSE) {
         tkset(this$cbvar3, this$selected.vars[random])
         printf("w: changed z-feature from %s to %s", this$selected.vars[idz], this$selected.vars[random])
       }
+      ### quadruplot ----------------------------------------------------
+      idx <- which(tclvalue(tkget(this$cbvar1quad)) == this$selected.vars)
+      idy <- which(tclvalue(tkget(this$cbvar2quad)) == this$selected.vars)
+      idz1 <- which(tclvalue(tkget(this$cbvar3quad)) == this$selected.vars)
+      idz2 <- which(tclvalue(tkget(this$cbvar4quad)) == this$selected.vars)
+      
+      if (any(c(idz1, idz2) %in% c(idx, idy))) {
+        ### if var index z is identical to var index x or y
+        # take another random var index for z
+        t <- 1:len
+        t <- t[-c(idx, idy)]
+        rand <- sample(t, 1)
+        tkset(this$cbvar3quad, this$selected.vars[rand])
+        printf("w: changed C1-feature from %s to %s", this$selected.vars[idz1], this$selected.vars[rand])
+        t <- t[-rand]
+        rand2 <- sample(t, 1)
+        tkset(this$cbvar4quad, this$selected.vars[rand2])
+        printf("w: changed C2-feature from %s to %s", this$selected.vars[idz2], this$selected.vars[rand2])
+      }
       
       ### initiate
       this$coords.info <- vector()
@@ -279,11 +302,46 @@ fcs$refreshMarker <- function(tab=FALSE, openProject=FALSE) {
       ### set combobox
       var1 <- this$checkMarker(tclvalue(tkget(this$cbvar1)))
       tkset(this$cbvar1di, var1)
+      tkset(this$cbvar1quad, var1)
       
       var2 <- this$checkMarker(tclvalue(tkget(this$cbvar2)))
       tkset(this$cbvar2di, var2)
-    } 
-    
+      tkset(this$cbvar2quad, var2)
+
+      var3 <- this$checkMarker(tclvalue(tkget(this$cbvar3)))
+      tkset(this$cbvar3quad, var3)
+
+      ### quadruplot ----------------------------------------------------
+      # if cbvar4 == cbvar1/2/3, then set cbvar4 randomly but different
+      idx <- which(tclvalue(tkget(this$cbvar1quad)) == this$selected.vars)
+      idy <- which(tclvalue(tkget(this$cbvar2quad)) == this$selected.vars)
+      idz1 <- which(tclvalue(tkget(this$cbvar3quad)) == this$selected.vars)
+      idz2 <- which(tclvalue(tkget(this$cbvar4quad)) == this$selected.vars)
+      
+      if (idz2 %in% c(idx, idy, idz1)) {
+        ### if var index z is identical to var index x or y
+        # take another random var index for z
+        t <- 1:len
+        t <- t[-c(idx, idy, idz1)]
+        rand <- sample(t, 1)
+        tkset(this$cbvar4quad, this$selected.vars[rand])
+        printf("w: changed C2-feature from %s to %s", this$selected.vars[idz2], this$selected.vars[rand])
+      }
+    } else if (tab.old == "2") {
+      ### tab 2 = quadruploT
+
+      ### set combobox
+      var1 <- this$checkMarker(tclvalue(tkget(this$cbvar1quad)))
+      tkset(this$cbvar1di, var1)
+      tkset(this$cbvar1, var1)
+
+      var2 <- this$checkMarker(tclvalue(tkget(this$cbvar2quad)))
+      tkset(this$cbvar2di, var2)
+      tkset(this$cbvar2, var2)
+
+      var3 <- this$checkMarker(tclvalue(tkget(this$cbvar3quad)))
+      tkset(this$cbvar3, var3)
+    }
   } else {
     ### initiate
     this$idx <- list()
@@ -750,10 +808,7 @@ fcs$clickTab <- function(...) {
   
   if (this$working) printf("w: do clickTab tab.old=%s tab.new=%s", tab.old, tab.new)
   
-  #if (tab.new == "2") this$refreshTabHistory()
-  #else this$refreshMarker(tab=TRUE)
-  if (tab.new != "2") this$refreshMarker(tab=TRUE)
-  
+  if (!tab.new %in% c("3", "4")) this$refreshMarker(tab=TRUE)
   
   this$current.tab <- tab.new
 }

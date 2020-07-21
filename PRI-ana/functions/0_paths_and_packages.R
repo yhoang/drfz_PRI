@@ -200,7 +200,7 @@ if (!grepl("linux", sessionInfo()$R.version$os)) {
 
 ### load PRI parameters if exist ----------------------------------------
 paramfile <- "myPRIparam.rda"
-if (!file.exists(paramfile)) {
+if (file.exists(paramfile)) {
   printf("Loading myPRIparam.rda..")
   load(paramfile)
   print(sprintf("diploT :: saved var1=%s var2=%s", param$currVarDi1, param$currVarDi2))
@@ -214,15 +214,14 @@ if (!file.exists(paramfile)) {
   fcs$vmaxvalY <- tclVar(param$maxvalY)
   fcs$vminMSI <- tclVar(param$minMSI)
   fcs$vmaxMSI <- tclVar(param$maxMSI)
-  fcs$vminfreq <- tclVar(param$minfreq)
   fcs$vmaxfreq <- tclVar(param$maxfreq)
 
   # radio buttons
   fcs$rbasinh <- tclVar(param$cofactor)
   fcs$rbcalc <- tclVar(param$rbcalc)
   fcs$rbtrans <- tclVar(param$rbtrans)
-  fcs$popC1 <- tclVar(param$rbpopC1)
-  fcs$popC2 <- tclVar(param$rbpopC2)
+  fcs$rbpopC1 <- tclVar(param$rbpopC1)
+  fcs$rbpopC2 <- tclVar(param$rbpopC2)
 
   # check buttons
   fcs$cbtfeatA <- tclVar(param$cbtfeatA)
@@ -236,6 +235,7 @@ if (!file.exists(paramfile)) {
   fcs$cbttrimming <- tclVar(param$cbttrimming)
   fcs$cbtmanRect <- tclVar(param$cbtmanRect)
   fcs$cbtdynRange <- tclVar(param$cbtdynRange)
+  fcs$cbtdynRangeFreq <- tclVar(param$cbtdynRangeFreq)
   fcs$cbtshowLegend <- tclVar(param$cbtshowLegend)
   fcs$cbtshowMinBins <- tclVar(param$cbtshowMinBins)
   fcs$cbtgateData <- tclVar(param$cbtgateData)
@@ -262,10 +262,10 @@ if (!file.exists(paramfile)) {
   param$binSizesTriPos <- 2
   param$minCountTriPos <- 3
   # feature quadruplot
-  param$currVarQuad1 <- 1
-  param$currVarQuad2 <- 2
-  param$currVarQuad3 <- 3
-  param$currVarQuad4 <- 4
+  param$currVarQuad1 <- 5
+  param$currVarQuad2 <- 6
+  param$currVarQuad3 <- 7
+  param$currVarQuad4 <- 9
   param$binSizesQuadPos <- 2
   param$minCountQuadPos <- 3
 
@@ -283,8 +283,8 @@ if (!file.exists(paramfile)) {
   fcs$rbasinh <- tclVar("1")
   fcs$rbcalc <- tclVar("MSI")
   fcs$rbtrans <- tclVar("asinh")
-  fcs$popC1 <- tclVar("pos")
-  fcs$popC2 <- tclVar("pos")
+  fcs$rbpopC1 <- tclVar("pos")
+  fcs$rbpopC2 <- tclVar("pos")
 
   # check buttons
   fcs$cbtfeatA <- tclVar("0") # fix feature
@@ -298,6 +298,7 @@ if (!file.exists(paramfile)) {
   fcs$cbttrimming <- tclVar("0")
   fcs$cbtmanRect <- tclVar("0")
   fcs$cbtdynRange <- tclVar("1")
+  fcs$cbtdynRangeFreq <- tclVar("0")
   fcs$cbtshowLegend <- tclVar("1")
   fcs$cbtshowMinBins <- tclVar("0")
   fcs$cbtgateData <- tclVar("0")

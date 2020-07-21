@@ -9,8 +9,8 @@ tclRequire("BWidget")
 tcl("lappend", "auto_path", "../tcl/lib")
 tcl("lappend", "auto_path", "./tcl/lib")
 tclRequire("tkpng")
-#tcl("lappend", "auto_path","tcl/lib")
-#tcl("package","require","tkpng")
+#tcl("lappend", "auto_path", "tcl/lib")
+#tcl("package", "require", "tkpng")
 
 
 #::Tree::bindArea
@@ -44,23 +44,23 @@ tclRequire("tkpng")
 #::Tree::xview
 #::Tree::yview
 
-bwidget.bitmap.getfile = function (image) { 
-    return(paste(tcl("set", "BWIDGET::LIBRARY"),"/images/",image,".gif",sep="")) 
+bwidget.bitmap.getfile  <-  function (image) { 
+    return(paste(tcl("set", "BWIDGET::LIBRARY"), "/images/", image, ".gif", sep="")) 
 }
 
 # images used for nodes
-imageOpen=tclVar()
-imageClose=tclVar()
-imageFile=tclVar()
-imageMatrix=tclVar()
-imageBook=tclVar()
-imageBookOpen=tclVar()
-imageFunction=tclVar()
+imageOpen <- tclVar()
+imageClose <- tclVar()
+imageFile <- tclVar()
+imageMatrix <- tclVar()
+imageBook <- tclVar()
+imageBookOpen <- tclVar()
+imageFunction <- tclVar()
 
 tkimage.create("photo", imageOpen, file = bwidget.bitmap.getfile("open")) 
 tkimage.create("photo", imageClose, file = bwidget.bitmap.getfile("folder")) 
 tkimage.create("photo", imageFile, file = bwidget.bitmap.getfile("file")) 
-tkimage.create("photo",imageMatrix,data="
+tkimage.create("photo", imageMatrix, data="
   R0lGODlhEAAQAIUAAPwCBHx+fHRydPT69DxqhBxihBxunBx2pBx6nByCrPTy
   7NTm7Mze5OTq7GxqbKSelLSyrKyqpLSupGRiZOzu3Ozq3FxaXOzezBxyjBxe
   jOzm1ExOTERGROzavOTStDQ2NOTOrDw+POTGnCQqLAAAAAAAAAAAAAAAAAAA
@@ -72,7 +72,7 @@ tkimage.create("photo",imageMatrix,data="
   cmVhdGVkIGJ5IEJNUFRvR0lGIFBybyB2ZXJzaW9uIDIuNQ0KqSBEZXZlbENv
   ciAxOTk3LDE5OTguIEFsbCByaWdodHMgcmVzZXJ2ZWQuDQpodHRwOi8vd3d3
   LmRldmVsY29yLmNvbQA7")
-tkimage.create("photo",imageBook,data="
+tkimage.create("photo", imageBook, data="
   R0lGODlhEAAQAIQAAPwCBAQCBDyKhDSChGSinFSWlEySjCx+fHSqrGSipESO
   jCR6dKTGxISytIy6vFSalBxydAQeHHyurAxubARmZCR+fBx2dDyKjPz+/MzK
   zLTS1IyOjAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAAVkICCOZGmK
@@ -81,7 +81,7 @@ tkimage.create("photo",imageBook,data="
   jpF+IQAh/mhDcmVhdGVkIGJ5IEJNUFRvR0lGIFBybyB2ZXJzaW9uIDIuNQ0K
   qSBEZXZlbENvciAxOTk3LDE5OTguIEFsbCByaWdodHMgcmVzZXJ2ZWQuDQpo
   dHRwOi8vd3d3LmRldmVsY29yLmNvbQA7")
-tkimage.create("photo",imageBookOpen,data="
+tkimage.create("photo", imageBookOpen, data="
   R0lGODlhEAAQAIUAAPwCBAQCBExCNGSenHRmVCwqJPTq1GxeTHRqXPz+/Dwy
   JPTq3Ny+lOzexPzy5HRuVFSWlNzClPTexIR2ZOzevPz29AxqbPz6/IR+ZDyK
   jPTy5IyCZPz27ESOjJySfDSGhPTm1PTizJSKdDSChNzWxMS2nIR6ZKyijNzO
@@ -93,7 +93,7 @@ tkimage.create("photo",imageBookOpen,data="
   C8bHGBMj1daARgEjLyN03kPZc09FfkEAIf5oQ3JlYXRlZCBieSBCTVBUb0dJ
   RiBQcm8gdmVyc2lvbiAyLjUNCqkgRGV2ZWxDb3IgMTk5NywxOTk4LiBBbGwg
   cmlnaHRzIHJlc2VydmVkLg0KaHR0cDovL3d3dy5kZXZlbGNvci5jb20AOw==")
-tkimage.create("photo",imageFunction,data="
+tkimage.create("photo", imageFunction, data="
   R0lGODlhEAAQAIMAAPwCBAQCBMT+xAT+BASCBMT+/ATCBAT+/ARCRPz+xARC
   BPz+BATCxISCBDQyNMTCBCH5BAEAAAAALAAAAAAQABAAAARhEMgZwrwYBCFs
   vhs3eF8wDMJAVBVmnupazKRmGDFxzMVBBjcDQXfYHRA/QmKpKBYRSMoysVgw
@@ -103,86 +103,89 @@ tkimage.create("photo",imageFunction,data="
   d3d3LmRldmVsY29yLmNvbQA7")
 
 
-tkbindarea = function (widget,...) { 
-    tcl(widget,"bindArea", ...) 
+tkbindarea  <-  function (widget, ...) { 
+    tcl(widget, "bindArea", ...) 
 }
-tkbindimage = function (widget,...) { 
-    tcl(widget,"bindImage", ...) 
+tkbindimage  <-  function (widget, ...) { 
+    tcl(widget, "bindImage", ...) 
 }
-tkbindtext = function (widget,...) { 
-    tcl(widget,"bindText", ...) 
+tkbindtext  <-  function (widget, ...) { 
+    tcl(widget, "bindText", ...) 
 }
-tkchildren = function(widget,...) {
-	tcl(widget,"children",...)
+tkchildren  <-  function(widget, ...) {
+    tcl(widget, "children", ...)
 }
-tkclosetree = function (widget,...) { 
-    tcl(widget,"closetree", ...) 
+tkclosetree  <-  function (widget, ...) { 
+    tcl(widget, "closetree", ...) 
 }
-tkedit = function (widget,...) { 
-    tcl(widget,"edit", ...) 
+tkedit  <-  function (widget, ...) { 
+    tcl(widget, "edit", ...) 
 }
-tkgetframe = function(widget,...) {
+tkgetframe  <-  function(widget, ...) {
     # problem if called a second time for the same widget
-    ID=tclvalue(tcl(widget,"getframe",...))
-        if(exists("getframewin",envir=widget$env)) {
+    ID <- tclvalue(tcl(widget, "getframe", ...))
+        if (exists("getframewin", envir=widget$env)) {
           print("second call")
-          win=widget$env$getframewin
+          win <- widget$env$getframewin
         } else {
           #print("first call")
-          win=.Tk.newwin(ID)
-          assign(ID,win,envir=widget$env)
-          assign('parent',widget,envir=win$env)
-           widget$env$getframewin=win
+          win <- .Tk.newwin(ID)
+          assign(ID, win, envir=widget$env)
+          assign("parent", widget, envir=win$env)
+           widget$env$getframewin <- win
        }
     return(win)
 }
-tksetwidget = function(widget,...) {
-    tcl(widget,"setwidget",...)
+tksetwidget  <-  function(widget, ...) {
+    tcl(widget, "setwidget", ...)
 }
-tkexists = function (widget,...) { 
-    tcl(widget,"exists", ...) 
+tkexists  <-  function (widget, ...) { 
+    tcl(widget, "exists", ...) 
 }
-tkgetcanvas = function (widget,...) { 
-    tcl(widget,"getcanvas", ...) 
+tkgetcanvas  <-  function (widget, ...) { 
+    tcl(widget, "getcanvas", ...) 
 }
-tkline = function (widget,...) { 
-    tcl(widget,"line", ...) 
+tkline  <-  function (widget, ...) { 
+    tcl(widget, "line", ...) 
 }
-tknodes = function (widget, ...) {
-    return(tcl(widget,"nodes",...));
+tknodes  <-  function (widget,  ...) {
+    return(tcl(widget, "nodes", ...))
 }
-tkopentree = function (widget,...) { 
-    tcl(widget,"opentree", ...) 
+tkopentree  <-  function (widget, ...) { 
+    tcl(widget, "opentree", ...) 
 }
-tkparent = function (widget,...) { 
-    tcl(widget,"parent", ...) 
+tkparent  <-  function (widget, ...) { 
+    tcl(widget, "parent", ...) 
 }
-tkreorder = function (widget,...) { 
-    tcl(widget,"reorder", ...) 
+tkreorder  <-  function (widget, ...) { 
+    tcl(widget, "reorder", ...) 
 }
-tkselection = function (widget,...) { 
-    tcl(widget,"selection", ...) 
+tkselection  <-  function (widget, ...) { 
+    tcl(widget, "selection", ...) 
 }
-tkuse = function (widget,...) { 
-    tcl(widget,"use", ...) 
+tkselect  <-  function (widget, ...) { 
+    tcl(widget, "select", ...) 
 }
-tkvisible = function (widget,...) { 
-    tcl(widget,"visible", ...) 
+tkuse  <-  function (widget, ...) { 
+    tcl(widget, "use", ...) 
 }
-tkvisiblenodes = function (widget,...) { 
-    tcl(widget,"visiblenodes", ...) 
+tkvisible  <-  function (widget, ...) { 
+    tcl(widget, "visible", ...) 
+}
+tkvisiblenodes  <-  function (widget, ...) { 
+    tcl(widget, "visiblenodes", ...) 
 }
 
 ### ttk treewidget
-ttktag = function(widget,...) {
-	tcl(widget,"tag",...)
+ttktag  <-  function(widget, ...) {
+    tcl(widget, "tag", ...)
 }
 
 ### opens a tree widget
-tkopentree <- function (widget,node,...) {
-  tkitemconfigure(widget,node,image=imageBookOpen)
+tkopentree <- function (widget, node, ...) {
+  tkitemconfigure(widget, node, image=imageBookOpen)
 }
 ### closes a tree widget
-tkclosetree <- function (widget,node,...) { 
-  tkitemconfigure(widget,node,image=imageBook)
+tkclosetree <- function (widget, node, ...) { 
+  tkitemconfigure(widget, node, image=imageBook)
 }
