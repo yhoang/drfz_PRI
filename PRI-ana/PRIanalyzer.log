@@ -4,10 +4,32 @@
 #		2015-2020
 ##########	PRI-analyzer Update Log
 
-########## v0.4
+########## v0.40
 *** general
-- 
-- add tab 'quadruplots' to create plots of A-B-stat(C1/C2) with option of neg/pos population
+- !!! use script "Start_PRI-ana.R" from now on !!!
+- distributed functions into meaningful scripts, located in folder "functions"
+- added tab 'quadruplots' to create plots of A-B-stat(C1/C2)
+- debugged: switching between tabs keeps the set features
+- cleaned code in all R scripts
+  * 0_paths_and_packages.R
+  * plot_other_functions.R
+  * calculation_functions.R
+  * check_manipulate_user_inputs_functions.R
+  * GUI_main_function.R
+  * GUI_residual_functions.R
+  * interaction_database_function.R
+  * plot_diploT_functions.R
+  * plot_triploT_functions.R
+
+*** quadruploT
+- added option: set neg/pos population for Feature C1 and C2 separately
+- added option: dynamic frequency range 
+  * if checked, the real max frequency will be displayed on the plot and in the window frame
+  * if unchecked and real max frequency is higher than set, the top label on the legend will be red 
+- debugged: switching bin sizes does not change the positions of the labels and legends in the plot
+- as usual: a table named "[project]_PRIquadruvis_metadata.csv" will be created with setting and percentage values of the plot
+*** triploT
+- debugged: switching bin sizes does not change the positions of the labels and legends in the plot
 ########## 20200709
 
 
