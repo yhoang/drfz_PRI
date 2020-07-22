@@ -9,8 +9,9 @@
 if (work.station  ==  "asus-zenbook") {
   ### ASUS Zenbook
   Lib.path <- "/opt/R-3.5.1/library"
-
+  Param.path <- vector()
   setwd(file.path("", "scratch", "drfz_PRI", "PRI-ana"))
+
   fcs$db.path <- file.path("", "data", "databases")
   fcs$db.name <- "EM_20200210_EME002_WTCD4.sqlite3"
 
@@ -23,8 +24,9 @@ if (work.station  ==  "asus-zenbook") {
   fcs$template.file <- file.path("tcl", "template.png")
 } else if (work.station == "asus-vividbook") {
   Lib.path <- file.path("C:", "Program\ Files", "R", "R-3.5.1", "library")
-
+  Param.path <- vector()
   setwd(file.path("D:", "drfz_PRI", "PRI-ana"))
+
   fcs$db.path <- file.path("D:", "DB")
   fcs$db.name <- "SGJP_20180524_NZBxWIL21+Cytokines.sqlite3"
   fcs$working <- FALSE
@@ -35,12 +37,12 @@ if (work.station  ==  "asus-zenbook") {
   fcs$template.file <- file.path("tcl", "template.png")
 } else if (work.station == "drfz") {
   Lib.path <- "Y:/AG_Baumgrass/AG-PRI/R/R-3.6.1/library"
+  Param.path <- file.path("Y:", "AG_Baumgrass", "AG-PRI", "github_yhoang", "drfz_PRI", "PRI-ana")
+  setwd(file.path("Y:", "AG_Baumgrass", "AG-PRI", "PRI-ana"))
 
-  setwd(file.path("Y:", "AG_Baumgrass", "AG-PRI", "PRIanalyzer"))
   fcs$db.path <- file.path("Y:", "AG_Baumgrass", "AG-PRI", "DB")
   fcs$db.name <- ""
   fcs$working <- FALSE
-  #fcs$working <- TRUE
 
   ### set template location
   fcs$png.file <- file.path("tcl", "tmp.png")
@@ -64,8 +66,9 @@ if (work.station  ==  "asus-zenbook") {
   fcs$template.file <- file.path("tcl", "template.png")
 } else if (work.station == "delta") {
   Lib.path <- "/usr/local/lib/R/site-library"
-
+  Param.path <- vector()
   setwd(file.path("", "scratch", "drfz", "PRI", "PRI-ana"))
+
   fcs$db.path <- file.path("", "data", "databases")
   # fcs$db.name <- "RB_20191002_Good2018.sqlite3"
   fcs$db.name <- "YH_20190524_Tordesillas2016.sqlite3"
@@ -89,7 +92,7 @@ library(tcltk2, quietly=TRUE, lib.loc = Lib.path)
 library(R.devices, quietly=TRUE, lib.loc = Lib.path)
 
 ### load private library
-source(file.path("tcl", "libbwidget.r"))
+source(file.path("Y:", "AG_Baumgrass", "AG-PRI", "github_yhoang", "drfz_PRI", "PRI-ana", "tcl", "libbwidget.r"))
 
 
 ### global variables - DO NOT TOUCH! --------------------------------------------
@@ -188,7 +191,7 @@ fcs$legend.space <- 0
 fcs$legend.space.di <- 0
 if (!grepl("linux", sessionInfo()$R.version$os)) {
   fcs$legend.space <- 0.2
-  fcs$legend.space.di <- 0.03
+  fcs$legend.space.di <- 0.04
 }
 ### global variables - END
 
@@ -199,7 +202,7 @@ if (!grepl("linux", sessionInfo()$R.version$os)) {
 #dbGetQuery(DB, "ALTER TABLE Cytokines_SG_colnameIndex RENAME TO Cytokines_SG_markerIdentity")
 
 ### load PRI parameters if exist ----------------------------------------
-paramfile <- "myPRIparam.rda"
+paramfile <- file.path(Param.path, "myPRIparam.rda")
 if (file.exists(paramfile)) {
   printf("Loading myPRIparam.rda..")
   load(paramfile)

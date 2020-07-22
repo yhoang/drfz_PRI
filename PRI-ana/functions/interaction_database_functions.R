@@ -486,7 +486,7 @@ fcs$exit <- function(){
     param$nrow <- graphROW
     graphCOL <- tclvalue(this$vncol)
     param$ncol <- graphCOL
-    save(param, file = "myPRIparam.rda")
+    save(param, file = paramfile)
     ###
     
     tkdestroy(this$tt)
@@ -526,7 +526,7 @@ fcs$exitandstart <- function (){
   
   this$exit()
   source("Start_PRI-ana.R")
-  # load(file = "myPRIparam.rda")
+  # load(file = paramfile)
 }
 
 if (length(strsplit(fcs$db.name, "")[[1]]) >  0){

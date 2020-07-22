@@ -530,7 +530,7 @@ fcs$dotriploTfiles <- function(read=FALSE) {
         width=3.21 * max.nhorizplots, 
         height=3.5 * max.nvertiplots, 
         pointsize=11, {
-          label.cex <- 1.2
+          label.cex <- 1.1 - 0.5 * this$legend.space
           set.cex.axes <- 1
           set.mgp <- c(1.9, 0.5, 0)
           par(mfrow=c(max.nvertiplots, max.nhorizplots), oma=c(0.5, 1, 6, 1), mar=c(3, 4, 5, 1))
@@ -860,7 +860,7 @@ fcs$dotriploTtable <- function() {
           width=3.21 * max.nhorizplots, 
           height=3.5 * max.nvertiplots, 
           pointsize=11, {
-            label.cex <- 1.2
+            label.cex <- 1.1 - 0.5 * this$legend.space
             set.cex.axes <- 1
             set.mgp <- c(1.9, 0.5, 0)
             par(mfrow=c(max.nvertiplots, max.nhorizplots), oma=c(0.5, 1, 6, 1), mar=c(3, 4, 5, 1))
@@ -1597,7 +1597,7 @@ fcs$dotriploTOverview <- function(table=NA) {
                   ##### start triploT overview
                   ### set label and axes font sizes
                   
-                  label.cex <- 1.1
+                  label.cex <- 1.1 - 0.5 * this$legend.space
                   set.cex.axes <- 1
                   set.mgp <- c(1.9, 0.5, 0)
                   par(mfrow=c(max.nvertiplots, max.nhorizplots), oma=c(0.5, 1, 6, 1), mar=c(3, 4, 5, 1))
@@ -1841,7 +1841,7 @@ fcs$dotriploTOverview <- function(table=NA) {
             height=3.5 * max.nvertiplots, 
             pointsize=11, {
               ### new
-              label.cex <- 1.1
+              label.cex <- 1.1 - 0.5 * this$legend.space
               set.cex.axes <- 1
               set.mgp <- c(1.9, 0.5, 0)
               par(mfrow=c(max.nvertiplots, max.nhorizplots), oma=c(0.5, 1, 5, 1), mar=c(3, 4, 5, 1))
@@ -2293,7 +2293,7 @@ fcs$dotriploTOverview_ALL <- function(table=NA) {
               ##### start triploT overview
               ### set label and axes font sizes
               
-              label.cex <- 1.1
+              label.cex <- 1.1 - 0.5 * this$legend.space
               set.cex.axes <- 1
               set.mgp <- c(1.9, 0.5, 0)
               par(mfrow=c(max.nvertiplots, max.nhorizplots), oma=c(0.5, 1, 6, 1), mar=c(3, 4, 5, 1))
@@ -2549,7 +2549,7 @@ fcs$dotriploTOverview_ALL <- function(table=NA) {
               {
                 
                 ### new
-                label.cex <- 1.1
+                label.cex <- 1.1 - 0.5 * this$legend.space
                 set.cex.axes <- 1
                 set.mgp <- c(1.9, 0.5, 0)
                 par(mfrow=c(max.nvertiplots, max.nhorizplots), oma=c(0.5, 1, 5, 1), mar=c(3, 4, 5, 1))
@@ -2972,7 +2972,7 @@ fcs$dotriploTOverviewX <- function(table=NA) {
                 ##### start triploT overview
                 
                 ### label and axes font sizes
-                label.cex <- 1.2
+                label.cex <- 1.1 - 0.5 * this$legend.space
                 set.cex.axes <- 1
                 set.mgp <- c(1.9, 0.5, 0)
                 par(mfrow=c(max.nvertiplots, max.nhorizplots), oma=c(0.5, 1, 5, 1), mar=c(3, 4, 5, 1))
@@ -3343,7 +3343,7 @@ fcs$dotriploTOverviewXY <- function(table=NA) {
   plot.nrow <- as.numeric(tclvalue(this$vnrow))
   
   ### label and axes font sizes
-  label.cex <- 1.2
+  label.cex <- 1.1 - 0.5 * this$legend.space
   set.cex.axes <- 1
   set.mgp <- c(1.9, 0.5, 0)
   plot.idx <- 0
@@ -4135,7 +4135,7 @@ fcs$bintriplot <- function(
         text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
         text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.14 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
         
-        csv.content <- cbind(current.date, displayfile, this$current.cofactor, checkCALC,
+        csv.content <- c(current.date, displayfile, this$current.cofactor, checkCALC,
         colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange, 
         xmin.val, xmax.val, ymin.val, ymax.val,
         cutoffs[1], cutoffs[2], cutoffs[3],
@@ -4149,14 +4149,14 @@ fcs$bintriplot <- function(
         text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q3.total), col=quadrants.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
         text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.total), col=quadrants.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
         
-        csv.content <- cbind(current.date, displayfile, this$current.cofactor, checkCALC,
+        csv.content <- c(current.date, displayfile, this$current.cofactor, checkCALC,
         colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange,
         xmin.val, xmax.val, ymin.val, ymax.val,
         cutoffs[1], cutoffs[2], "NA", round(this$q1.total, 1), round(this$q2.total, 1), round(this$q3.total, 1), round(this$q4.total, 1))
         
       } else {
         ### no cutoffs are set, at least the absRange
-        csv.content <- cbind(current.date, displayfile, this$current.cofactor, checkCALC,
+        csv.content <- c(current.date, displayfile, this$current.cofactor, checkCALC,
         colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange,
         xmin.val, xmax.val, ymin.val, ymax.val,
         )
@@ -4240,7 +4240,7 @@ fcs$bintriplot <- function(
     text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.total), col=quadrants.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
     text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
     
-    csv.content <- cbind(current.date, displayfile, this$current.cofactor, checkCALC,
+    csv.content <- c(current.date, displayfile, this$current.cofactor, checkCALC,
     colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange, 
       xmin.val, xmax.val, ymin.val, ymax.val,
       cutoffs[1], cutoffs[2], cutoffs[3],

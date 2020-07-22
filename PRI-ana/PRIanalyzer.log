@@ -20,6 +20,10 @@
   * interaction_database_function.R
   * plot_diploT_functions.R
   * plot_triploT_functions.R
+- fixed label space differences between different OS (Linux<>Windows) with global parameters
+  * fcs$legend.space
+  * fcs$legend.space.di
+- fixed path for R scripts and R data (myPRIparam.rda)
 
 *** quadruploT
 - added option: set neg/pos population for Feature C1 and C2 separately
@@ -30,7 +34,7 @@
 - as usual: a table named "[project]_PRIquadruvis_metadata.csv" will be created with setting and percentage values of the plot
 *** triploT
 - debugged: switching bin sizes does not change the positions of the labels and legends in the plot
-########## 20200709
+########## 20200722
 
 
 ########## v0.39c

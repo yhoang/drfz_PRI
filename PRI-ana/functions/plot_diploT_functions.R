@@ -377,7 +377,7 @@ fcs$newdiploT <- function(len=26) {
   this$plot.windows <- c(this$plot.windows, dev.label)
   
   devNew(type="x11", title=sprintf("n-diploTs  x-range=[%.1f, %.1f] x-axis=%s", xminval, xmaxval, var1), width=8, height=len * 0.28, label=dev.label)
-  par(oma=c(0, 0.5, 2, 0), mar=c(2.5, 11, 1, 2))
+  par(oma=c(0, 0.5, 2, 0.8), mar=c(2.5, 11, 1, 2.8))
   plot(1, type = "n", frame.plot = FALSE, axes = FALSE,
     xlim=c(xminval - 0.5, xmaxval + 2), ylim = c(0.5, len),
     xlab=sprintf("%s (%s, binSize=%s/mincells=%s, cutoff=%s)", var1, checkTRANS, binSize, mincells, tclvalue(this$vcutoffs[[var1.idx]])), ylab="", cex.lab=1.0, cex.axis=0.9, mgp=set.mgp)
@@ -745,7 +745,7 @@ fcs$dodiGraph <- function(mode, total.cex=NA, set.zero=FALSE) {
        xlim=c(xmin - 10 * binSize, xmax),
        ylim=c(y_range[1], y_range[2]),
        xlab=sprintf("%s (%s, binSize=%s/mincells=%s, cutoff=%s)", var1, checkTRANS, binSize, mincells, tclvalue(this$vcutoffs[[var1.idx]])),
-       ylab=checkCALC, cex.lab=1.0, cex.axis=0.7, mgp=set.mgp)
+       ylab=checkCALC, cex.lab=1.0, cex.axis=0.7, mgp=set.mgp, xpd=TRUE)
   
   ### no box for now
   # box(lwd=0.8, col="darkgrey")
@@ -818,7 +818,7 @@ fcs$bindiplot <- function(
 ){ 
   this <- fcs
 
-  ### for manual entry
+  ### for manual entry / debugging
   if (FALSE) {
     data <- data[, c(colvec[i], var1.num)]
     cutoffs <- cutoffs[c(i, len)]
@@ -886,9 +886,9 @@ fcs$bindiplot <- function(
   ### if data is empty, only display 'empty data'
   if (nrow(data) == 0) {
     if (this$distepy == 0) {
-      text(x=xmax.val * 1 / 2, y=bin.pos + 0.2, labels="[no bins to display]", cex=0.5 * set.cex, adj=1, mgp=set.mgp, xpd=TRUE)
+      text(x=xmax.val * 1 / 2, y=bin.pos + 0.2 + 2 * this$legend.space.di, labels="[no bins to display]", cex=0.5 * set.cex, adj=1, mgp=set.mgp, xpd=TRUE)
     } else {
-      text(x = this$current.diploT.x - 1, y = bin.pos + 0.2, labels = "[no bins to display]", cex = 0.5 * set.cex, adj = 1, mgp = set.mgp, xpd = TRUE)
+      text(x = this$current.diploT.x - 1, y = bin.pos + 0.2 + 2 * this$legend.space.di, labels = "[no bins to display]", cex = 0.5 * set.cex, adj = 1, mgp = set.mgp, xpd = TRUE)
     }
     empty <- TRUE
   } else {
@@ -940,16 +940,14 @@ fcs$bindiplot <- function(
     if (checkCALC == "freq") {
       ### bin color factor
       my.calc.fac <- cut(my.calc$x, breaks=seq(0, 100, by=10), labels=1:10, include.lowest=TRUE)
-      levels(my.calc.fac) <- c(0, levels(my.calc.fac), 11, 1)
+
     } else if (checkCALC == "RSEM") {
       ### bin color factor
       my.calc.fac <- cut(my.calc$x, breaks=seq(0, 50, by=5), labels=1:10, include.lowest=TRUE)
-      levels(my.calc.fac) <- c(0, levels(my.calc.fac), 11, 12)
-      this$my.calc.fac2 <- my.calc.fac
       for (i in 1:length(my.calc.fac)){
         if (!is.na(my.calc$x[i])) {
           if (my.calc$x[i] >= 50 & my.calc$ncells[i] >= mincells) {
-            my.calc.fac[i] <- 11
+            my.calc.fac[i] <- 10
           }
         }
       }
@@ -962,9 +960,9 @@ fcs$bindiplot <- function(
         printf("I AM EMPTY, min.y = %s", min.y)
         empty <- TRUE
         if (this$distepy == 0) {
-          text(x = xmax.val * 1 / 2, y = bin.pos + 0.2, labels = "[no bins to display]", cex = 0.5 * set.cex, adj = 1, mgp = set.mgp, xpd = TRUE)
+          text(x = xmax.val * 1 / 2, y = bin.pos + 0.2 + 2 * this$legend.space.di, labels = "[no bins to display]", cex = 0.5 * set.cex, adj = 1, mgp = set.mgp, xpd = TRUE)
         } else {
-          text(x = this$current.diploT.x - 1, y = bin.pos + 0.2, labels = "[no bins to display]", cex = 0.5 * set.cex, adj = 1, mgp = set.mgp, xpd = TRUE)
+          text(x = this$current.diploT.x - 1, y = bin.pos + 0.2 + 2 * this$legend.space.di, labels = "[no bins to display]", cex = 0.5 * set.cex, adj = 1, mgp = set.mgp, xpd = TRUE)
         }
       } else {
         if (grepl("MSI", checkCALC) & diff(c(min.y, max.y)) <= 0.5) col.minmax <- "red"
@@ -998,7 +996,7 @@ fcs$bindiplot <- function(
     
     ### if there are bins to display
     if (!empty) {
-      my.calc <- cbind(my.calc, fac=as.numeric(as.character(my.calc.fac)))
+      my.calc <- cbind(my.calc, fac=as.numeric(as.character(my.calc.fac)) + 1)
       
       ### get min, max and absolute bin range of feat. B in all bins with mincells
       range.B <- range(my.calc$x[which(my.calc$ncells >= mincells)])
@@ -1060,7 +1058,7 @@ fcs$bindiplot <- function(
         
         ### plot bin
         if (plotting) {
-          rect(sub2, bin.pos, sub2 + binSize, bin.pos + 0.5, col = bin.color, border = bin.border, lwd = bin.lwd)
+          rect(sub2, bin.pos + 2 * this$legend.space.di, sub2 + binSize, bin.pos + 0.5 + 2 * this$legend.space.di, col = bin.color, border = bin.border, lwd = bin.lwd)
         }
         
         if (my.calc$ncells[i] > max.cells) max.cells <- my.calc$ncells[i]   
@@ -1082,7 +1080,7 @@ fcs$bindiplot <- function(
       rect.step <- round(diff(c(par()$usr[3], par()$usr[4])) / 100, 2)
       
       ### draw line sigments between pairs of points
-      segments(cutoffs[2], bin.pos - 0.12, x1 = cutoffs[2], y1 = bin.pos + 0.55)
+      segments(cutoffs[2], bin.pos - 0.12 + 2 * this$legend.space.di, x1 = cutoffs[2], y1 = bin.pos + 0.55 + 2 * this$legend.space.di)
       ### get percentage of cells left and right from cutoff x
       data.left <- data.old[which(data.old[, 2] < cutoffs[2]), ]
       data.right <- data.old[which(data.old[, 2] >= cutoffs[2]), ]
@@ -1092,11 +1090,11 @@ fcs$bindiplot <- function(
       ### and plot the percentages of cells left and right from cutoff x 
       # [ink=black]
       text(x = plot.xmin - rect.step,
-      y = bin.pos + 0.65 + this$legend.space.di,
+      y = bin.pos + 0.65 + 3 * this$legend.space.di,
       label = sprintf("%0.1f%% ", cells.left),
       cex = 0.5 * set.cex, pos = 4)     
       text(x = plot.xmax + 3.5 * rect.step,
-      y = bin.pos + 0.65 + this$legend.space.di,
+      y = bin.pos + 0.65 + 3 * this$legend.space.di,
       label = sprintf("%0.1f%% ", cells.right),
       cex = 0.5 * set.cex, pos = 2)
       
@@ -1110,11 +1108,11 @@ fcs$bindiplot <- function(
         prod.right <- 100 * (nrow(data.right[which(data.right[, 1] >= cutoffs[1]), ]) / nrow(data.right))
 
         text(x = plot.xmin + rect.step,
-          y = bin.pos + 0.65 + this$legend.space.di,
+          y = bin.pos + 0.65 + 3 * this$legend.space.di,
           label = sprintf("%0.1f%% ", prod.left),
           cex = 0.5 * set.cex, col = "red", pos = 2)
-        text(x = plot.xmax + 1.5 * rect.step,
-          y = bin.pos + 0.65 + this$legend.space.di,
+        text(x = plot.xmax + 1.5 * rect.step - 2 * this$legend.space.di,
+          y = bin.pos + 0.65 + 3 * this$legend.space.di,
           label = sprintf("%0.1f%% ", prod.right),
           cex = 0.5 * set.cex, col = "red", pos = 4)
         
@@ -1134,11 +1132,11 @@ fcs$bindiplot <- function(
           prod.right <- 100 * (nrow(data.right[which(data.right[, 1] >= cutoffs[1]), ]) / data.lengths)
           
           text(x = plot.xmin + rect.step,
-            y = bin.pos + 0.65 + this$legend.space.di,
+            y = bin.pos + 0.65 + 3 * this$legend.space.di,
             label = sprintf("%0.1f%% ", prod.left),
             cex = 0.5 * set.cex, col = "chartreuse4", pos = 2)
-          text(x = plot.xmax + 1.5 * rect.step,
-            y = bin.pos + 0.65 + this$legend.space.di,
+          text(x = plot.xmax + 1.5 * rect.step - 2 * this$legend.space.di,
+            y = bin.pos + 0.65 + 3 * this$legend.space.di,
             label = sprintf("%0.1f%% ", prod.right),
             cex=0.5 * set.cex, col="chartreuse4", pos = 4)
           
@@ -1167,7 +1165,7 @@ fcs$bindiplot <- function(
         print.minmax <- sprintf("min/max=%0.1f/%0.1f%s", minX, maxX, range)
       }
       # print to the right of plot area
-      text(x=sub2 + 0.8, y=bin.pos - 0.04, label=print.minmax, col=col.minmax, cex=0.5 * set.cex * totalcex, pos=4, xpd=TRUE)
+      text(x=sub2 + 0.8 + 12 * this$legend.space.di, y=bin.pos - 0.04 + 2 * this$legend.space.di, label=print.minmax, col=col.minmax, cex=0.5 * set.cex * totalcex, pos=4, xpd=TRUE)
     }
   }
   
@@ -1182,17 +1180,17 @@ fcs$bindiplot <- function(
   if (empty) {
     if (this$distepy == "1") {
       text(x = xmax.val * 2 / 3,
-      y = bin.pos + 0.4, label = print.label,
+      y = bin.pos + 0.4 + 2 * this$legend.space.di, label = print.label,
       cex = 0.6 * set.cex * totalcex, pos = 4, col = "red", xpd = TRUE)
     } else {
       text(x = this$current.diploT.x,
-      y = bin.pos + 0.4, label = print.label,
+      y = bin.pos + 0.4 + 2 * this$legend.space.di, label = print.label,
       cex = 0.6 * set.cex * totalcex, pos = 4, col = "red", xpd = TRUE)
     }
   } else {
-    text(x = sub2 + 0.8,
-      y = bin.pos + 0.4,
-      label = print.label, cex = 0.6 * set.cex * totalcex, pos = 4)
+    text(x = sub2 + 0.8 + 12 * this$legend.space.di,
+      y = bin.pos + 0.4 + 2 * this$legend.space.di,
+      label = print.label, cex = 0.6 * set.cex * totalcex, pos = 4, xpd = TRUE)
   }
   
   ### print second feature and file name on y axis horizontal
@@ -1205,7 +1203,7 @@ fcs$bindiplot <- function(
     this$axis.label[bin.pos + 1] <- paste0(this$axis.label[bin.pos + 1], colnames(data)[1])
   } 
   
-  text(x=filename.pos.x, y=bin.pos + 0.2, labels=this$axis.label[bin.pos + 1], 
+  text(x=filename.pos.x, y=bin.pos + 0.2 + 2 * this$legend.space.di, labels=this$axis.label[bin.pos + 1], 
        cex=0.6 * set.cex, pos=2, mgp=set.mgp, xpd=TRUE)
   
 }

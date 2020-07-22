@@ -535,7 +535,7 @@ fcs$binquadruplot <- function(
     my.calc.fac.C2 <- cut(freq.C2$x, breaks=seq(0, 100, by=10), labels=1:10, include.lowest=TRUE)
 
     ### get only data table where Z1 and Z2 is produced
-    eval(parse(text=paste("tdata.double = data[ which((data[, 3]", sign.C1[1], " cutoffs[3]) ", "& (data[, 4]", sign.C2[1], " cutoffs[4])), ]", sep="")))
+    eval(parse(text=paste("tdata.double = tdata[ which((tdata[, 3]", sign.C1[1], " cutoffs[3]) ", "& (tdata[, 4]", sign.C2[1], " cutoffs[4])), ]", sep="")))
     ### construct bin table with number of cells per bin
     fX.double <- cut(tdata.double[, 1], breaks=seq(xmin.val, xmax.val, by=binSize), include.lowest=TRUE, dig.lab=5)
     fY.double <- cut(tdata.double[, 2], breaks=seq(ymin.val, ymax.val, by=binSize), include.lowest=TRUE, dig.lab=5)
