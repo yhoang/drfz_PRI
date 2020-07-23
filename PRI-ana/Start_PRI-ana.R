@@ -39,6 +39,8 @@ if (work.station == "asus-zenbook") {
   PRIana.path <- file.path("C:", "Users", "ag-baumgras", "Documents", "R", "functions")
 } else if (work.station == "asus-vividbook") {
   PRIana.path <- file.path("D:", "drfz_PRI", "PRI-ana", "functions")
+} else if (work.station == "felix") {
+ PRIana.path <- file.path("~","Github", "DRFZ-AG-Baumgrass", "AG_Baumgrass","PRI", "drfz_PRI", "PRI-ana", "functions")
 }
 
 ### Load functions -------------------------------------------------------

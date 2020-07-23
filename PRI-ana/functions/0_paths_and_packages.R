@@ -86,13 +86,24 @@ if (work.station  ==  "asus-zenbook") {
   fcs$db.name <- "SG_20161030_HumanCytokines_CD4mem.sqlite3"
   fcs$working <- TRUE
   density <- TRUE
+
+} else if (work.station == "felix") {
+  Lib.path <- "/home/felix/R/x86_64-pc-linux-gnu-library/3.6"
+  Param.path <- vector()
+  setwd(file.path("~", "Github", "DRFZ-AG-Baumgrass", "AG_Baumgrass","PRI","drfz_PRI","PRI-ana"))
+  fcs$db.path <- file.path("..", "..","DB")
+  fcs$db.name <- "RB_20191002_Good2018.sqlite3"
+  # fcs$db.name <- "SG_20161030_HumanCytokines_CD4mem.sqlite3"
+  fcs$working <- TRUE
+  density <- TRUE
 }
+
 library(RSQLite, quietly=TRUE, lib.loc = Lib.path)
 library(tcltk2, quietly=TRUE, lib.loc = Lib.path)
 library(R.devices, quietly=TRUE, lib.loc = Lib.path)
 
 ### load private library
-source(file.path("Y:", "AG_Baumgrass", "AG-PRI", "github_yhoang", "drfz_PRI", "PRI-ana", "tcl", "libbwidget.r"))
+source(file.path("~", "Github", "DRFZ-AG-Baumgrass", "AG_Baumgrass","PRI","drfz_PRI","PRI-ana", "tcl", "libbwidget.r"))
 
 
 ### global variables - DO NOT TOUCH! --------------------------------------------

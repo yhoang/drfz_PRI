@@ -4,8 +4,9 @@ options(shiny.error=browser)
 
 ### chose your workstation ---------------------------------
 # work.station = "asus-zenbook"
-work.station = "delta"
+# work.station = "delta"
 # work.station = "drfz"
+work.station = "felix"
 
 
 ### load paths - DO NOT TOUCH! ----------------------------
@@ -55,6 +56,23 @@ if (work.station == "asus-zenbook") {
   
   # set paths for app and databases
   App.path="/scratch/drfz/PRI/PRI-base/"
+  DB.path="/data/databases/"
+  FlowRepDb.path="www/FlowRep_Experiments.sqlite3"
+  FCS.download.path="/data/databases/FCS"
+  
+} else if (work.station == "felix") {
+  ### DELTA
+  PRIbase.path = "~/Github/DRFZ-AG-Baumgrass/AG_Baumgrass/PRI/drfz_PRI/PRI-base"
+  
+  ####### Set directory
+  setwd(PRIbase.path)
+  
+  # Loads all needed packages.
+  Lib.path = "/home/felix/R/x86_64-pc-linux-gnu-library/3.6"
+  source("www/packages.R")
+  
+  # set paths for app and databases
+  App.path="~/Github/DRFZ-AG-Baumgrass/AG_Baumgrass/PRI/drfz_PRI/PRI-base/"
   DB.path="/data/databases/"
   FlowRepDb.path="www/FlowRep_Experiments.sqlite3"
   FCS.download.path="/data/databases/FCS"
