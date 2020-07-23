@@ -89,7 +89,7 @@ if (work.station  ==  "asus-zenbook") {
 
 } else if (work.station == "felix") {
   Lib.path <- "/home/felix/R/x86_64-pc-linux-gnu-library/3.6"
-  Param.path <- vector()
+  Param.path <- file.path("~", "Github", "DRFZ-AG-Baumgrass", "AG_Baumgrass","PRI","drfz_PRI","PRI-ana")
   setwd(file.path("~", "Github", "DRFZ-AG-Baumgrass", "AG_Baumgrass","PRI","drfz_PRI","PRI-ana"))
   fcs$db.path <- file.path("..", "..","DB")
   fcs$db.name <- "RB_20191002_Good2018.sqlite3"
