@@ -6,8 +6,8 @@ options(shiny.error=browser)
 # work.station = "asus-zenbook"
 # work.station = "delta"
 # work.station = "drfz"
-work.station = "felix"
-
+# work.station = "felix"
+work.station = "delta_local"
 
 ### load paths - DO NOT TOUCH! ----------------------------
 if (work.station == "asus-zenbook") {
@@ -77,7 +77,25 @@ if (work.station == "asus-zenbook") {
   FlowRepDb.path="www/FlowRep_Experiments.sqlite3"
   FCS.download.path="/data/databases/FCS"
   
+} else if (work.station == "delta_local") {
+  ### DELTA
+  PRIbase.path = "/home/flohrke/PRI-Github/drfz_PRI/PRI-base/"
+  # Path for packages
+  #Lib.path = "/usr/local/lib/R/library/site-library"
+  Lib.path = "/home/flohrke/R/x86_64-pc-linux-gnu-library/3.6"
+  # Set paths for app and databases
+  App.path="/home/flohrke/PRI-Github/drfz_PRI/PRI-base/"
+  DB.path="/data/databases/"
+  FCS.download.path="/data/databases/FCS"
+  FlowRepDb.path="www/FlowRep_Experiments.sqlite3"
 }
+
+### Starts app. ---------------------------------------------------
+####### Set directory
+setwd(PRIbase.path)
+
+# Loads all needed packages.
+source("www/packages.R")
 
 ### starts app. ---------------------------------------------------
 runApp()

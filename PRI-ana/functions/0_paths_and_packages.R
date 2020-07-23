@@ -73,7 +73,9 @@ if (work.station  ==  "asus-zenbook") {
   # fcs$db.name <- "RB_20191002_Good2018.sqlite3"
   fcs$db.name <- "YH_20190524_Tordesillas2016.sqlite3"
 
-  fcs$table.dir <- "/scratch/drfz/Spitzer2017/glmnet_bio_keep/"
+  fcs$table.dir <- "/scratch/drfz/Spitzer2017library(RSQLite, quietly=TRUE, lib.loc = Lib.path)
+library(tcltk2, quietly=TRUE, lib.loc = Lib.path)
+library(R.devices, quietly=TRUE, lib.loc = Lib.path)/glmnet_bio_keep/"
   fcs$working <- TRUE
   #fcs$working <- FALSE
 
@@ -96,14 +98,37 @@ if (work.station  ==  "asus-zenbook") {
   # fcs$db.name <- "SG_20161030_HumanCytokines_CD4mem.sqlite3"
   fcs$working <- TRUE
   density <- TRUE
-}
+  #source(file.path("~", "Github", "DRFZ-AG-Baumgrass", "AG_Baumgrass","PRI","drfz_PRI","PRI-ana", "tcl", "libbwidget.r"))
+
+} else if (work.station=="delta_local") {
+
+  Lib.path = "/home/flohrke/R/x86_64-pc-linux-gnu-library/3.6"
+  setwd(file.path("","home","flohrke","PRI-Github","drfz_PRI","PRI-ana"))
+  Param.path <- file.path("","home","flohrke","PRI-Github","drfz_PRI","PRI-ana")
+  fcs$db.path=file.path("","data","databases")
+  fcs$db.name="RB_20191002_Good2018.sqlite3"
+  #fcs$db.name="YH_20190524_Tordesillas2016.sqlite3"
+  
+  fcs$table.dir = "/scratch/drfz/Spitzer2017/glmnet_bio_keep/"
+  fcs$working=TRUE
+  #fcs$working=FALSE
+  
+  ### set template location
+  fcs$png.file=file.path("tcl","tmp.png")
+  fcs$template.file=file.path("tcl","template.png")
+
+  # load private library
+  #source(file.path("","home","flohrke","PRI-Github","drfz_PRI","PRI-ana", "tcl", "libbwidget.r"))
+
+} 
 
 library(RSQLite, quietly=TRUE, lib.loc = Lib.path)
 library(tcltk2, quietly=TRUE, lib.loc = Lib.path)
 library(R.devices, quietly=TRUE, lib.loc = Lib.path)
 
 ### load private library
-source(file.path("~", "Github", "DRFZ-AG-Baumgrass", "AG_Baumgrass","PRI","drfz_PRI","PRI-ana", "tcl", "libbwidget.r"))
+## changed to relative path since wd will be set before through designated work.station
+source("./tcl/libbwidget.r")
 
 
 ### global variables - DO NOT TOUCH! --------------------------------------------
