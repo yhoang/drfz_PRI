@@ -18,13 +18,14 @@ fcs$version <- "v0.40"
 ### "asus-vividbook": ASUS Vividbook
 ### ----------------------------------------------------------------------
 
-work.station <- "asus-vividbook"
-work.station <- "drfz"
+# work.station <- "asus-vividbook"
+# work.station <- "drfz"
 # work.station <- "lenovoz570"
 # work.station <- "rev"
 # work.station <- "Ria"
 # work.station <- "Praktika"
 # work.station <- "asus-zenbook"
+work.station <- "felix"
 
 if (work.station == "asus-zenbook") {
   PRIana.path <- file.path("", "scratch", "drfz_PRI", "PRI-ana", "functions") 
