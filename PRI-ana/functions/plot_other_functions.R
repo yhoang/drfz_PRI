@@ -514,15 +514,15 @@ fcs$plotHistograms <- function(plotter, pdf) {
   if (pdf) {
     if (FALSE) {
       if (len.colvec / 5 > 2) {
-        #print("5")
+        
         par(mfrow=c(7, ceiling(len.colvec / 7)), oma=c(3, 3, 4, 3), mar=c(5, 5, 7, 5))
         set.cex <- 2.5
       } else if (len.colvec / 4 > 2) {
-        #print("4")
+        
         par(mfrow=c(6, ceiling(len.colvec / 6)), oma=c(3, 3, 4, 3), mar=c(5, 5, 7, 5))
         set.cex <- 2.5
       } else if (len.colvec / 3 > 2) {
-        #print("3")
+       
         par(mfrow=c(5, ceiling(len.colvec / 5)), oma=c(3, 3, 4, 3), mar=c(5, 5, 7, 5))
         set.cex <- 2
       } else {
@@ -530,7 +530,7 @@ fcs$plotHistograms <- function(plotter, pdf) {
         set.cex <- 1.5
       }
     }
-    print("hallo")
+    
   } else if (length(which(dev.label == names(devList()))) == 0) {
     devNew(type="x11", title=sprintf("Histograms for %sploTs", plotter), width=3 * 4, height=ceiling(len.colvec / 3) * 3.1, label=dev.label)
     if (len.colvec / 5 > 2) par(mfrow=c(ceiling(len.colvec / 5), 5), oma=c(2.5, 2, 2.5, 2), mar=c(3, 2, 3, 2))
