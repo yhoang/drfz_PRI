@@ -279,7 +279,7 @@ fcs$autoSetCutoff <- function() {
 					#printf("inc=%s list[3]=%s",inc,incline_list[[inc]][3])
 				
 					### check if there is at least one minima
-				  # difference at position inc should be -, and at position inc+1 should be +
+				  	# difference at position inc should be -, and at position inc+1 should be +
 					if (incline_list[[inc]][3] < 0 & incline_list[[inc+1]][3] > 0) {
 						#printf("-turn inc[%s]=%0.5f inc[%s]=%0.5f x=%s",inc,incline_list[[inc]][3],inc+1,incline_list[[inc+1]][3],incline_list[[inc]][2])
 						idx.minima=c(idx.minima,inc)
