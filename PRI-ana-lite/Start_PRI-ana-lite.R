@@ -40,11 +40,15 @@ if (length(strsplit(Main$db.name, "")[[1]]) >  0){
 
     # database connection is established at Main$conn
     Main$connectDb(file.path(Main$db.path, Main$db.name))
+    
 } else {
     file <- tclvalue(tkgetOpenFile(initialdir=fcs$db.path, defaultextension="sqlite3"))
     Main$connectDb(file)
     Main$db.name <- file
 }
+
+# retrieve MetaData 
+Main$getMetaData(Main$conn)
 
 # Start App
 Main$GUImain()

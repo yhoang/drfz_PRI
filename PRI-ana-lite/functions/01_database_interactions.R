@@ -33,20 +33,38 @@ Main$getMetaData <- function(connector) {
   Current$all.tables = dbListTables(connector)
   Current$df.num = 2
   Current$dataframes.name <- vector()
+
+  # dont know what these are for -> maybe saving after own rectangle?
   Current$dataframes.name[1] <- "Rectangle_Data_Raw"
   Current$dataframes.name[2] <- "Rectangle_Data_Transformed"
+
   ## sorting of metadata from tables
   # index for metadata (looks for any of these patterns)
   idx <- grep("markerIdentity|colnameIndex|fileIdentity|fileIndex|UserHistory|Classification|equipmentInfo|fileComments|SPILL", Current$all.tables)
 
   for (i in idx){
-  Current$df.num <- Current$df.num + 1 
-    
-  nam <- paste("dataframes", Current$df.num, sep="")
-  df <- Current$getDFtable(Current$all.tables[i])
-  assign(nam, df, envir=Main) 
-  Current$dataframes.name[Current$df.num] <- Current$all.tables[i]
+    Current$df.num <- Current$df.num + 1 
+      
+    nam <- paste("dataframes", Current$df.num, sep="")
+    df <- Current$getDFtable(Current$all.tables[i])
+    assign(nam, df, envir=Main) 
+    Current$dataframes.name[Current$df.num] <- Current$all.tables[i]
   }
-  print("end")
 
+  # contains absolute num of different subsets/projects
+  Current$all.tables = Current$all.tables[-idx]
+  Current$current.table = Current$all.tables[1]
+
+  # get indices for filenames and table
+  idx.table <- grep(paste0("^", Current$all.tables[1], "_"), Current$dataframes.name)
+  idx.file <- grep("fileIdentity|fileIndex", Current$dataframes.name)
+  
+  # assigning different names to fileid/markerid depending on retrieved data
+  if (grepl("Identity", Current$dataframes.name[idx.file[1]])) Current$fileid_name <- "_fileIdentity"
+  else Current$fileid_name <- "_fileIndex"
+  idx.stain <- grep("markerIdentity|colnameIndex", Current$dataframes.name)[1]
+  if (grepl("Identity", Current$dataframes.name[idx.stain])) Current$markerid_name <- "_markerIdentity"
+  else Current$markerid_name <- "_colnameIndex"
+
+  print("Metadata prepared")
 }

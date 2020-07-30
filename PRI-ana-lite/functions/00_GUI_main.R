@@ -22,7 +22,7 @@ Main$GUImain <- function() {
     tkconfigure(Current$mainframe, menu=topMenu)
     fileMenu <- tkmenu(topMenu, tearoff=FALSE)
     tkadd(topMenu, "command", label = "Close", command = function() {
-        Current$GUIquit
+      Current$GUIquit()
     })
 
     #tkpack(Current$mainframe)
@@ -45,9 +45,9 @@ Main$GUImain <- function() {
     ## add filenames from database
     ## add select filename functionality
     ## add refresh after select
-    tkgrid(tklabel(comboboxframe, text = "File: "), comboboxfiles, sticky = "w")
+    tkgrid(tklabel(comboboxframe, text = "File: "), Current$comboboxfiles, sticky = "w")
     tkgrid(comboboxframe, pady = 10)
-    tkgrid(subframe, pady = 1)
+    tkgrid(Current$subframe, pady = 1)
 
 
     # create entry values
