@@ -7,7 +7,6 @@
 fcs$GUImain <- function () {
   this <- fcs
   this$total.projects <- dbListTables(this$conn)
-  
   this$dataframes.name <- vector()
   this$dataframes.name[1] <- "Rectangle_Data_Raw"
   this$dataframes.name[2] <- "Rectangle_Data_Transformed"
