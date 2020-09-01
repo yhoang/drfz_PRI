@@ -25,25 +25,36 @@ Main$GUImain <- function() {
       Current$GUIquit()
     })
 
-    # create listbox that contains projects
-    listbox = tklistbox(Current$mainframe)
-    tkpack(listbox, side = "top")
-    tk2tip(listbox, "Double Click to Open")
+    ### Preselection Status of project (preselect = TRUE)
+    if (Current$preselection == TRUE) {
+       
+      # create listbox that contains projects
+      listbox = tklistbox(Current$mainframe)
+      tkpack(listbox, side = "top")
+      tk2tip(listbox, "Double Click to Open")
 
-    # bind double click command to select project
-    tkbind(listbox, "<Double-Button-1>", function(){
-      selection = as.integer(tclvalue(tkcurselection(listbox)))
-      Current$project = Current$returnTablenames(file.path(Current$db.path, Current$db.name))[selection+1]
-      print(Current$project)
-    }
-    )
+      # retrieve tablenames from database 
+      all_tables = Current$returnTablenames(file.path(Current$db.path, Current$db.name))
 
-    # retrieve tablenames from database 
-    all_tables = Current$returnTablenames(file.path(Current$db.path, Current$db.name))
+      # display tablenames in listbox
+      for (table in 1:length(all_tables)) {
+        tkinsert(listbox, "end", all_tables[table])
+      }
 
-    # display tablenames in listbox
-    for (table in 1:length(all_tables)) {
-      tkinsert(listbox, "end", all_tables[table])
+      # bind double click command to select project
+      tkbind(listbox, "<Double-Button-1>", function(){
+        selection = as.integer(tclvalue(tkcurselection(listbox)))
+
+        # assigning selected project
+        Current$project = Current$returnTablenames(file.path(Current$db.path, Current$db.name))[selection+1]
+        print(Current$project)
+
+        # reload of app without preselection window
+        Current$preselection = FALSE
+        tkdestroy(Current$mainframe)
+        Current$GUImain()
+      }
+      )
     }
 
     #tkpack(Current$mainframe)

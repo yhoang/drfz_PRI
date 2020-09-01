@@ -51,4 +51,6 @@ if (length(strsplit(Main$db.name, "")[[1]]) >  0){
 Main$getMetaData(Main$conn)
 
 # Start App
+# preselection for opening project selection once at start
+Main$preselection = TRUE
 Main$GUImain()
