@@ -4,6 +4,18 @@
 
 # ---------- # Interaction functions with the sqlite3 database # ---------- #
 
+# retrieve main table names from database and return
+Main$returnTablenames <- function(database.path) {
+  # get all tablenames from database
+  conn = dbConnect(SQLite(), dbname = database.path)
+  all_tables = dbListTables(conn)
+
+  # idx to filter out non-main table names
+  idx <- grep("markerIdentity|colnameIndex|fileIdentity|fileIndex|UserHistory|Classification|equipmentInfo|fileComments|SPILL", all_tables)
+  return(all_tables[-idx])
+}
+
+
 # database connector call
 Main$connectDb <- function(fname){
   Current <- Main

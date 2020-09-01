@@ -25,29 +25,54 @@ Main$GUImain <- function() {
       Current$GUIquit()
     })
 
+    # create listbox that contains projects
+    listbox = tklistbox(Current$mainframe)
+    tkpack(listbox, side = "top")
+    tk2tip(listbox, "Double Click to Open")
+
+    # bind double click command to select project
+    tkbind(listbox, "<Double-Button-1>", function(){
+      selection = as.integer(tclvalue(tkcurselection(listbox)))
+      Current$project = Current$returnTablenames(file.path(Current$db.path, Current$db.name))[selection+1]
+      print(Current$project)
+    }
+    )
+
+    # retrieve tablenames from database 
+    all_tables = Current$returnTablenames(file.path(Current$db.path, Current$db.name))
+
+    # display tablenames in listbox
+    for (table in 1:length(all_tables)) {
+      tkinsert(listbox, "end", all_tables[table])
+    }
+
     #tkpack(Current$mainframe)
 
     # create subframe
-    Current$subframe = tkframe(Current$mainframe)
+    #Current$subframe = tkframe(Current$mainframe)
 
     ## combobox to choose files
 
     # get filenames for table and combobox
-    Current$current.fileid_name = "_fileIndex"
-    Current$total.projects <- dbListTables(Current$conn)
-    Current$current.project <- Current$total.projects[1]
-    Current$current.filetable <- Current$getDFtable(paste0(Current$current.project, Current$fileid_name))
-    Current$current.filenames <- Current$current.filetable[, 2]
+    #Current$current.fileid_name = "_fileIndex"
+    #Current$total.projects <- dbListTables(Current$conn)
+    #Current$current.project <- Current$total.projects[1]
+    #Current$current.filetable <- Current$getDFtable(paste0(Current$current.project, Current$fileid_name))
+    #Current$current.filenames <- Current$current.filetable[, 2]
 
 
-    comboboxframe = tkframe(Current$subframe)
-    Current$comboboxfiles = ttkcombobox(comboboxframe, values = "", width = 40)
+    #listboxframe = tkframe(Current$subframe)
+    #Current$listbox = tklistbox(listboxframe, values = "", width = 40)
+
+    #listboxframe = tkframe(Current$subframe)
+    #Current$comboboxfiles = tklistbox(listboxframe)
     ## add filenames from database
     ## add select filename functionality
     ## add refresh after select
-    tkgrid(tklabel(comboboxframe, text = "File: "), Current$comboboxfiles, sticky = "w")
-    tkgrid(comboboxframe, pady = 10)
-    tkgrid(Current$subframe, pady = 1)
+    #tkpack(tklabel(comboboxframe, text = "File: "), Current$comboboxfiles)
+    #tkpack(listboxframe, pady = 10)
+    #tkgrid(listboxframe, pady = 10)
+    #tkpack(Current$subframe)
 
 
     # create entry values

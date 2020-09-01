@@ -14,7 +14,7 @@ fcs$GUImain <- function () {
   # sort metadata from tables first ---------------------------
   # index for metadata
   idx <- grep("markerIdentity|colnameIndex|fileIdentity|fileIndex|UserHistory|Classification|equipmentInfo|fileComments|SPILL", this$total.projects)
-  
+
   for (i in idx){
     this$df.num <- this$df.num + 1 
     
