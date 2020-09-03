@@ -600,6 +600,12 @@ fcs$dotriploTfiles <- function(read=FALSE) {
               cex.lab=set.cex, cex.axis=0.5 * set.cex.axes, mgp=set.mgp)
             box(lwd=0.8, col="darkgrey")
             
+            # check if date should be added
+            if (checkDATE == "1") {
+            date <- gsub("-", "", Sys.Date())
+            title(main=date, outer=TRUE, line=1, cex.main=1.3, adj=1)
+            }
+
             ### draw axis on the bottom and on the left
             axis(side=1, at=scale, labels=label, las=1, cex.axis=set.cex.axes, mgp=set.mgp, col="darkgrey")
             axis(side=2, at=scale, labels=label, las=3, cex.axis=set.cex.axes, mgp=set.mgp, col="darkgrey")
@@ -750,10 +756,11 @@ fcs$dotriploTfiles <- function(read=FALSE) {
   
   tkconfigure(this$tt, cursor = "left_ptr")
   
-  if (checkDATE == "1") {
-    date <- gsub("-", "", Sys.Date())
-    title(main=date, outer=TRUE, line=1, cex.main=1.3, adj=1)
-  }
+  ## BUGFIX date attempted to add after plot closure - moved into toPDF
+  #if (checkDATE == "1") {
+  #  date <- gsub("-", "", Sys.Date())
+  #  title(main=date, outer=TRUE, line=1, cex.main=1.3, adj=1)
+  #}
   
 }
 
