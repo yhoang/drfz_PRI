@@ -126,6 +126,9 @@ library(RSQLite, quietly=TRUE, lib.loc = Lib.path)
 library(tcltk2, quietly=TRUE, lib.loc = Lib.path)
 library(R.devices, quietly=TRUE, lib.loc = Lib.path)
 
+## added function definition
+printf = function(...) invisible(print(sprintf(...)))
+
 ### load private library
 ## changed to relative path since wd will be set before through designated work.station
 source("./tcl/libbwidget.r")
