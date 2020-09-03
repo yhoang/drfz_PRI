@@ -25,6 +25,12 @@ Main$GUImain <- function() {
       Current$GUIquit()
     })
 
+    # add back button if project has been selected
+    if (Current$preselection == FALSE) {
+     tkadd(topMenu, "command", label = "Back", command = function() {
+      Current$GUIback()
+    })}
+
     ### Preselection Status of project (preselect = TRUE)
     if (Current$preselection == TRUE) {
        
@@ -110,4 +116,11 @@ Main$GUImain <- function() {
 Main$GUIquit <- function() {
     Current = Main
     tkdestroy(Current$mainframe)
+}
+
+Main$GUIback <- function() {
+    Current = Main
+    Current$preselection = TRUE
+    tkdestroy(Current$mainframe)
+    Current$GUImain()
 }

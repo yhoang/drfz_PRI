@@ -599,6 +599,13 @@ fcs$dotriploTfiles <- function(read=FALSE) {
               xlab = title.axis[1], ylab = title.axis[2],
               cex.lab=set.cex, cex.axis=0.5 * set.cex.axes, mgp=set.mgp)
             box(lwd=0.8, col="darkgrey")
+
+            # check if date should be added
+            if (checkDATE == "1") {
+            print("plot date")
+            date <- gsub("-", "", Sys.Date())
+            title(main=date, outer=TRUE, line=1, cex.main=1.3, adj=1)
+            }
             
             ### draw axis on the bottom and on the left
             axis(side=1, at=scale, labels=label, las=1, cex.axis=set.cex.axes, mgp=set.mgp, col="darkgrey")
@@ -738,6 +745,7 @@ fcs$dotriploTfiles <- function(read=FALSE) {
             thirdLine <- sprintf("%s-%s(%0.1f%%); binSize=%s, #bins=%s", ncells.total, ncells.zero, (ncells.zero / ncells.total * 100), binSize, this$bincount)
             title(main=thirdLine, line=1.6, cex.main=0.7, adj=0)
           }
+
         })
   
   ### save FI ranges for this transformation type
@@ -750,10 +758,13 @@ fcs$dotriploTfiles <- function(read=FALSE) {
   
   tkconfigure(this$tt, cursor = "left_ptr")
   
-  if (checkDATE == "1") {
-    date <- gsub("-", "", Sys.Date())
-    title(main=date, outer=TRUE, line=1, cex.main=1.3, adj=1)
-  }
+  ### ERROR here since plot already closed - moved into the toPDF()
+
+  #if (checkDATE == "1") {
+  #  print(2)
+  #  date <- gsub("-", "", Sys.Date())
+  #  title(main=date, outer=TRUE, line=1, cex.main=1.3, adj=1)
+  #}
   
 }
 
@@ -1070,6 +1081,8 @@ fcs$dotriploTtable <- function() {
               title(main=thirdLine, line=1.6, cex.main=0.7, adj=0)
             }
           })
+
+
     printf("Saved file in %s", pdf.file)
     
     ### save FI ranges for this transformation type
