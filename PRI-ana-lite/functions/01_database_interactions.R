@@ -15,6 +15,16 @@ Main$returnTablenames <- function(database.path) {
   return(all_tables[-idx])
 }
 
+# get marker information from specified table and specified sample ID
+Main$getMarkerData <- function(database.path, table, fileID) {
+
+  # get Marker data from specified table and for specified ID (Sample)
+  conn = dbConnect(SQLite(), dbname = database.path)
+  data = dbGetQuery(conn, paste0("SELECT * FROM ", table, " WHERE file_ID == '", fileID, "'"))
+
+  return(data)
+}
+
 
 # database connector call
 Main$connectDb <- function(fname){

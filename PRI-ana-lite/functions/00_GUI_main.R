@@ -55,6 +55,9 @@ Main$GUImain <- function() {
         Current$project = Current$returnTablenames(file.path(Current$db.path, Current$db.name))[selection+1]
         print(Current$project)
 
+        # extracting marker data
+        #Current$data = Current$getMarkerData(file.path(Current$db.path, Current$db.name), Current$project, 1)
+
         # reload of app without preselection window
         Current$preselection = FALSE
         tkdestroy(Current$mainframe)
