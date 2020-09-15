@@ -5,26 +5,54 @@
 # ---------- # Interaction functions with the sqlite3 database # ---------- #
 
 # retrieve main table names from database and return
-Main$returnTablenames <- function(database.path) {
+Main$returnTableNames <- function(database.path) {
   # get all tablenames from database
   conn = dbConnect(SQLite(), dbname = database.path)
   all_tables = dbListTables(conn)
+  dbDisconnect(conn)
 
   # idx to filter out non-main table names
   idx <- grep("markerIdentity|colnameIndex|fileIdentity|fileIndex|UserHistory|Classification|equipmentInfo|fileComments|SPILL", all_tables)
   return(all_tables[-idx])
 }
 
-# get marker information from specified table and specified sample ID
+# get marker values from specified table and specified sample ID from table NAME_markerIdentity
 Main$getMarkerData <- function(database.path, table, fileID) {
 
   # get Marker data from specified table and for specified ID (Sample)
   conn = dbConnect(SQLite(), dbname = database.path)
   data = dbGetQuery(conn, paste0("SELECT * FROM ", table, " WHERE file_ID == '", fileID, "'"))
+  dbDisconnect(conn)
 
   return(data)
 }
 
+# get sample names with position corresponding to their ID from table NAME_fileIdentity
+Main$getSampleNames <- function(database.path, table) {
+
+  # get sample names which are identified through FileID in other tables
+  conn = dbConnect(SQLite(), dbname = database.path)
+  sample_names = dbGetQuery(conn, paste0("SELECT filename FROM ", table))
+  dbDisconnect(conn)
+
+  return(sample_names)
+}
+
+# get unique marker names from table NAME_markerIdentity
+Main$getMarkerNames <- function(database.path, table, fileID) {
+
+  # get sample names which are identified through FileID in other tables
+  conn = dbConnect(SQLite(), dbname = database.path)
+  marker_names = unique(dbGetQuery(conn, paste0("SELECT shortname FROM ", table)))
+  dbDisconnect(conn)
+  return(marker_names)
+}
+
+
+
+# ---------- # Interaction functions with the sqlite3 database # ---------- #
+
+### PRI-ana functions 
 
 # database connector call
 Main$connectDb <- function(fname){
