@@ -3,3 +3,12 @@
 #		Written in R
 #		2020-
 ##########	PRI-analyzer-lite Update Log
+
+########## v0.1
+*** general
+- created Main GUI with selection of tables 
+* selection of database refreshes window to new surface
+- added switch to Post-selection mode with back button
+* window is refreshed and new options become available
+- added dropdown menu with selectable samples
+- added checkboxes to select markers which should be used in plotting/calc
