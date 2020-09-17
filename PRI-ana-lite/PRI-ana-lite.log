@@ -12,3 +12,6 @@
 * window is refreshed and new options become available
 - added dropdown menu with selectable samples
 - added checkboxes to select markers which should be used in plotting/calc
+- added specific selection of markers by project, sample and marker selection
+- worked on marker selection checkboxes
+- added translation of marker selection into column names for db extraction
