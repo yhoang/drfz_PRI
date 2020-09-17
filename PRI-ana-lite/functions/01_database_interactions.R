@@ -16,16 +16,23 @@ Main$returnTableNames <- function(database.path) {
   return(all_tables[-idx])
 }
 
-# get marker values from specified table and specified sample ID from table NAME_markerIdentity
-Main$getMarkerData <- function(database.path, table, fileID) {
+# get all marker values from specified table and specified sample ID from table NAME_markerIdentity
+# optional input of vector with markerindices ("colNUMBER,") to select only for specific markers
+Main$getMarkerData <- function(database.path, table, fileID, markerindex = "all") {
 
   # get Marker data from specified table and for specified ID (Sample)
   conn = dbConnect(SQLite(), dbname = database.path)
-  data = dbGetQuery(conn, paste0("SELECT * FROM ", table, " WHERE file_ID == '", fileID, "'"))
+  if (markerindex == "all") {
+    data = dbGetQuery(conn, paste0("SELECT * FROM ", table, " WHERE file_ID == '", fileID, "'"))
+  } else {
+    data = dbGetQuery(conn, paste0("SELECT ", markerindex , " FROM ", table, " WHERE file_ID == '", fileID, "'"))
+  }
+  
   dbDisconnect(conn)
 
   return(data)
 }
+
 
 # get sample names with position corresponding to their ID from table NAME_fileIdentity
 Main$getSampleNames <- function(database.path, table) {
