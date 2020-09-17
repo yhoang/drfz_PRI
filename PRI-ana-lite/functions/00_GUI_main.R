@@ -82,15 +82,58 @@ Main$GUImain <- function() {
     tkpack(combobox, side = "top", pady = 5)
     tkbind(combobox, "<<ComboboxSelected>>", function() {
         selection = tclvalue(tkget(combobox))
-        print(selection)
+        selection_idx = tcl(combobox, "current")
+        #print(selection)
+        #print(selection_idx)
+
+        # extracting marker data for selected sample
+        #Current$data = Current$getMarkerData(file.path(Current$db.path, Current$db.name), Current$project, 1)
     })
 
+    # area for buttons to plot data
+
     middleframe = tkframe(Current$mainframe, relief = "raised", borderwidth = 1)
-    button1 = tkbutton(middleframe)
+    button_plot_data = tkbutton(middleframe, text = "plot data")
     button2 = tkbutton(middleframe)
-    tkpack(button1)
+    tkpack(button_plot_data)
     tkpack(button2, side = "right")
     tkpack(middleframe, fill = "x", side = "top")
+
+    # adding comands to plot data button
+    tkbind(button_plot_data, "<Button-1>", function(...) {
+      # get current selected sample from dropbox
+      sample_idx = as.integer(tcl(combobox, "current"))+1
+      sample_name = tclvalue(tkget(combobox))
+      print(sample_idx) 
+      print(sample_name)
+
+      # get current selected markers
+      # output of states of checkboxes
+      marker_cols = c()
+
+      # transformation of tcl states into integer vector
+      for (i in 1:marker_length) {
+      marker_cols = c(marker_cols, as.integer(tclvalue(cb_states[[i]])))}
+      marker_cols = which(marker_cols == 1)
+
+      # zero padding for values < 10
+      for (i in 1:length(marker_cols)) {
+        if (marker_cols[i] %in% c(1,2,3,4,5,6,7,8,9)) {
+          marker_cols[i] = sprintf("%02d", as.integer(marker_cols[i]))
+        }
+      }
+
+      # translation of inetger vector into column names for marker selection
+      markerindex = c()
+      for (i in marker_cols) {
+         markerindex[i] = paste0(markerindex, "col", i)
+      }
+
+      print(markerindex)
+      # get marker data for current selected markers and sample
+      sample_marker_data = Current$getMarkerData(file.path(Current$db.path, Current$db.name), Current$project, sample_idx, markerindex = "col01, col02")
+      Current$specified_marker_data = sample_marker_data
+    })
 
     # creating checkboxes with all markers that will be used for calculation/plotting
     # 4 frames with dimension calculation is needed
@@ -104,28 +147,40 @@ Main$GUImain <- function() {
     # quarter = amount of markers in one quadrant
     residue = 0
     marker_length = nrow(Current$marker_names)
+
+    # creating checkbox list to keep track of checkbox states
+    cb_states = list()
+    for (i in 1:marker_length) {
+      # identifies groupings (each is distinct)
+      cb_states[[i]] = i
+      # marks tclvalue state at initiation
+      tclvalue(cb_states[[i]]) = 0
+    }
+    
+    # checkbox selection list
+    
     if (marker_length %% 4 != 0) {
       residue = 1
     }
     quarter = floor(marker_length/4) + residue
 
     for (i in 1:quarter) {
-      checkbox = tkcheckbutton(marker_frame1, variable="unlist(Current$marker_names)[i]", text=unlist(Current$marker_names[i,]))
+      checkbox = tkcheckbutton(marker_frame1, variable=cb_states[[i]], text=unlist(Current$marker_names[i,]))
       cutoffentry = tkentry(marker_frame1, width=4, textvariable="this$vcutoffs[[i]]")
       tkpack(checkbox, tklabel(marker_frame1, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
     }
     for (j in (i+1):(i+quarter)) {
-      checkbox = tkcheckbutton(marker_frame2, variable="unlist(Current$marker_names)[j]", text=unlist(Current$marker_names[j,]))
+      checkbox = tkcheckbutton(marker_frame2, variable=cb_states[[j]], text=unlist(Current$marker_names[j,]))
       cutoffentry = tkentry(marker_frame2, width=4, textvariable="this$vcutoffs[[i]]")
       tkpack(checkbox, tklabel(marker_frame2, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
     }
     for (k in (j+1):(j+quarter)) {
-      checkbox = tkcheckbutton(marker_frame3, variable="unlist(Current$marker_names)[k]", text=unlist(Current$marker_names[k,]))
+      checkbox = tkcheckbutton(marker_frame3, variable=cb_states[[k]], text=unlist(Current$marker_names[k,]))
       cutoffentry = tkentry(marker_frame3, width=4, textvariable="this$vcutoffs[[i]]")
       tkpack(checkbox, tklabel(marker_frame3, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
     }
     for (l in (k+1):marker_length) {
-      checkbox = tkcheckbutton(marker_frame4, variable="unlist(Current$marker_names)[l]", text=unlist(Current$marker_names[l,]))
+      checkbox = tkcheckbutton(marker_frame4, variable=cb_states[[l]], text=unlist(Current$marker_names[l,]))
       cutoffentry = tkentry(marker_frame4, width=4, textvariable="this$vcutoffs[[i]]")
       tkpack(checkbox, tklabel(marker_frame4, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
     }
