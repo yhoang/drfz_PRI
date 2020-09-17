@@ -1,0 +1,34 @@
+##########  PRI-analyzer-lite Roadmap Log
+#		Author:	Felix Lohrke
+#		Written in R
+#		2020-
+##########	PRI-analyzer-lite Roadmap Log
+
+########## Improvements of existing code 
+
+- increase modularity of GUI main into functions
+* add separate functions for pre/post selection
+- fix positioning of marker checkboxes
+* conversion of all pack into grid (emulate Yens approach)
+* or get damned pack to work!
+
+########## Improvements of existing code 
+
+########## Implementations to do
+
+- plotting functions
+* plot single histogram of thresholds
+* plot multiple histograms 
+* check for pdf or just plot
+- calculation functions for thresholds
+* emulate existing from PRI-ana
+* add new ones 
+- add storage/database manipulation 
+* save created thresholds
+* extract existing thresholds
+* reload last used database
+- GUI additions
+* select/deselect all markers
+* restore thresholds
+
+########## Implementations to do
