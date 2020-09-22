@@ -14,4 +14,12 @@
 - added checkboxes to select markers which should be used in plotting/calc
 - added specific selection of markers by project, sample and marker selection
 - worked on marker selection checkboxes
+
+########## v0.2
+*** general
 - added translation of marker selection into column names for db extraction
+- added automatic cutoff calculation from PRI-ANA 
+* values differ slightly
+* other method might be possible via package peak calc
+- connected project, sample and selected marker functionality with database retrieval
+* might need to modularize since main script is in command def for button
