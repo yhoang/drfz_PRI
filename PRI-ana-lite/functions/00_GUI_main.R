@@ -91,7 +91,6 @@ Main$GUImain <- function() {
     })
 
     # area for buttons to plot data
-
     middleframe = tkframe(Current$mainframe, relief = "raised", borderwidth = 1)
     button_plot_data = tkbutton(middleframe, text = "plot data")
     button2 = tkbutton(middleframe)
@@ -101,11 +100,12 @@ Main$GUImain <- function() {
 
     # adding comands to plot data button
     tkbind(button_plot_data, "<Button-1>", function(...) {
+
       # get current selected sample from dropbox
       sample_idx = as.integer(tcl(combobox, "current"))+1
       sample_name = tclvalue(tkget(combobox))
-      print(sample_idx) 
-      print(sample_name)
+      #print(sample_idx) 
+      #print(sample_name)
 
       # get current selected markers
       # output of states of checkboxes
@@ -120,19 +120,22 @@ Main$GUImain <- function() {
       for (i in 1:length(marker_cols)) {
         if (marker_cols[i] %in% c(1,2,3,4,5,6,7,8,9)) {
           marker_cols[i] = sprintf("%02d", as.integer(marker_cols[i]))
+        } else {
+          marker_cols[i] = toString(marker_cols[i])
         }
       }
 
       # translation of inetger vector into column names for marker selection
-      markerindex = c()
-      for (i in marker_cols) {
-         markerindex[i] = paste0(markerindex, "col", i)
+      markerindex = list()
+      for (i in 1:length(marker_cols)) {
+         markerindex[[i]] = paste0("col", marker_cols[i])
       }
-
-      print(markerindex)
+      markerindex = paste(unlist(markerindex), collapse=", ")
+     
       # get marker data for current selected markers and sample
-      sample_marker_data = Current$getMarkerData(file.path(Current$db.path, Current$db.name), Current$project, sample_idx, markerindex = "col01, col02")
+      sample_marker_data = Current$getMarkerData(file.path(Current$db.path, Current$db.name), Current$project, sample_idx, markerindex)
       Current$specified_marker_data = sample_marker_data
+
     })
 
     # creating checkboxes with all markers that will be used for calculation/plotting

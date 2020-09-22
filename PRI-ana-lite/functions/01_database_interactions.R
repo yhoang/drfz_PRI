@@ -23,13 +23,15 @@ Main$getMarkerData <- function(database.path, table, fileID, markerindex = "all"
   # get Marker data from specified table and for specified ID (Sample)
   conn = dbConnect(SQLite(), dbname = database.path)
   if (markerindex == "all") {
+    print(paste0("Retrieving all markervalues for project ", table, " and sample with ID ", fileID))
     data = dbGetQuery(conn, paste0("SELECT * FROM ", table, " WHERE file_ID == '", fileID, "'"))
   } else {
+    print(paste0("Retrieving selected markervalues for project ", table, " and sample with ID ", fileID))
     data = dbGetQuery(conn, paste0("SELECT ", markerindex , " FROM ", table, " WHERE file_ID == '", fileID, "'"))
   }
   
   dbDisconnect(conn)
-
+  print("done")
   return(data)
 }
 

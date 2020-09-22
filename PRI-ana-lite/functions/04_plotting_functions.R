@@ -7,5 +7,6 @@
 # plotting a Histogram from marker data with threshold
 
 Main$plotHistogram <- function(markerdata, threshold) {
+    Current = Main
    
 }
