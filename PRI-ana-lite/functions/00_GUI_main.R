@@ -9,8 +9,8 @@ Main$GUImain <- function() {
 
     # databse selection via pop up at start of PRI-ana-lite
     ## there should be a default option/use db from last time
-    tk_messageBox(caption = "PRI-ANA-LITE V0.1", message = "Welcome to PRI-ANA-Lite, please select the database you want to work with.")
-    Current$database = tkgetOpenFile()
+    #tk_messageBox(caption = "PRI-ANA-LITE V0.1", message = "Welcome to PRI-ANA-Lite, please select the database you want to work with.")
+    #Current$database = tkgetOpenFile()
 
     # creating base and adding main title
     Current$mainframe = tktoplevel()
