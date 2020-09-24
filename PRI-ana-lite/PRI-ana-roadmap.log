@@ -11,6 +11,7 @@
 - fix positioning of marker checkboxes
 * conversion of all pack into grid (emulate Yens approach)
 * or get damned pack to work!
+- change plotting to plot a single Hist and do par() etc outside
 
 ########## Improvements of existing code 
 
