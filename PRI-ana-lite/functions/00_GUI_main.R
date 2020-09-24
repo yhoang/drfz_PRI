@@ -9,8 +9,8 @@ Main$GUImain <- function() {
 
     # databse selection via pop up at start of PRI-ana-lite
     ## there should be a default option/use db from last time
-    #tk_messageBox(caption = "PRI-ANA-LITE V0.1", message = "Welcome to PRI-ANA-Lite, please select the database you want to work with.")
-    #Current$database = tkgetOpenFile()
+    tk_messageBox(caption = "PRI-ANA-LITE V0.1", message = "Welcome to PRI-ANA-Lite, please select the database you want to work with.")
+    Current$database = tkgetOpenFile()
 
     # creating base and adding main title
     Current$mainframe = tktoplevel()
@@ -52,7 +52,7 @@ Main$GUImain <- function() {
         print(Current$project)
 
         # extracting marker data
-        Current$data = Current$getMarkerData(file.path(Current$db.path, Current$db.name), Current$project, 1)
+        #Current$data = Current$getMarkerData(file.path(Current$db.path, Current$db.name), Current$project, 1)
 
         # extracting sample names
         Current$samples = Current$getSampleNames(file.path(Current$db.path, Current$db.name), paste0(Current$project, "_fileIdentity"))
@@ -116,25 +116,45 @@ Main$GUImain <- function() {
       marker_cols = c(marker_cols, as.integer(tclvalue(cb_states[[i]])))}
       marker_cols = which(marker_cols == 1)
 
-      # zero padding for values < 10
-      for (i in 1:length(marker_cols)) {
-        if (marker_cols[i] %in% c(1,2,3,4,5,6,7,8,9)) {
-          marker_cols[i] = sprintf("%02d", as.integer(marker_cols[i]))
-        } else {
-          marker_cols[i] = toString(marker_cols[i])
+
+      # retrieving number of selected markers
+      num_markers = length(marker_cols)
+      selected_marker_names = Current$marker_names[marker_cols,]
+      print(selected_marker_names)
+
+      # check if any markers are selected
+      if (num_markers > 0) {
+
+        # zero padding for values < 10
+        for (i in 1:length(marker_cols)) {
+          if (marker_cols[i] %in% c(1,2,3,4,5,6,7,8,9)) {
+            marker_cols[i] = sprintf("%02d", as.integer(marker_cols[i]))
+          } else {
+            marker_cols[i] = toString(marker_cols[i])
+          }
         }
+
+        # translation of inetger vector into column names for marker selection
+        markerindex = list()
+        for (i in 1:length(marker_cols)) {
+          markerindex[[i]] = paste0("col", marker_cols[i])
+        }
+        markerindex = paste(unlist(markerindex), collapse=", ")
+        #print(markerindex)
+     
+        # get marker data for current selected markers and sample
+        Current$specified_marker_data  = Current$getMarkerData(file.path(Current$db.path, Current$db.name), Current$project, sample_idx, markerindex)
+
+        # automatically calculate cutoffs
+        threshold = Current$calculateCutoff(Current$specified_marker_data[,1])
+        print(threshold)
+        # plotting Histograms
+        Current$plotHistograms(Current$specified_marker_data, num_markers, selected_marker_names, threshold)
+      
+      } else {
+         print("No Markers selected.")
       }
 
-      # translation of inetger vector into column names for marker selection
-      markerindex = list()
-      for (i in 1:length(marker_cols)) {
-         markerindex[[i]] = paste0("col", marker_cols[i])
-      }
-      markerindex = paste(unlist(markerindex), collapse=", ")
-     
-      # get marker data for current selected markers and sample
-      sample_marker_data = Current$getMarkerData(file.path(Current$db.path, Current$db.name), Current$project, sample_idx, markerindex)
-      Current$specified_marker_data = sample_marker_data
 
     })
 

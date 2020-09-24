@@ -144,9 +144,7 @@ Main$calculateCutoff <- function(marker_values) {
 
             # cutoff calculation
 
-            # if there is a minima
-            # cutoff is either first minima or if divisible by 2
-            # median of all minima
+            # if there is a d to modularize since main script is in command def for buttonminima
             if (length(idx_minima) > 0) {
                 tmp = round(length(idx_minima)/2)
                 if (tmp == 0) {
