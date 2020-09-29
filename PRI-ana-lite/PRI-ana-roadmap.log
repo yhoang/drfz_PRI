@@ -18,8 +18,9 @@
 ########## Implementations to do
 
 - plotting functions
-* plot single histogram of thresholds
-* plot multiple histograms 
+* plot single histogram of thresholds - done
+* plot multiple histograms - done
+* values are different to PRI-ANA + no cutoffs found!
 * check for pdf or just plot
 - calculation functions for thresholds
 * emulate existing from PRI-ana
