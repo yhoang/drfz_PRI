@@ -1,5 +1,5 @@
 #!/usr/bin/R
-# Author: Yen Hoang and Felix Lohrke
+# Author: Felix Lohrke and Yen Hoang
 # DRFZ 2020
 
 # ---------- # Interaction functions with the sqlite3 database # ---------- #
@@ -31,6 +31,10 @@ Main$getMarkerData <- function(database.path, table, fileID, markerindex = "all"
   }
   
   dbDisconnect(conn)
+
+  # data prep
+  cofactor = 0.2
+  data = asinh(data/cofactor)
   print("done")
   return(data)
 }

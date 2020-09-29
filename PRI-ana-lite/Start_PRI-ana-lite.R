@@ -1,5 +1,5 @@
 #!/usr/bin/R
-# Author: Felix Lohrke
+# Author: Felix Lohrke and Yen Hoang
 
 # ---------- # Start of PRI-ana-lite # ---------- #
 
@@ -8,7 +8,7 @@ rm(list = ls())
 Main <- new.env()
 Parameters <- new.env()
 Main$parent.env <- ls()
-Main$version <- "v0.1"
+Main$version <- "v0.2"
 
 # designate work station
 work.station = "delta_local"

@@ -1,5 +1,5 @@
 #!/usr/bin/R
-# Author: Yen Hoang and Felix Lohrke
+# Author: Felix Lohrke and Yen Hoang
 # DRFZ 2020
 
 # ---------- # Calculation functions # ---------- #
@@ -16,6 +16,7 @@ Main$calculateCutoff <- function(marker_values) {
     density = density(marker_values)
     x = density$x
     y = density$y
+    cutoff_found = ""
 
     # only higher level of denisty values is observed
     # shouldnt x be selected via valid y values???
@@ -27,6 +28,9 @@ Main$calculateCutoff <- function(marker_values) {
     # move 5 positions earlier than start
     x_min = x[intersect(id_y, id_x)[1]-5]
     x_max = round(max(marker_values))
+
+    # create list for multiple found cutoffs per marker
+    cutoff_list = list()
 
     # start of steps through density curve
     stepsize = 6:3
@@ -126,19 +130,19 @@ Main$calculateCutoff <- function(marker_values) {
             }
 
             # remove shoulder idices near maxima +- 0.3
-            remove = vector() # intentional that she doesnt re-defines it?
+            #remove = vector() # intentional that she doesnt re-defines it?
             minus_shoulder = intersect(idx_maxima, idx_shoulder)
             if (length(minus_shoulder) > 0) {
                 x_shoulder_max = incline_x[minus_shoulder]
 
                 for (i in idx_shoulder) {
 
-                    if (abs(x_shoulder_max - incline_x[i] <= 0.3)) {
+                    if (abs(x_shoulder_max - incline_x[i]) <= 0.3) {
                         remove = c(remove, which(idx_shoulder == i))
 
                     }
                 }
-                idx_shoulder = idx_shoulder[remove]
+                idx_shoulder = idx_shoulder[-remove]
 
             }
 
@@ -152,7 +156,7 @@ Main$calculateCutoff <- function(marker_values) {
                 } else {
                    tmp = idx_minima[round(length(idx_minima)/2)]
                 }
-                print("minima")
+                cutoff_found = "minima"
                 cutoff = as.numeric(incline_list[[tmp]][2])
 
             # if there is a shoulder
@@ -165,7 +169,7 @@ Main$calculateCutoff <- function(marker_values) {
                 } else {
                    tmp = idx_shoulder[round(length(idx_shoulder)/2)]
                 }
-                print("shoulder")
+                cutoff_found = "shoulder"
                 cutoff = as.numeric(incline_list[[tmp]][2])
 
             # if neither minima or shoulder we use 20% quantile
@@ -174,9 +178,20 @@ Main$calculateCutoff <- function(marker_values) {
             }
 
         }
+        if (step == 1) {
+           cutoff_list[[1]] = cutoff 
+        } else {
+           cutoff_list[[1]][step] = cutoff
+        }
 
     }
 
+    # get cutoff from median of found cutoffs
+    print(cutoff_list)
+    cutoff = round(median(cutoff_list[[1]]), 1)
+    
+    # display curve characteristic of cutoff
+    print(cutoff_found)
     return(cutoff)
 
 }

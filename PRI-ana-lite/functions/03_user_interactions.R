@@ -1,5 +1,5 @@
 #!/usr/bin/R
-# Author: Yen Hoang and Felix Lohrke
+# Author: Felix Lohrke and Yen Hoang
 # DRFZ 2020
 
 # ---------- # Interaction functions with the user # ---------- #

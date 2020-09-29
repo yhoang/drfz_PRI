@@ -1,5 +1,5 @@
 #!/usr/bin/R
-# Author: Yen Hoang and Felix Lohrke
+# Author: Felix Lohrke and Yen Hoang
 # Date: 2020
 
 # ---------- # GUI base function # ---------- #
@@ -14,7 +14,7 @@ Main$GUImain <- function() {
 
     # creating base and adding main title
     Current$mainframe = tktoplevel()
-    tkwm.title(Current$mainframe, "PRI-ANA-LITE")
+    tkwm.title(Current$mainframe, "PRI-ANA-LITE v0.2")
 
     # set window size
     tkwm.geometry(Current$mainframe, "1200x800")
@@ -32,7 +32,7 @@ Main$GUImain <- function() {
        
       # create listbox that contains projects
       listbox = tklistbox(Current$mainframe)
-      tkpack(listbox, side = "top")
+      tkpack(listbox, side = "top", pady = 100)
       tk2tip(listbox, "Double Click to Open")
 
       # retrieve tablenames from database 
@@ -76,9 +76,10 @@ Main$GUImain <- function() {
       Current$GUIback()
     })
     
+
     # add dropdown menu with samples to select
     # currently selected sample name is returned as selection
-    combobox = ttkcombobox(Current$mainframe, values=unlist(Current$samples))
+    combobox = ttkcombobox(Current$mainframe, values=unlist(Current$samples), width = 30)
     tkpack(combobox, side = "top", pady = 5)
     tkbind(combobox, "<<ComboboxSelected>>", function() {
         selection = tclvalue(tkget(combobox))
@@ -93,9 +94,7 @@ Main$GUImain <- function() {
     # area for buttons to plot data
     middleframe = tkframe(Current$mainframe, relief = "raised", borderwidth = 1)
     button_plot_data = tkbutton(middleframe, text = "plot data")
-    button2 = tkbutton(middleframe)
-    tkpack(button_plot_data)
-    tkpack(button2, side = "right")
+    tkpack(button_plot_data, pady = 6)
     tkpack(middleframe, fill = "x", side = "top")
 
     # adding comands to plot data button
@@ -103,9 +102,12 @@ Main$GUImain <- function() {
 
       # get current selected sample from dropbox
       sample_idx = as.integer(tcl(combobox, "current"))+1
+
+      # catch error if no sample selected
+      if (sample_idx == 0) {
+        tk_messageBox(caption = "PRI-ANA-LITE V0.2", message = "Please select a sample from the list.")
+      }
       sample_name = tclvalue(tkget(combobox))
-      #print(sample_idx) 
-      #print(sample_name)
 
       # get current selected markers
       # output of states of checkboxes
@@ -114,9 +116,9 @@ Main$GUImain <- function() {
       # transformation of tcl states into integer vector
       for (i in 1:marker_length) {
       marker_cols = c(marker_cols, as.integer(tclvalue(cb_states[[i]])))}
+      marker_idx = which(marker_cols == 1)
       marker_cols = which(marker_cols == 1)
-
-
+      
       # retrieving number of selected markers
       num_markers = length(marker_cols)
       selected_marker_names = Current$marker_names[marker_cols,]
@@ -146,13 +148,25 @@ Main$GUImain <- function() {
         Current$specified_marker_data  = Current$getMarkerData(file.path(Current$db.path, Current$db.name), Current$project, sample_idx, markerindex)
 
         # automatically calculate cutoffs
-        threshold = Current$calculateCutoff(Current$specified_marker_data[,1])
-        print(threshold)
+        thresholds = rep(0, marker_length)
+        for (marker in 1:ncol(Current$specified_marker_data)) {
+          thresholds[marker] = Current$calculateCutoff(Current$specified_marker_data[,marker])
+          print(thresholds[marker])
+        }
+
         # plotting Histograms
-        Current$plotHistograms(Current$specified_marker_data, num_markers, selected_marker_names, threshold)
-      
+        Current$plotHistograms(Current$specified_marker_data, num_markers, selected_marker_names, thresholds)
+
+        # display calculated thresholds in textboxes
+        for (selected in marker_idx) {
+          tclvalue(Current$displayed_thresholds[[selected]]) = thresholds[selected]
+        }
+        print(thresholds)
+
       } else {
-         print("No Markers selected.")
+        # catch error if no marker selected
+        tk_messageBox(caption = "PRI-ANA-LITE V0.2", message = "Please select at least one Marker.")
+        print("No Markers selected.")
       }
 
 
@@ -187,32 +201,38 @@ Main$GUImain <- function() {
     }
     quarter = floor(marker_length/4) + residue
 
+    # global variable for displayed thresholds in textfields
+    Current$displayed_thresholds = list()
+    for (i in 1:marker_length) {
+      Current$displayed_thresholds[[i]] = tclVar(0)
+    }
+
     for (i in 1:quarter) {
       checkbox = tkcheckbutton(marker_frame1, variable=cb_states[[i]], text=unlist(Current$marker_names[i,]))
-      cutoffentry = tkentry(marker_frame1, width=4, textvariable="this$vcutoffs[[i]]")
+      cutoffentry = tkentry(marker_frame1, width=4, textvariable=Current$displayed_thresholds[[i]])
       tkpack(checkbox, tklabel(marker_frame1, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
     }
     for (j in (i+1):(i+quarter)) {
       checkbox = tkcheckbutton(marker_frame2, variable=cb_states[[j]], text=unlist(Current$marker_names[j,]))
-      cutoffentry = tkentry(marker_frame2, width=4, textvariable="this$vcutoffs[[i]]")
+      cutoffentry = tkentry(marker_frame2, width=4, textvariable=Current$displayed_thresholds[[j]])
       tkpack(checkbox, tklabel(marker_frame2, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
     }
     for (k in (j+1):(j+quarter)) {
       checkbox = tkcheckbutton(marker_frame3, variable=cb_states[[k]], text=unlist(Current$marker_names[k,]))
-      cutoffentry = tkentry(marker_frame3, width=4, textvariable="this$vcutoffs[[i]]")
+      cutoffentry = tkentry(marker_frame3, width=4, textvariable=Current$displayed_thresholds[[k]])
       tkpack(checkbox, tklabel(marker_frame3, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
     }
     for (l in (k+1):marker_length) {
       checkbox = tkcheckbutton(marker_frame4, variable=cb_states[[l]], text=unlist(Current$marker_names[l,]))
-      cutoffentry = tkentry(marker_frame4, width=4, textvariable="this$vcutoffs[[i]]")
+      cutoffentry = tkentry(marker_frame4, width=4, textvariable=Current$displayed_thresholds[[l]])
       tkpack(checkbox, tklabel(marker_frame4, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
     }
-    tkpack(marker_frame1, side = "left", padx = 5, fill = "both")
-    tkpack(marker_frame2, side = "left", padx = 5, fill = "both")
-    tkpack(marker_frame3, side = "left", padx = 5, fill = "both")
-    tkpack(marker_frame4, side = "left", padx = 5, fill = "both")
+    tkpack(marker_frame1, side = "left", padx = 5)
+    tkpack(marker_frame2,  side = "left", padx = 5)
+    tkpack(marker_frame3, side = "left",  padx = 5)
+    tkpack(marker_frame4,  side = "left", padx = 5)
     #tkpack(marker_frame1, marker_frame2, marker_frame3, marker_frame4, padx=20, pady=1)
-    tkpack(marker_frames, fill = "both", expand = TRUE, side = "top")
+    tkpack(marker_frames, expand = TRUE, side = "top")
     
     #tkgrid(this$ttlfautogate, pady=1)
     
