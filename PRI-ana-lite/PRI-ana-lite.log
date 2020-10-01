@@ -24,3 +24,15 @@
 - connected project, sample and selected marker functionality with database retrieval
 * might need to modularize since main script is in command def for button
 - added Histogram plotting
+
+########## v0.3
+*** general
+- added pdf save of generated plots
+- fixed asinh problem for cutoff generation
+* still a out of bounds bug
+- increased modularity via functions in GUI
+- added dates and title to Histograms
+- fixed displayed cutoff positions
+- added DB selection button and functionality
+- added select/deselect all
+- optimized windows size and added labels

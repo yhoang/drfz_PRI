@@ -8,10 +8,19 @@
 
 - increase modularity of GUI main into functions
 * add separate functions for pre/post selection
+* add single function for plotting or pdf generation
+
 - fix positioning of marker checkboxes
 * conversion of all pack into grid (emulate Yens approach)
 * or get damned pack to work!
+
 - change plotting to plot a single Hist and do par() etc outside
+
+- General Optimizations/Coding
+* add procedure prints/flags
+
+- subscript out of bounds error with some markers
+
 
 ########## Improvements of existing code 
 
@@ -20,17 +29,24 @@
 - plotting functions
 * plot single histogram of thresholds - done
 * plot multiple histograms - done
-* values are different to PRI-ANA + no cutoffs found!
-* check for pdf or just plot
+* values are different to PRI-ANA + no cutoffs found! - fixed 
+* check for pdf or just plot - done
+* add title and dates automatically - done
+
 - calculation functions for thresholds
-* emulate existing from PRI-ana
+* emulate existing from PRI-ana - done
 * add new ones 
+
 - add storage/database manipulation 
 * save created thresholds
 * extract existing thresholds
 * reload last used database
+
 - GUI additions
-* select/deselect all markers
+* select/deselect all markers - done
 * restore thresholds
+
+- Automation 
+* what to automate?
 
 ########## Implementations to do
