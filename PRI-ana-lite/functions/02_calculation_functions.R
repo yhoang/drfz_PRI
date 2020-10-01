@@ -9,8 +9,8 @@
 # automatically calculate cutoff for a marker depending on marker value behavior over time
 # (trimming and doublets?)
 Main$calculateCutoff <- function(marker_values) {
-    Current = Main
-
+    #Current = Main
+    print("do: calculateCutoff")
     # calulate density values of marker values
     # retrtieve points at which density is calculated (x) + denisty values (y)
     density = density(marker_values)
@@ -89,7 +89,7 @@ Main$calculateCutoff <- function(marker_values) {
                 }
             }
         }
-        
+
         # dunno about this one
         if (idx == 1) {
             flag = TRUE
@@ -174,7 +174,7 @@ Main$calculateCutoff <- function(marker_values) {
 
             # if neither minima or shoulder we use 20% quantile
             } else {
-                cutoff = "need quantile calculation"
+                cutoff = Main$calcCutoffQuantile(marker_values, 20)
             }
 
         }
@@ -192,6 +192,20 @@ Main$calculateCutoff <- function(marker_values) {
     
     # display curve characteristic of cutoff
     print(cutoff_found)
+    return(cutoff)
+
+}
+# function that takes marker values and returns cutoff based on % quantile
+Main$calcCutoffQuantile <- function(marker_values, quantile = 20) {
+
+    print("do: calcCutoffQuantile")
+
+    marker_values = as.matrix(marker_values)
+
+    # calculation of % quantile as cutoff (generally 20 %)
+    marker_values = sort(marker_values, decreasing = TRUE)
+    cutoff = round(marker_values[length(marker_values)*(quantile/100)], 3)
+
     return(cutoff)
 
 }

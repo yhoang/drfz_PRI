@@ -8,7 +8,7 @@ rm(list = ls())
 Main <- new.env()
 Parameters <- new.env()
 Main$parent.env <- ls()
-Main$version <- "v0.2"
+Main$version <- "PRI-ANA-LITE v0.3"
 
 # designate work station
 work.station = "delta_local"
@@ -20,6 +20,7 @@ if (work.station == "delta_local") {
     aram.path <- file.path("","home","flohrke","PRI-Github","drfz_PRI","PRI-ana")
     Main$db.path=file.path("","data","databases")
     Main$db.name="RB_20191002_Good2018.sqlite3"
+    Main$database = file.path("","data","databases","RB_20191002_Good2018.sqlite3")
 }
 
 # loading libraries
@@ -28,27 +29,12 @@ library(tcltk2, quietly=TRUE, lib.loc = Lib.path)
 library(R.devices, quietly=TRUE, lib.loc = Lib.path)
 
 ### Load functions -------------------------------------------------------
-# setwd(PRIana.path)
+
 ### Source several R scripts
 source.files <- list.files(path = PRIanalite.path, pattern = "\\.[Rr]$")
 for (nm in 1:length(source.files)) {
  source(file.path(PRIanalite.path, source.files[nm]))
 }
-
-# connect to database
-#if (length(strsplit(Main$db.name, "")[[1]]) >  0){
-
-    # database connection is established at Main$conn
-#    Main$connectDb(file.path(Main$db.path, Main$db.name))
-    
-#} else {
-#    file <- tclvalue(tkgetOpenFile(initialdir=fcs$db.path, defaultextension="sqlite3"))
-#    Main$connectDb(file)
-#    Main$db.name <- file
-#}
-
-# retrieve MetaData 
-#Main$getMetaData(Main$conn)
 
 # Start App
 # preselection for opening project selection once at start

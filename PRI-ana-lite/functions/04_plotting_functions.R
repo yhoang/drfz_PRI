@@ -6,8 +6,9 @@
 
 # plotting Histograms from marker data with thresholds
 
-Main$plotHistograms <- function(marker_data, num_markers, marker_names, thresholds) {
+Main$plotHistograms <- function(marker_data, num_markers, marker_names, thresholds, sample_name) {
     
+    print("do: plotHistograms")
     Current = Main
     
     ### handling of variable number of plotting histograms
@@ -53,11 +54,15 @@ Main$plotHistograms <- function(marker_data, num_markers, marker_names, threshol
         if (is.infinite(xmax) | is.na(xmax)) {
             xmax = 8
         }
-
+        
+        # create histogram
         hist(marker_data[, marker], freq=F, 
         breaks=50, col = "palegreen2", main = marker_names[marker],
         xlab = "", lwd = 0.5)
         lines(density(marker_data[, marker]), lwd = 2, col = "brown")
+
+        # add cutoff number to line
+        text(thresholds[marker], min(y)+0.8*max(y),label=sprintf("[%s]", thresholds[marker]),cex=1,pos=4,xpd=TRUE)
 
         # vertical lines
         #for (i in ceiling(xmin):floor(xmax)) {
@@ -68,5 +73,13 @@ Main$plotHistograms <- function(marker_data, num_markers, marker_names, threshol
         }
     }
 
+    # add title and date
+    date = gsub("-", "", Sys.Date())
+    if (length(dev.cur() == devList()[grep("di", names(devList()))]) > 0)  {
+        set.cex = 0.9
+        } else {
+            set.cex = 1.3 }
+    title(main = date, outer = TRUE, line = 0.3, cex.main = set.cex, adj = 1)
+    title(main = sample_name, outer = TRUE, line = 0.3, cex.main = set.cex)
    
 }

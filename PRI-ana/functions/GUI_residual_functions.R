@@ -765,13 +765,13 @@ fcs$addTitle <- function(mode="") {
   
   if (mode == "date") {
     date <- gsub("-", "", Sys.Date())
-    title(main=date, outer=TRUE, line=1, cex.main=set.cex, adj=1)
+    title(main=date, outer=TRUE, line=0.3, cex.main=set.cex, adj=1)
   } else {
     text <- as.character(tclvalue(tkget(this$title, "1.0", "end-1c")))
     
     if (!is.null(dev.list())) {
       # get title withouth new line "\n" with "end-1c"
-      title(main=text, outer=TRUE, line=1, cex.main=set.cex)
+      title(main=text, outer=TRUE, line=0.3, cex.main=set.cex)
     } else {
       tkmessageBox(title = "An error has occured!", 
                    message = "There is no plot window to print your title.", icon = "error", type = "ok")

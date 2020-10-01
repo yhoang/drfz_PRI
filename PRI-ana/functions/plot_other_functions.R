@@ -581,7 +581,7 @@ fcs$plotHistograms <- function(plotter, pdf) {
       # plot frequency histogram instead of density
       hist(tdata, freq=FALSE, breaks=50, main=paste(colnames(data)[i]))
     } else {
-      hist(tdata, freq=FALSE, breaks=50, main=paste(colnames(data)[i]), xlab="", col = "#66bd63", lwd=0.5)
+      hist(tdata, freq=FALSE, breaks=50, main=paste(colnames(data)[i]), xlab="", col = "#66bd63", lwd=0.3)
       lines(density(tdata), lwd = 2, col = "#b2182b")
     }
     # vertical lines

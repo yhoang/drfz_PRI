@@ -20,6 +20,8 @@ Main$returnTableNames <- function(database.path) {
 # optional input of vector with markerindices ("colNUMBER,") to select only for specific markers
 Main$getMarkerData <- function(database.path, table, fileID, markerindex = "all") {
 
+  print("do: getMarkerData")
+
   # get Marker data from specified table and for specified ID (Sample)
   conn = dbConnect(SQLite(), dbname = database.path)
   if (markerindex == "all") {
@@ -33,7 +35,7 @@ Main$getMarkerData <- function(database.path, table, fileID, markerindex = "all"
   dbDisconnect(conn)
 
   # data prep
-  cofactor = 0.2
+  cofactor = 1
   data = asinh(data/cofactor)
   print("done")
   return(data)
@@ -42,6 +44,8 @@ Main$getMarkerData <- function(database.path, table, fileID, markerindex = "all"
 
 # get sample names with position corresponding to their ID from table NAME_fileIdentity
 Main$getSampleNames <- function(database.path, table) {
+
+  print("do: getSampleNames")
 
   # get sample names which are identified through FileID in other tables
   conn = dbConnect(SQLite(), dbname = database.path)
@@ -54,6 +58,8 @@ Main$getSampleNames <- function(database.path, table) {
 # get unique marker names from table NAME_markerIdentity
 Main$getMarkerNames <- function(database.path, table, fileID) {
 
+  print("do: getMarkerNames")
+  
   # get sample names which are identified through FileID in other tables
   conn = dbConnect(SQLite(), dbname = database.path)
   marker_names = unique(dbGetQuery(conn, paste0("SELECT shortname FROM ", table)))

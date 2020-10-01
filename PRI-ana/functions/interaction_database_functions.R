@@ -176,6 +176,7 @@ fcs$getFile <- function (table, fileidx, stain=NA, cofactor=NA){
   
   if (checkTRANS == "asinh"){
     data <- asinh(data / cofactor)
+    this$test = cofactor
     
     this$current.trans <- "asinh"
     
