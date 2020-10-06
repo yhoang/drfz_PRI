@@ -36,3 +36,6 @@
 - added DB selection button and functionality
 - added select/deselect all
 - optimized windows size and added labels
+- added standardized pdf save of Histograms
+- added current database display
+- added refresh after db selection
