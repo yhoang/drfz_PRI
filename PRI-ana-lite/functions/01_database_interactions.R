@@ -64,12 +64,27 @@ Main$getMarkerNames <- function(database.path, table, fileID) {
   conn = dbConnect(SQLite(), dbname = database.path)
   marker_names = unique(dbGetQuery(conn, paste0("SELECT shortname FROM ", table)))
   dbDisconnect(conn)
+
   return(marker_names)
 }
 
+# get pre saved cutoffs from database
+Main$getSavedCutoffs <- function(database.path, table, fileID) {
+
+  print("do: getSavedCutoffs")
+  conn = dbConnect(SQLite(), dbname = database.path)
+  cutoffs = dbGetQuery(conn, paste0("SELECT file_savedCutoffs FROM ", table, " WHERE file_ID == '", fileID, "'"))
+  dbDisconnect(conn)
+  
+  return(cutoffs)
+
+}
 
 
 # ---------- # Interaction functions with the sqlite3 database # ---------- #
+
+
+
 
 ### PRI-ana functions 
 

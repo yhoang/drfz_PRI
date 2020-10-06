@@ -22,7 +22,7 @@ Main$translateToDatabase <- function(marker_cols) {
           }
         }
 
-        # translation of iteger vector into column names for marker selection
+        # translation of integer vector into column names for marker selection
         markerindex = list()
         for (i in 1:length(marker_cols)) {
           markerindex[[i]] = paste0("col", marker_cols[i])

@@ -18,8 +18,8 @@ if (work.station == "delta_local") {
     PRIanalite.path = file.path("","home","flohrke","PRI-Github","drfz_PRI","PRI-ana-lite","functions")
     Lib.path = "/home/flohrke/R/x86_64-pc-linux-gnu-library/3.6"
     aram.path <- file.path("","home","flohrke","PRI-Github","drfz_PRI","PRI-ana")
-    Main$db.path=file.path("","data","databases")
-    Main$db.name="RB_20191002_Good2018.sqlite3"
+    #Main$db.path=file>>.path("","data","databases")
+    #Main$db.name="RB_20191002_Good2018.sqlite3"
     Main$database = file.path("","data","databases","RB_20191002_Good2018.sqlite3")
 }
 

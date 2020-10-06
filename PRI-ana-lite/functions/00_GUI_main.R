@@ -7,14 +7,19 @@ Main$GUImain <- function() {
 
     Current = Main
 
-    # databse selection via pop up at start of PRI-ana-lite
-    ## there should be a default option/use db from last time
-    #tk_messageBox(caption = "PRI-ANA-LITE V0.1", message = "Welcome to PRI-ANA-Lite, please select the database you want to work with.")
-    #Current$database = tkgetOpenFile()
-
+    # select theme
+    #themes = as.character(tcl("ttk::style", "theme", "names"))
+    #tcl("ttk::style", "theme", "use", themes[5])
+    themes = tk2theme.list()
+    if ("radiance" %in% themes) {
+      print("do: theme set")
+      tk2theme(theme = "radiance")
+    }
+    
     # creating base and adding main title
     Current$mainframe = tktoplevel()
     tkwm.title(Current$mainframe, Current$version)
+    #.Tcl("ttk::style theme use default")
 
     # set window size
     tkwm.geometry(Current$mainframe, "600x500")
@@ -26,17 +31,30 @@ Main$GUImain <- function() {
       topMenu <- tkmenu(Current$mainframe)
       tkconfigure(Current$mainframe, menu=topMenu)
       fileMenu <- tkmenu(topMenu, tearoff=FALSE)
-
+    
       tkadd(topMenu, "command", label = "Close", command = function() {
         Current$GUIquit()
       })
       tkadd(topMenu, "command", label = "Choose DB", command = function() {
         Current$GUIselectdb()
+        tkdestroy(Current$mainframe)
+        Current$GUImain()
       })
       
       # create padding frame 
       padframe = tkframe(Current$mainframe)
       tkpack(padframe, pady = 30)
+
+      # title of entry
+      label_title = tklabel(Current$mainframe, text = "Current database: ")
+      tkpack(label_title)   
+
+      # create entry with current database
+      db_name = strsplit(Current$database, split = "/")[[1]]
+      db_name = tclVar(db_name[length(db_name)])
+      db_entry = tkentry(Current$mainframe, textvariable = db_name, width = 40)
+      tk2state.set(db_entry, state = "readonly")
+      tkpack(db_entry, pady = 10)
 
       # create labelframe
       label = tklabel(Current$mainframe, text = "Please select the Project you are working on:")
@@ -44,7 +62,7 @@ Main$GUImain <- function() {
 
       # create listbox that contains projects
       listbox = tklistbox(Current$mainframe)
-      tkpack(listbox, side = "top", pady = 60)
+      tkpack(listbox, side = "top", pady = 50)
       tk2tip(listbox, "Double Click to Open")
 
       # retrieve tablenames from database 
@@ -96,18 +114,28 @@ Main$GUImain <- function() {
       tkadd(topMenu, "command", label = "Back", command = function() {
       Current$GUIback()
       })
-    
-    # add dropdown menu with samples to select
-    # currently selected sample name is returned as selection
-    combobox = ttkcombobox(Current$mainframe, values=unlist(Current$samples), width = 30)
-    tkset(combobox, unlist(Current$samples)[1])
-    tkpack(combobox, side = "top", pady = 5)
-    tkbind(combobox, "<<ComboboxSelected>>", function() {
-        selection = tclvalue(tkget(combobox))
-        selection_idx = tcl(combobox, "current")
+      
+      # add dropdown menu with samples to select
+      # currently selected sample name is returned as selection
+      combobox = ttkcombobox(Current$mainframe, values=unlist(Current$samples), width = 30)
+        tkset(combobox, unlist(Current$samples)[1])
+        tkpack(combobox, side = "top", pady = 5)
+        tkbind(combobox, "<<ComboboxSelected>>", function() {
+      
+          selection = tclvalue(tkget(combobox))
+          selection_idx = tcl(combobox, "current")
 
-        # extracting marker data for selected sample
-        #Current$data = Current$getMarkerData(file.path(Current$db.path, Current$db.name), Current$project, 1)
+          # extracting marker data for selected sample
+          #Current$data = Current$getMarkerData(file.path(Current$db.path, Current$db.name), Current$project, 1)
+          # get saved cutoffs
+          sample_idx = as.integer(tcl(combobox, "current"))+1
+          thresholds = Current$getSavedCutoffs(Current$database, paste0(Current$project, "_markerIdentity"), sample_idx)
+        
+          # display calculated thresholds in textboxes
+          for (markers in 1:length(Current$marker_names)) {
+            tclvalue(Current$displayed_thresholds[[markers]]) = thresholds[markers,]
+          }
+          print(thresholds)
     })
 
     # area for buttons to plot data
@@ -236,8 +264,8 @@ Main$GUImain <- function() {
         }
 
         # saving Histograms as pdf 
-        pdf(filename)
         Current$plotHistograms(Current$specified_marker_data, num_markers, selected_marker_names, thresholds, sample_name)
+        dev.copy2pdf(file = filename)
         dev.off()
         tk_messageBox(caption = "PRI-ANA-LITE V0.3", message = paste0("Plots have been saved at ", filename))
 
@@ -250,6 +278,7 @@ Main$GUImain <- function() {
         print(thresholds)
 
       } else {
+
         # catch error if no marker selected
         tk_messageBox(caption = Current$version, message = "Please select at least one Marker.")
         print("No Markers selected.")
@@ -298,7 +327,6 @@ Main$GUImain <- function() {
     }
     
     # checkbox selection list
-    
     if (marker_length %% 4 != 0) {
       residue = 1
     }
@@ -306,6 +334,8 @@ Main$GUImain <- function() {
 
     # global variable for displayed thresholds in textfields
     Current$displayed_thresholds = list()
+
+    # creating 4 fields adjusted to number of markers
     for (i in 1:marker_length) {
       Current$displayed_thresholds[[i]] = tclVar(0)
     }
@@ -339,7 +369,9 @@ Main$GUImain <- function() {
     }
 }
 
-# secondary GUI functions
+# ---------- # GUI secondary functions # ---------- #
+
+# quit GUI
 Main$GUIquit <- function() {
   print("do: GUIquit")
   Current = Main
@@ -347,6 +379,7 @@ Main$GUIquit <- function() {
   tkdestroy(Current$mainframe)
 }
 
+# move back into preselection mode
 Main$GUIback <- function() {
   print("do: GUIback")
   Current = Main
@@ -356,6 +389,7 @@ Main$GUIback <- function() {
   Current$GUImain()
 }
 
+# select database to work from
 Main$GUIselectdb <- function() {
   print("do: GUIselectdb")
   Current = Main
