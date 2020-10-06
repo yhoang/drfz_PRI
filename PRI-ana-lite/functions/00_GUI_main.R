@@ -138,11 +138,13 @@ Main$GUImain <- function() {
           print(thresholds)
     })
 
-    # area for buttons to plot data
+    # area for buttons to plot data and save data
     middleframe = tkframe(Current$mainframe, relief = "raised", borderwidth = 1)
     button_plot_data = tkbutton(middleframe, text = "Plot data with calculated cutoffs")
-    button_pdf_data = tkbutton(middleframe, text = "Save as pdf")
+    button_save_data = tkbutton(middleframe, text = "Save displayed cutoffs to Database")
+    button_pdf_data = tkbutton(middleframe, text = "Save Plots as pdf")
     tkpack(button_plot_data, pady = 6)
+    tkpack(button_save_data, pady = 6)
     tkpack(button_pdf_data, pady = 6)
     tkpack(middleframe, fill = "x", side = "top")
 
@@ -207,6 +209,9 @@ Main$GUImain <- function() {
           x = x + 1
         }
         print(thresholds)
+
+        # save Cutoffs TEST
+        Current$saveCutoffs(Current$database, Current$project, sample_idx, thresholds, marker_cols)
 
       } else {
         # catch error if no marker selected
@@ -283,6 +288,33 @@ Main$GUImain <- function() {
         tk_messageBox(caption = Current$version, message = "Please select at least one Marker.")
         print("No Markers selected.")
       }
+
+    })
+
+    # bind command to save cutoffs to database
+    tkbind(button_save_data, "<Button-1>", function(...) {
+      
+      # calculated thresholds
+      thresholds = rep(0, marker_length)
+      for (marker in 1:ncol(Current$specified_marker_data)) {
+        thresholds[marker] = Current$calculateCutoff(Current$specified_marker_data[,marker])
+      }
+
+      # get sample ID
+      sample_idx = as.integer(tcl(combobox, "current"))+1
+
+      # get current selected markers
+      # output of states of checkboxes
+      marker_cols = c()
+
+      # transformation of tcl states into integer vector for columns
+      for (i in 1:marker_length) {
+        marker_cols = c(marker_cols, as.integer(tclvalue(cb_states[[i]])))
+      }
+      marker_cols = which(marker_cols == 1)
+
+      # save Cutoffs TEST
+      Current$saveCutoffs(Current$database, Current$project, sample_idx, thresholds, marker_cols)
 
     })
     

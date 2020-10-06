@@ -80,6 +80,21 @@ Main$getSavedCutoffs <- function(database.path, table, fileID) {
 
 }
 
+# save generated cutoffs to database
+Main$saveCutoffs <- function(database.path, table, fileID, cutoffs, positions) {
+
+  print("do: saveCutoffs")
+  conn = dbConnect(SQLite(), dbname = database.path)
+  x = 1
+  for (row in positions) {
+    print(paste0("UPDATE ", paste0(table,"_markerIdentity"), " SET file_savedCutoffs = ", cutoffs[x], " WHERE file_ID == ", fileID, " AND rowid == ", row))
+    #dbSendQuery(conn, paste0("UPDATE", paste0(table,"_markerIdentity"), "SET file_savedCutoffs = ", cutoffs[row], " WHERE file_ID == ", fileID, "AND rowid == ", row))
+    x = x + 1
+  }
+  dbDisconnect(conn)
+
+}
+
 
 # ---------- # Interaction functions with the sqlite3 database # ---------- #
 

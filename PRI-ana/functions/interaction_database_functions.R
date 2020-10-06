@@ -258,6 +258,7 @@ fcs$saveCutoffsToDB <- function(){
   
   ### get name of stain table
   name.stain <- paste0(this$selected.project, this$markerid_name)
+  
   ### remove and rewrite stain table
   dbRemoveTable(this$conn, name.stain)
   dbWriteTable(this$conn, name.stain, new.staintable)
