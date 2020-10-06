@@ -39,3 +39,4 @@
 - added standardized pdf save of Histograms
 - added current database display
 - added refresh after db selection
+- added DB update with new cutoffs
