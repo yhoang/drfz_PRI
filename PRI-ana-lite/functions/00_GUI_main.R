@@ -8,8 +8,6 @@ Main$GUImain <- function() {
     Current = Main
 
     # select theme
-    #themes = as.character(tcl("ttk::style", "theme", "names"))
-    #tcl("ttk::style", "theme", "use", themes[5])
     themes = tk2theme.list()
     if ("radiance" %in% themes) {
       print("do: theme set")
@@ -19,7 +17,6 @@ Main$GUImain <- function() {
     # creating base and adding main title
     Current$mainframe = tktoplevel()
     tkwm.title(Current$mainframe, Current$version)
-    #.Tcl("ttk::style theme use default")
 
     # set window size
     tkwm.geometry(Current$mainframe, "600x500")
@@ -40,7 +37,10 @@ Main$GUImain <- function() {
         tkdestroy(Current$mainframe)
         Current$GUImain()
       })
-      
+      tkadd(topMenu, "command", label = "Open Log", command = function() {
+        Current$openLog()
+      })
+
       # create padding frame 
       padframe = tkframe(Current$mainframe)
       tkpack(padframe, pady = 30)
@@ -52,7 +52,7 @@ Main$GUImain <- function() {
       # create entry with current database
       db_name = strsplit(Current$database, split = "/")[[1]]
       db_name = tclVar(db_name[length(db_name)])
-      db_entry = tkentry(Current$mainframe, textvariable = db_name, width = 40)
+      db_entry = tkentry(Current$mainframe, textvariable = db_name, width = nchar(db_name) + 30)
       tk2state.set(db_entry, state = "readonly")
       tkpack(db_entry, pady = 10)
 
@@ -60,18 +60,29 @@ Main$GUImain <- function() {
       label = tklabel(Current$mainframe, text = "Please select the Project you are working on:")
       tkpack(label)
 
-      # create listbox that contains projects
-      listbox = tklistbox(Current$mainframe)
-      tkpack(listbox, side = "top", pady = 50)
-      tk2tip(listbox, "Double Click to Open")
-
       # retrieve tablenames from database 
       all_tables = Current$returnTableNames(Current$database)
 
+      # dynamic listbox width
+      standard_width = 20
+      input_width = max(nchar(unlist(all_tables)))
+
+      if (input_width > standard_width) {
+         listbox_width = input_width
+      } else {
+         listbox_width = standard_width
+      }
+
+      # create listbox that contains projects
+      listbox = tklistbox(Current$mainframe, width = listbox_width, bg = "white")
+      
       # display tablenames in listbox
       for (table in 1:length(all_tables)) {
         tkinsert(listbox, "end", all_tables[table])
       }
+
+      tkpack(listbox, side = "top", pady = 50)
+      tk2tip(listbox, "Double Click to Open")
 
       # bind double click command to select project
       tkbind(listbox, "<Double-Button-1>", function(){
@@ -104,7 +115,7 @@ Main$GUImain <- function() {
     if (Current$preselection == FALSE) {
       
       # new window size and menu with close + back
-      tkwm.geometry(Current$mainframe, "1200x1000")
+      tkwm.geometry(Current$mainframe, "1100x900")
       topMenu <- tkmenu(Current$mainframe)
       tkconfigure(Current$mainframe, menu=topMenu)
 
@@ -117,26 +128,27 @@ Main$GUImain <- function() {
       
       # add dropdown menu with samples to select
       # currently selected sample name is returned as selection
-      combobox = ttkcombobox(Current$mainframe, values=unlist(Current$samples), width = 30)
+      combobox = ttkcombobox(Current$mainframe, values=unlist(Current$samples), width = max(nchar(unlist(Current$samples))))
         tkset(combobox, unlist(Current$samples)[1])
         tkpack(combobox, side = "top", pady = 5)
-        tkbind(combobox, "<<ComboboxSelected>>", function() {
+        #tkbind(combobox, "<<ComboboxSelected>>", function() {
       
-          selection = tclvalue(tkget(combobox))
-          selection_idx = tcl(combobox, "current")
+          #selection = tclvalue(tkget(combobox))
+          #selection_idx = tcl(combobox, "current")
 
           # extracting marker data for selected sample
           #Current$data = Current$getMarkerData(file.path(Current$db.path, Current$db.name), Current$project, 1)
           # get saved cutoffs
-          sample_idx = as.integer(tcl(combobox, "current"))+1
-          thresholds = Current$getSavedCutoffs(Current$database, paste0(Current$project, "_markerIdentity"), sample_idx)
+          #print("here")
+          #sample_idx = as.integer(tcl(combobox, "current"))+1
+          #thresholds = Current$getSavedCutoffs(Current$database, paste0(Current$project, "_markerIdentity"), sample_idx)
         
           # display calculated thresholds in textboxes
-          for (markers in 1:length(Current$marker_names)) {
-            tclvalue(Current$displayed_thresholds[[markers]]) = thresholds[markers,]
-          }
-          print(thresholds)
-    })
+          #for (markers in 1:length(Current$marker_names)) {
+          #  tclvalue(Current$displayed_thresholds[[markers]]) = thresholds[markers,]
+          #}
+          #print(thresholds)
+    #})
 
     # area for buttons to plot data and save data
     middleframe = tkframe(Current$mainframe, relief = "raised", borderwidth = 1)
@@ -209,9 +221,6 @@ Main$GUImain <- function() {
           x = x + 1
         }
         print(thresholds)
-
-        # save Cutoffs TEST
-        Current$saveCutoffs(Current$database, Current$project, sample_idx, thresholds, marker_cols)
 
       } else {
         # catch error if no marker selected
@@ -292,6 +301,7 @@ Main$GUImain <- function() {
     })
 
     # bind command to save cutoffs to database
+    # need to add class vars to avoid repetition
     tkbind(button_save_data, "<Button-1>", function(...) {
       
       # calculated thresholds
@@ -313,7 +323,7 @@ Main$GUImain <- function() {
       }
       marker_cols = which(marker_cols == 1)
 
-      # save Cutoffs TEST
+      # save Cutoffs TEST PRINT
       Current$saveCutoffs(Current$database, Current$project, sample_idx, thresholds, marker_cols)
 
     })
@@ -338,15 +348,17 @@ Main$GUImain <- function() {
 
     # creating checkboxes with all markers that will be used for calculation/plotting
     # 4 frames with dimension calculation is needed
-    marker_frames = ttklabelframe(Current$mainframe, text = "Select Markers: ")
-    marker_frame1 = tkframe(marker_frames, relief = "raised", borderwidth = 1)
-    marker_frame2 = tkframe(marker_frames, relief = "raised", borderwidth = 1)
-    marker_frame3 = tkframe(marker_frames, relief = "raised", borderwidth = 1)
-    marker_frame4 = tkframe(marker_frames, relief = "raised", borderwidth = 1)
+    #marker_frames = ttklabelframe(Current$mainframe, text = "Select Markers: ")
+    #marker_frame1 = tkframe(marker_frames, relief = "raised", borderwidth = 1)
+    #marker_frame2 = tkframe(marker_frames, relief = "raised", borderwidth = 1)
+    #marker_frame3 = tkframe(marker_frames, relief = "raised", borderwidth = 1)
+    #marker_frame4 = tkframe(marker_frames, relief = "raised", borderwidth = 1)
+    #scrollbar = tk2scrollbar(marker_frames, orientation = "vertical")
+    #tkpack(scrollbar, side = "right")
 
     # check if markers can be split into 4 quadrants
     # quarter = amount of markers in one quadrant
-    residue = 0
+    #residue = 0
     marker_length = nrow(Current$marker_names)
 
     # creating checkbox list to keep track of checkbox states
@@ -359,10 +371,10 @@ Main$GUImain <- function() {
     }
     
     # checkbox selection list
-    if (marker_length %% 4 != 0) {
-      residue = 1
-    }
-    quarter = floor(marker_length/4) + residue
+    #if (marker_length %% 4 != 0) {
+    #  residue = 1
+    #}
+    #quarter = floor(marker_length/4) + residue
 
     # global variable for displayed thresholds in textfields
     Current$displayed_thresholds = list()
@@ -372,33 +384,75 @@ Main$GUImain <- function() {
       Current$displayed_thresholds[[i]] = tclVar(0)
     }
 
-    for (i in 1:quarter) {
-      checkbox = tkcheckbutton(marker_frame1, variable=cb_states[[i]], text=unlist(Current$marker_names[i,]))
-      cutoffentry = tkentry(marker_frame1, width=4, textvariable=Current$displayed_thresholds[[i]])
-      tkpack(checkbox, tklabel(marker_frame1, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
+    #for (i in 1:quarter) {
+    #  checkbox = tkcheckbutton(marker_frame1, variable=cb_states[[i]], text=unlist(Current$marker_names[i,]))
+    #  cutoffentry = tkentry(marker_frame1, width=4, textvariable=Current$displayed_thresholds[[i]])
+    #  tkpack(checkbox, tklabel(marker_frame1, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
+    #}
+    #for (j in (i+1):(i+quarter)) {
+    #  checkbox = tkcheckbutton(marker_frame2, variable=cb_states[[j]], text=unlist(Current$marker_names[j,]))
+    #  cutoffentry = tkentry(marker_frame2, width=4, textvariable=Current$displayed_thresholds[[j]])
+    #  tkpack(checkbox, tklabel(marker_frame2, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
+    #}
+    #for (k in (j+1):(j+quarter)) {
+    #  checkbox = tkcheckbutton(marker_frame3, variable=cb_states[[k]], text=unlist(Current$marker_names[k,]))
+    #  cutoffentry = tkentry(marker_frame3, width=4, textvariable=Current$displayed_thresholds[[k]])
+    #  tkpack(checkbox, tklabel(marker_frame3, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
+    #}
+    #for (l in (k+1):marker_length) {
+    #  checkbox = tkcheckbutton(marker_frame4, variable=cb_states[[l]], text=unlist(Current$marker_names[l,]))
+    #  cutoffentry = tkentry(marker_frame4, width=4, textvariable=Current$displayed_thresholds[[l]])
+    #  tkpack(checkbox, tklabel(marker_frame4, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
+    #}
+    #tkpack(marker_frame1, side = "left", padx = 5)
+    #tkpack(marker_frame2,  side = "left", padx = 5)
+    #tkpack(marker_frame3, side = "left",  padx = 5)
+    #tkpack(marker_frame4,  side = "left", padx = 5)
+    #tkpack(marker_frames, expand = TRUE, side = "top")
+
+
+    ### TESTING DYNAMIC FIELD CREATION
+
+    markers = c(1:marker_length)
+
+    # calculate num of fields so that max 8 marker per field
+    number_fields = ceiling(marker_length/8)
+
+    # splitting the markers with possible leftover
+    groups = split(markers, rep(1:number_fields, each=8, length.out = length(markers)))
+
+    # global variable for displayed thresholds in textfields
+    Current$displayed_thresholds = list()
+
+    # creating 4 fields adjusted to number of markers
+    for (i in 1:marker_length) {
+      Current$displayed_thresholds[[i]] = tclVar(0)
     }
-    for (j in (i+1):(i+quarter)) {
-      checkbox = tkcheckbutton(marker_frame2, variable=cb_states[[j]], text=unlist(Current$marker_names[j,]))
-      cutoffentry = tkentry(marker_frame2, width=4, textvariable=Current$displayed_thresholds[[j]])
-      tkpack(checkbox, tklabel(marker_frame2, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
+
+    # main labeframe + list of dynamically created group frames
+    marker_frames = ttklabelframe(Current$mainframe, text = "Select Markers: ")
+    all_group_frames = list()
+
+    # dynamic marker field creation
+    for (group in 1:length(groups)) {
+      all_group_frames[[group]] = tkframe(marker_frames, relief = "raised", borderwidth = 1)
+      
+      # for each marker in each group checkbox and entry created
+      for (marker in groups[[group]]) {
+        checkbox = tkcheckbutton(all_group_frames[[group]], variable=cb_states[[marker]], text=unlist(Current$marker_names[marker,]))
+        cutoffentry = tkentry(all_group_frames[[group]], width=4, textvariable=Current$displayed_thresholds[[marker]])
+        tkpack(checkbox, tklabel(all_group_frames[[group]], text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
+      }
     }
-    for (k in (j+1):(j+quarter)) {
-      checkbox = tkcheckbutton(marker_frame3, variable=cb_states[[k]], text=unlist(Current$marker_names[k,]))
-      cutoffentry = tkentry(marker_frame3, width=4, textvariable=Current$displayed_thresholds[[k]])
-      tkpack(checkbox, tklabel(marker_frame3, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
+
+    # packing all dynamically created frames
+    for (frames in 1:length(all_group_frames)) {
+      tkpack(all_group_frames[[frames]], side = "left", padx = 5)
     }
-    for (l in (k+1):marker_length) {
-      checkbox = tkcheckbutton(marker_frame4, variable=cb_states[[l]], text=unlist(Current$marker_names[l,]))
-      cutoffentry = tkentry(marker_frame4, width=4, textvariable=Current$displayed_thresholds[[l]])
-      tkpack(checkbox, tklabel(marker_frame4, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
-    }
-    tkpack(marker_frame1, side = "left", padx = 5)
-    tkpack(marker_frame2,  side = "left", padx = 5)
-    tkpack(marker_frame3, side = "left",  padx = 5)
-    tkpack(marker_frame4,  side = "left", padx = 5)
+    # packing main labelframe
     tkpack(marker_frames, expand = TRUE, side = "top")
-    
-    }
+      
+      }
 }
 
 # ---------- # GUI secondary functions # ---------- #
@@ -433,4 +487,30 @@ Main$GUIselectdb <- function() {
   if (Current$database == "") {
     Current$database = last_database
   }
+}
+
+# open PRI-ANA-LITE log
+Main$openLog <- function(parameters) {
+  print("do: openLog")
+  Current = Main
+
+  # creating base and adding main title
+  Current$logframe = tktoplevel()
+  tkwm.title(Current$logframe, Current$version)
+
+  # set window size
+  tkwm.geometry(Current$logframe, "600x500")
+
+  # reading in log file
+  log = readLines("../PRI-ana-lite.log")
+
+  # textfield creation and text insertion
+  textfield = tk2text(Current$logframe, width = 88, height = 35)
+  for (i in log) {
+    tkinsert(textfield, "end", i)
+    tkinsert(textfield, "end", "\n")
+  }
+  tkconfigure(textfield, state = "disabled")
+  tkpack(textfield)
+
 }

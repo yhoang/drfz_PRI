@@ -8,7 +8,7 @@ rm(list = ls())
 Main <- new.env()
 Parameters <- new.env()
 Main$parent.env <- ls()
-Main$version <- "PRI-ANA-LITE v0.3"
+Main$version <- "PRI-ANA-LITE v0.4"
 
 # designate work station
 work.station = "delta_local"
@@ -29,6 +29,8 @@ library(tcltk2, quietly=TRUE, lib.loc = Lib.path)
 library(R.devices, quietly=TRUE, lib.loc = Lib.path)
 
 ### Load functions -------------------------------------------------------
+### set wd
+setwd(PRIanalite.path)
 
 ### Source several R scripts
 source.files <- list.files(path = PRIanalite.path, pattern = "\\.[Rr]$")

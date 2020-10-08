@@ -5,7 +5,6 @@
 # ---------- # Functions for plotting # ---------- #
 
 # plotting Histograms from marker data with thresholds
-
 Main$plotHistograms <- function(marker_data, num_markers, marker_names, thresholds, sample_name) {
     
     print("do: plotHistograms")

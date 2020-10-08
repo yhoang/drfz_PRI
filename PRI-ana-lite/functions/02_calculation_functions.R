@@ -3,11 +3,8 @@
 # DRFZ 2020
 
 # ---------- # Calculation functions # ---------- #
-# 3 scenarios
-# i) 
 
 # automatically calculate cutoff for a marker depending on marker value behavior over time
-# (trimming and doublets?)
 Main$calculateCutoff <- function(marker_values) {
     #Current = Main
     print("do: calculateCutoff")
@@ -195,6 +192,7 @@ Main$calculateCutoff <- function(marker_values) {
     return(cutoff)
 
 }
+
 # function that takes marker values and returns cutoff based on % quantile
 Main$calcCutoffQuantile <- function(marker_values, quantile = 20) {
 
@@ -208,4 +206,20 @@ Main$calcCutoffQuantile <- function(marker_values, quantile = 20) {
 
     return(cutoff)
 
+}
+
+# function for custom cutoffs that only fires for specific markers
+# takes identifier to return specific custom cutoff
+Main$customCutoff <- function(marker_values, identifier) {
+   
+   print("do: customCutoff")
+
+   # CD63 set cutoff at 25% percentile
+   if (identifier == "CD63") {
+       return(Main$calcCutoffQuantile(marker_values, 25))
+
+   # FCR/ CD123 cutoff at Lage der Quadranten (Triplot) 
+   } else if (identifier == "FCR" | identifier == "CD123") {
+      return(0)
+   } 
 }

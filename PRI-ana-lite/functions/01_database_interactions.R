@@ -81,6 +81,7 @@ Main$getSavedCutoffs <- function(database.path, table, fileID) {
 }
 
 # save generated cutoffs to database
+# selects rows with calculated cutoffs dynamically and moves iteratively through cutoffs vector (position doesnt respond directly to row)
 Main$saveCutoffs <- function(database.path, table, fileID, cutoffs, positions) {
 
   print("do: saveCutoffs")
@@ -88,7 +89,7 @@ Main$saveCutoffs <- function(database.path, table, fileID, cutoffs, positions) {
   x = 1
   for (row in positions) {
     print(paste0("UPDATE ", paste0(table,"_markerIdentity"), " SET file_savedCutoffs = ", cutoffs[x], " WHERE file_ID == ", fileID, " AND rowid == ", row))
-    #dbSendQuery(conn, paste0("UPDATE", paste0(table,"_markerIdentity"), "SET file_savedCutoffs = ", cutoffs[row], " WHERE file_ID == ", fileID, "AND rowid == ", row))
+    #dbSendQuery(conn, paste0("UPDATE ", paste0(table,"_markerIdentity"), " SET file_savedCutoffs = ", cutoffs[x], " WHERE file_ID == ", fileID, " AND rowid == ", row))
     x = x + 1
   }
   dbDisconnect(conn)
