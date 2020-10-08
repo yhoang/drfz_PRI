@@ -1,10 +1,10 @@
 ##########  PRI-analyzer-lite Update Log
 #		Author:	Felix Lohrke
 #		Written in R
-#		2020-
+#		2020-current
 ##########	PRI-analyzer-lite Update Log
 
-########## v0.1
+########## v0.1 - base
 *** general
 - created Main GUI with selection of tables 
 * selection of database refreshes window to new surface
@@ -15,7 +15,7 @@
 - added specific selection of markers by project, sample and marker selection
 - worked on marker selection checkboxes
 
-########## v0.2
+########## v0.2 - database connection
 *** general
 - added translation of marker selection into column names for db extraction
 - added automatic cutoff calculation from PRI-ANA 
@@ -25,7 +25,7 @@
 * might need to modularize since main script is in command def for button
 - added Histogram plotting
 
-########## v0.3
+########## v0.3 - pdf saving 
 *** general
 - added pdf save of generated plots
 - fixed asinh problem for cutoff generation
@@ -40,3 +40,13 @@
 - added current database display
 - added refresh after db selection
 - added DB update with new cutoffs
+
+########## v0.4 - GUI improvements/functionality
+*** improvements
+- added dynamic marker field creation (8 Markers per field)
+- increased modularization in GUI
+*** general
+- added dynamic textfield widths
+- added log to menu
+- removed unnecessary code 
+- started function for custom cutoffs (need to ask Ria)

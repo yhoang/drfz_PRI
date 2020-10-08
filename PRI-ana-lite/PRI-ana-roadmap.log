@@ -1,14 +1,14 @@
 ##########  PRI-analyzer-lite Roadmap Log
 #		Author:	Felix Lohrke
 #		Written in R
-#		2020-
+#		2020-current
 ##########	PRI-analyzer-lite Roadmap Log
 
 ########## Improvements of existing code 
 
 - increase modularity of GUI main into functions
-* add separate functions for pre/post selection
-* add single function for plotting or pdf generation
+* add separate functions for pre/post selection - might be overkill
+* add single function for plotting or pdf generation - done
 
 - might need some class vars in Main-GUI for cutoff display + saving
 * calculated thresholds
@@ -16,20 +16,23 @@
 * selected markers
 
 - BUG: saving thresholds before they are calculated should be catched
+- BUG: saved cutoffs are extracted but not displayed in text fields
 
-- fix positioning of marker checkboxes
-* conversion of all pack into grid (emulate Yens approach)
-* or get damned pack to work!
+- fix positioning of marker checkboxes - fixed via dynamic marker field creation
+* implement dynamic field number with fixed num of markers per field - done
+* conversion of all pack into grid (emulate Yens approach) - not needed
+* or get damned pack to work! - works now
 
-- change plotting to plot a single Hist and do par() etc outside
+- change plotting to plot a single Hist and do par() etc outside - fixed
 
 - General Optimizations/Coding
-* add procedure prints/flags
+* add procedure prints/flags - done
 
-- subscript out of bounds error with some markers
+- subscript out of bounds error with some markers (same error in PRI-ANA)
+- saving cutoffs should only re-calculate them if they havent been calculated yet
+* via class var
+* either flag or other (avoid saving previously calculated cutoffs)
 
-
-########## Improvements of existing code 
 
 ########## Implementations to do
 
@@ -42,10 +45,11 @@
 
 - calculation functions for thresholds
 * emulate existing from PRI-ana - done
+* trimming and doublets
 * add new ones 
 
 - add storage/database manipulation 
-* save created thresholds
+* save created thresholds - done
 * extract existing thresholds
 * reload last used database
 
@@ -56,4 +60,5 @@
 - Automation 
 * what to automate?
 
-########## Implementations to do
+- add PRI log field - done
+
