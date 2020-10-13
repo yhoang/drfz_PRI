@@ -128,8 +128,9 @@ Main$GUImain <- function() {
       
       # add dropdown menu with samples to select
       # currently selected sample name is returned as selection
-      combobox = ttkcombobox(Current$mainframe, values=unlist(Current$samples), width = max(nchar(unlist(Current$samples))))
+      combobox = ttkcombobox(Current$mainframe, values=unlist(Current$samples), state = "readonly", width = max(nchar(unlist(Current$samples))))
       tkset(combobox, unlist(Current$samples)[1])
+      #tk2state.set(combobox, state = "readonly")
       tkpack(combobox, side = "top", pady = 5)
 
       # area for buttons to plot data and save data
@@ -175,13 +176,14 @@ Main$GUImain <- function() {
         # retrieving number of selected markers
         num_markers = length(marker_cols)
         selected_marker_names = Current$marker_names[marker_cols,]
-        print(selected_marker_names)
+        #print(selected_marker_names)
 
         ## check if any markers are selected
         if (num_markers > 0) {
         
           # translate selected marker cols into database cols
           markerindex = Current$translateToDatabase(marker_cols)
+          #print(markerindex)
 
           # get marker data for current selected markers and sample
           Current$specified_marker_data  = Current$getMarkerData(Current$database, Current$project, sample_idx, markerindex)
@@ -189,6 +191,7 @@ Main$GUImain <- function() {
           # automatically calculate cutoffs
           thresholds = rep(0, marker_length)
           for (marker in 1:ncol(Current$specified_marker_data)) {
+            print(paste0("#### ",selected_marker_names[marker]))
             thresholds[marker] = Current$calculateCutoff(Current$specified_marker_data[,marker])
             print(thresholds[marker])
           }
@@ -379,6 +382,7 @@ Main$GUImain <- function() {
       for (marker in groups[[group]]) {
         checkbox = tkcheckbutton(all_group_frames[[group]], variable=cb_states[[marker]], text=unlist(Current$marker_names[marker,]))
         cutoffentry = tkentry(all_group_frames[[group]], width=4, textvariable=Current$displayed_thresholds[[marker]])
+        tk2state.set(cutoffentry, state = "readonly")
         tkpack(checkbox, tklabel(all_group_frames[[group]], text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
       }
     }
@@ -422,7 +426,7 @@ Main$GUIselectdb <- function() {
   # saving last db in case of cancel
   last_database = Current$database
 
-  # initial dir at location of last selected db
+  # initial dir at location of last db
   path_database = strsplit(Current$database, split = "/")
   path_database = paste0(paste(path_database[[1]][-length(path_database[[1]])], collapse= "/"), sep = "/")
   Current$database = tclvalue(tkgetOpenFile(initialdir = path_database))

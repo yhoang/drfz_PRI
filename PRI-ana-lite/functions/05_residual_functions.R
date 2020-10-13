@@ -33,7 +33,7 @@ Main$translateToDatabase <- function(marker_cols) {
 }
 
 # function for dynamic marker checkbox creation - NOT WORKING AS FUNCTION 
-# has been implemented in GUI_main directly
+# has been implemented in GUI_main directly instead
 Main$createMarkerBoxes <- function(marker_length) {
 
   print("do: createMarkerBoxes")
