@@ -8,13 +8,14 @@
 *** improvements
 - added dynamic marker field creation (8 Markers per field)
 - increased modularization in GUI
+- improved cutoff entries
+- cleaned up code visibility and removed unnecessary code 
 *** general
 - added dynamic textfield widths
 - added log to menu
-- removed unnecessary code 
 - started function for custom cutoffs (need to ask Ria)
-- cleaned up code visibility
 - added database location memory
+
 
 ########## v0.3 - pdf saving 
 *** general
