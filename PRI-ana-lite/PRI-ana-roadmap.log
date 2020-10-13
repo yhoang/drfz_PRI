@@ -30,7 +30,7 @@
 - General Optimizations/Coding
 * add procedure prints/flags - done
 
-- BUG: subscript out of bounds error with some markers (same error in PRI-ANA)
+- BUG: subscript out of bounds error with some markers (same error in PRI-ANA) - fixed
 - saving cutoffs should only re-calculate them if they havent been calculated yet
 * via class var
 * either flag or other (avoid saving previously calculated cutoffs)

@@ -15,6 +15,7 @@
 - added log to menu
 - started function for custom cutoffs (need to ask Ria)
 - added database location memory
+- fixed inc subscript put of bounds (also fixed in PRI-ana)
 
 
 ########## v0.3 - pdf saving 
