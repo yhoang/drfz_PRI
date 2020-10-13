@@ -97,23 +97,41 @@ Main$calculateCutoff <- function(marker_values) {
         if (flag != TRUE) {
 
             idx_minima = idx_maxima = idx_shoulder = c()
-
-            for (inc in 1:(length(incline_x)-1)) {
-               
-               # check for local minima
-               if (incline_list[[inc]][3] < 0 & incline_list[[inc+1]][3] > 0) {
-                   idx_minima = c(idx_minima, inc)
+            
+            # check exeption if incline lists contain 1 element only
+            if ((length(incline_x) == 1) && (length(incline_list) == 1)) {
+                # check for local minima
+               if (incline_list[[1]][3] < 0 & incline_list[[1]][3] > 0) {
+                   idx_minima = c(idx_minima, 1)
                }
-
-               # check for local maxima
-               if (incline_list[[inc]][3] > 0 & incline_list[[inc+1]][3] < 0) {
-                   idx_maxima = c(idx_maxima, inc)
+                # check for local maxima
+               if (incline_list[[1]][3] < 0 & incline_list[[1]][3] > 0) {
+                   idx_minima = c(idx_minima, 1)
                }
-
                # check for local shoulder
-               if (abs(incline_list[[inc]][3]) < 0.01) {
-                   idx_shoulder = c(idx_shoulder, inc)
+               if (abs(incline_list[[1]][3]) < 0.01) {
+                   idx_shoulder = c(idx_shoulder, 1)
                }
+               
+            } else {
+
+                for (inc in 1:(length(incline_x)-1)) {
+                
+                # check for local minima
+                if (incline_list[[inc]][3] < 0 & incline_list[[inc+1]][3] > 0) {
+                    idx_minima = c(idx_minima, inc)
+                }
+
+                # check for local maxima
+                if (incline_list[[inc]][3] > 0 & incline_list[[inc+1]][3] < 0) {
+                    idx_maxima = c(idx_maxima, inc)
+                }
+
+                # check for local shoulder
+                if (abs(incline_list[[inc]][3]) < 0.01) {
+                    idx_shoulder = c(idx_shoulder, inc)
+                }
+                }
             }
             
             # remove all maxima indices from minima indices or near

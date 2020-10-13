@@ -25,7 +25,7 @@ if (work.station == "delta_local") {
     PRIanalite.path <- file.path("Y:", "AG_Baumgrass", "AG-PRI", "github_yhoang", "drfz_PRI", "PRI-ana-lite", "functions")
     Lib.path <- "Y:/AG_Baumgrass/AG-PRI/R/R-3.6.1/library"
     Main$database = file.path("","data","databases","RB_20191002_Good2018.sqlite3")
-}  else if (work.station == "drfz") {
+}  else if (work.station == "Ria") {
 
     PRIanalite.path <- file.path("C:", "Users", "ag-baumgras", "Documents", "R", "functions")
     Lib.path <- "Y:/AG_Baumgrass/AG-PRI/R/R-3.6.1/library"
