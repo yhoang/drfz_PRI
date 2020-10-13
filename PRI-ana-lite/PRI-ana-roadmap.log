@@ -28,7 +28,7 @@
 - General Optimizations/Coding
 * add procedure prints/flags - done
 
-- subscript out of bounds error with some markers (same error in PRI-ANA)
+- BUG: subscript out of bounds error with some markers (same error in PRI-ANA)
 - saving cutoffs should only re-calculate them if they havent been calculated yet
 * via class var
 * either flag or other (avoid saving previously calculated cutoffs)
@@ -36,7 +36,7 @@
 
 ########## Implementations to do
 
-- plotting functions
+- plotting functions - done
 * plot single histogram of thresholds - done
 * plot multiple histograms - done
 * values are different to PRI-ANA + no cutoffs found! - fixed 
@@ -45,13 +45,13 @@
 
 - calculation functions for thresholds
 * emulate existing from PRI-ana - done
-* trimming and doublets
+* trimming and doublets?
 * add new ones 
 
 - add storage/database manipulation 
 * save created thresholds - done
-* extract existing thresholds
-* reload last used database
+* extract existing thresholds - done but not displayed yet
+* reload last used database - not needed (dynamic initial dir is fine)
 
 - GUI additions
 * select/deselect all markers - done
