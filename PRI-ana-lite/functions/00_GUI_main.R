@@ -129,109 +129,91 @@ Main$GUImain <- function() {
       # add dropdown menu with samples to select
       # currently selected sample name is returned as selection
       combobox = ttkcombobox(Current$mainframe, values=unlist(Current$samples), width = max(nchar(unlist(Current$samples))))
-        tkset(combobox, unlist(Current$samples)[1])
-        tkpack(combobox, side = "top", pady = 5)
-        #tkbind(combobox, "<<ComboboxSelected>>", function() {
-      
-          #selection = tclvalue(tkget(combobox))
-          #selection_idx = tcl(combobox, "current")
+      tkset(combobox, unlist(Current$samples)[1])
+      tkpack(combobox, side = "top", pady = 5)
 
-          # extracting marker data for selected sample
-          #Current$data = Current$getMarkerData(file.path(Current$db.path, Current$db.name), Current$project, 1)
-          # get saved cutoffs
-          #print("here")
-          #sample_idx = as.integer(tcl(combobox, "current"))+1
-          #thresholds = Current$getSavedCutoffs(Current$database, paste0(Current$project, "_markerIdentity"), sample_idx)
+      # area for buttons to plot data and save data
+      middleframe = tkframe(Current$mainframe, relief = "raised", borderwidth = 1)
+      button_plot_data = tkbutton(middleframe, text = "Plot data with calculated cutoffs")
+      button_save_data = tkbutton(middleframe, text = "Save displayed cutoffs to Database")
+      button_pdf_data = tkbutton(middleframe, text = "Save Plots as pdf")
+      tkpack(button_plot_data, pady = 6)
+      tkpack(button_save_data, pady = 6)
+      tkpack(button_pdf_data, pady = 6)
+      tkpack(middleframe, fill = "x", side = "top")
+
+      # area for select buttons
+      lowframe = tkframe(Current$mainframe, relief = "raised", borderwidth = 1)
+      button_select_all = tkbutton(lowframe, text = "select all")
+      button_deselect_all = tkbutton(lowframe, text = "deselect all")
+      tkpack(button_select_all, pady = 6)
+      tkpack(button_deselect_all, pady = 6)
+      tkpack(lowframe, fill = "x")
+
+      # adding comands to plot data button
+      tkbind(button_plot_data, "<Button-1>", function(...) {
+
+        # get current selected sample from dropbox
+        sample_idx = as.integer(tcl(combobox, "current"))+1
+
+        ## catch error if no sample selected
+        if (sample_idx == 0) {
+          tk_messageBox(caption = Current$version, message = "Please select a sample from the list.")
+        }
+        sample_name = tclvalue(tkget(combobox))
+
+        # get current selected markers
+        # output of states of checkboxes
+        marker_cols = c()
+
+        # transformation of tcl states into integer vector for columns
+        for (i in 1:marker_length) {
+          marker_cols = c(marker_cols, as.integer(tclvalue(cb_states[[i]])))
+        }
+        marker_cols = which(marker_cols == 1)
+      
+        # retrieving number of selected markers
+        num_markers = length(marker_cols)
+        selected_marker_names = Current$marker_names[marker_cols,]
+        print(selected_marker_names)
+
+        ## check if any markers are selected
+        if (num_markers > 0) {
         
+          # translate selected marker cols into database cols
+          markerindex = Current$translateToDatabase(marker_cols)
+
+          # get marker data for current selected markers and sample
+          Current$specified_marker_data  = Current$getMarkerData(Current$database, Current$project, sample_idx, markerindex)
+
+          # automatically calculate cutoffs
+          thresholds = rep(0, marker_length)
+          for (marker in 1:ncol(Current$specified_marker_data)) {
+            thresholds[marker] = Current$calculateCutoff(Current$specified_marker_data[,marker])
+            print(thresholds[marker])
+          }
+
+          # plotting Histograms
+          Current$plotHistograms(Current$specified_marker_data, num_markers, selected_marker_names, thresholds, sample_name)
+
           # display calculated thresholds in textboxes
-          #for (markers in 1:length(Current$marker_names)) {
-          #  tclvalue(Current$displayed_thresholds[[markers]]) = thresholds[markers,]
-          #}
-          #print(thresholds)
-    #})
+          x = 1
+          for (selected in marker_cols) {
+            tclvalue(Current$displayed_thresholds[[selected]]) = thresholds[x]
+            x = x + 1
+          }
+          print(thresholds)
 
-    # area for buttons to plot data and save data
-    middleframe = tkframe(Current$mainframe, relief = "raised", borderwidth = 1)
-    button_plot_data = tkbutton(middleframe, text = "Plot data with calculated cutoffs")
-    button_save_data = tkbutton(middleframe, text = "Save displayed cutoffs to Database")
-    button_pdf_data = tkbutton(middleframe, text = "Save Plots as pdf")
-    tkpack(button_plot_data, pady = 6)
-    tkpack(button_save_data, pady = 6)
-    tkpack(button_pdf_data, pady = 6)
-    tkpack(middleframe, fill = "x", side = "top")
-
-    # area for select buttons
-    lowframe = tkframe(Current$mainframe, relief = "raised", borderwidth = 1)
-    button_select_all = tkbutton(lowframe, text = "select all")
-    button_deselect_all = tkbutton(lowframe, text = "deselect all")
-    tkpack(button_select_all, pady = 6)
-    tkpack(button_deselect_all, pady = 6)
-    tkpack(lowframe, fill = "x")
-
-    # adding comands to plot data button
-    tkbind(button_plot_data, "<Button-1>", function(...) {
-
-      # get current selected sample from dropbox
-      sample_idx = as.integer(tcl(combobox, "current"))+1
-
-      # catch error if no sample selected
-      if (sample_idx == 0) {
-        tk_messageBox(caption = Current$version, message = "Please select a sample from the list.")
-      }
-      sample_name = tclvalue(tkget(combobox))
-
-      # get current selected markers
-      # output of states of checkboxes
-      marker_cols = c()
-
-      # transformation of tcl states into integer vector for columns
-      for (i in 1:marker_length) {
-        marker_cols = c(marker_cols, as.integer(tclvalue(cb_states[[i]])))
-      }
-      marker_cols = which(marker_cols == 1)
-      
-      # retrieving number of selected markers
-      num_markers = length(marker_cols)
-      selected_marker_names = Current$marker_names[marker_cols,]
-      print(selected_marker_names)
-
-      # check if any markers are selected
-      if (num_markers > 0) {
-        
-        # translate selected marker cols into database cols
-        markerindex = Current$translateToDatabase(marker_cols)
-
-        # get marker data for current selected markers and sample
-        Current$specified_marker_data  = Current$getMarkerData(Current$database, Current$project, sample_idx, markerindex)
-
-        # automatically calculate cutoffs
-        thresholds = rep(0, marker_length)
-        for (marker in 1:ncol(Current$specified_marker_data)) {
-          thresholds[marker] = Current$calculateCutoff(Current$specified_marker_data[,marker])
-          print(thresholds[marker])
+        } else {
+          # catch error if no marker selected
+          tk_messageBox(caption = Current$version, message = "Please select at least one Marker.")
+          print("No Markers selected.")
         }
-
-        # plotting Histograms
-        Current$plotHistograms(Current$specified_marker_data, num_markers, selected_marker_names, thresholds, sample_name)
-
-        # display calculated thresholds in textboxes
-        x = 1
-        for (selected in marker_cols) {
-          tclvalue(Current$displayed_thresholds[[selected]]) = thresholds[x]
-          x = x + 1
-        }
-        print(thresholds)
-
-      } else {
-        # catch error if no marker selected
-        tk_messageBox(caption = Current$version, message = "Please select at least one Marker.")
-        print("No Markers selected.")
-      }
 
 
     })
 
-    # add command to pdf button
+    ## add command to pdf button
     tkbind(button_pdf_data, "<Button-1>", function(...) {
 
       # getting save location and filename
@@ -240,7 +222,7 @@ Main$GUImain <- function() {
       # get current selected sample from dropbox
       sample_idx = as.integer(tcl(combobox, "current"))+1
 
-      # catch error if no sample selected
+      ## catch error if no sample selected
       if (sample_idx == 0) {
         tk_messageBox(caption = Current$version, message = "Please select a sample from the list.")
       }
@@ -261,7 +243,7 @@ Main$GUImain <- function() {
       selected_marker_names = Current$marker_names[marker_cols,]
       print(selected_marker_names)
 
-      # check if any markers are selected
+      ## check if any markers are selected
       if (num_markers > 0) {
         
         # translate selected marker cols into database cols
@@ -300,7 +282,7 @@ Main$GUImain <- function() {
 
     })
 
-    # bind command to save cutoffs to database
+    ## bind command to save cutoffs to database
     # need to add class vars to avoid repetition
     tkbind(button_save_data, "<Button-1>", function(...) {
       
@@ -328,7 +310,7 @@ Main$GUImain <- function() {
 
     })
     
-    # bind command to select all button
+    ## bind command to select all button
     tkbind(button_select_all, "<Button-1>", function(...) {
       for (i in 1:marker_length) {
         # marks tclvalue state at initiation
@@ -337,7 +319,7 @@ Main$GUImain <- function() {
 
     })
 
-    # bind command to deselect all button
+    ## bind command to deselect all button
     tkbind(button_deselect_all, "<Button-1>", function(...) {
       for (i in 1:marker_length) {
         # marks tclvalue state at initiation
@@ -346,35 +328,19 @@ Main$GUImain <- function() {
 
     })
 
-    # creating checkboxes with all markers that will be used for calculation/plotting
-    # 4 frames with dimension calculation is needed
-    #marker_frames = ttklabelframe(Current$mainframe, text = "Select Markers: ")
-    #marker_frame1 = tkframe(marker_frames, relief = "raised", borderwidth = 1)
-    #marker_frame2 = tkframe(marker_frames, relief = "raised", borderwidth = 1)
-    #marker_frame3 = tkframe(marker_frames, relief = "raised", borderwidth = 1)
-    #marker_frame4 = tkframe(marker_frames, relief = "raised", borderwidth = 1)
-    #scrollbar = tk2scrollbar(marker_frames, orientation = "vertical")
-    #tkpack(scrollbar, side = "right")
-
-    # check if markers can be split into 4 quadrants
-    # quarter = amount of markers in one quadrant
-    #residue = 0
+    # assigning length of all extracted markers
     marker_length = nrow(Current$marker_names)
 
     # creating checkbox list to keep track of checkbox states
     cb_states = list()
+
     for (i in 1:marker_length) {
+
       # identifies groupings (each is distinct)
       cb_states[[i]] = i
       # marks tclvalue state at initiation
       tclvalue(cb_states[[i]]) = 0
     }
-    
-    # checkbox selection list
-    #if (marker_length %% 4 != 0) {
-    #  residue = 1
-    #}
-    #quarter = floor(marker_length/4) + residue
 
     # global variable for displayed thresholds in textfields
     Current$displayed_thresholds = list()
@@ -384,38 +350,10 @@ Main$GUImain <- function() {
       Current$displayed_thresholds[[i]] = tclVar(0)
     }
 
-    #for (i in 1:quarter) {
-    #  checkbox = tkcheckbutton(marker_frame1, variable=cb_states[[i]], text=unlist(Current$marker_names[i,]))
-    #  cutoffentry = tkentry(marker_frame1, width=4, textvariable=Current$displayed_thresholds[[i]])
-    #  tkpack(checkbox, tklabel(marker_frame1, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
-    #}
-    #for (j in (i+1):(i+quarter)) {
-    #  checkbox = tkcheckbutton(marker_frame2, variable=cb_states[[j]], text=unlist(Current$marker_names[j,]))
-    #  cutoffentry = tkentry(marker_frame2, width=4, textvariable=Current$displayed_thresholds[[j]])
-    #  tkpack(checkbox, tklabel(marker_frame2, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
-    #}
-    #for (k in (j+1):(j+quarter)) {
-    #  checkbox = tkcheckbutton(marker_frame3, variable=cb_states[[k]], text=unlist(Current$marker_names[k,]))
-    #  cutoffentry = tkentry(marker_frame3, width=4, textvariable=Current$displayed_thresholds[[k]])
-    #  tkpack(checkbox, tklabel(marker_frame3, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
-    #}
-    #for (l in (k+1):marker_length) {
-    #  checkbox = tkcheckbutton(marker_frame4, variable=cb_states[[l]], text=unlist(Current$marker_names[l,]))
-    #  cutoffentry = tkentry(marker_frame4, width=4, textvariable=Current$displayed_thresholds[[l]])
-    #  tkpack(checkbox, tklabel(marker_frame4, text="cutoff: "), cutoffentry, padx=2, pady=1, expand = TRUE, fill = "both")
-    #}
-    #tkpack(marker_frame1, side = "left", padx = 5)
-    #tkpack(marker_frame2,  side = "left", padx = 5)
-    #tkpack(marker_frame3, side = "left",  padx = 5)
-    #tkpack(marker_frame4,  side = "left", padx = 5)
-    #tkpack(marker_frames, expand = TRUE, side = "top")
-
-
-    ### TESTING DYNAMIC FIELD CREATION
-
-    markers = c(1:marker_length)
+    ## Dynamic marker field creation
 
     # calculate num of fields so that max 8 marker per field
+    markers = c(1:marker_length)
     number_fields = ceiling(marker_length/8)
 
     # splitting the markers with possible leftover
@@ -424,7 +362,7 @@ Main$GUImain <- function() {
     # global variable for displayed thresholds in textfields
     Current$displayed_thresholds = list()
 
-    # creating 4 fields adjusted to number of markers
+    # assigning tclVar to marker threshold tickboxes
     for (i in 1:marker_length) {
       Current$displayed_thresholds[[i]] = tclVar(0)
     }
@@ -433,7 +371,7 @@ Main$GUImain <- function() {
     marker_frames = ttklabelframe(Current$mainframe, text = "Select Markers: ")
     all_group_frames = list()
 
-    # dynamic marker field creation
+    # creating as many frames as needed to host max 8 markers per frame
     for (group in 1:length(groups)) {
       all_group_frames[[group]] = tkframe(marker_frames, relief = "raised", borderwidth = 1)
       
@@ -449,10 +387,11 @@ Main$GUImain <- function() {
     for (frames in 1:length(all_group_frames)) {
       tkpack(all_group_frames[[frames]], side = "left", padx = 5)
     }
+
     # packing main labelframe
     tkpack(marker_frames, expand = TRUE, side = "top")
       
-      }
+    }
 }
 
 # ---------- # GUI secondary functions # ---------- #
@@ -480,8 +419,13 @@ Main$GUIselectdb <- function() {
   print("do: GUIselectdb")
   Current = Main
 
+  # saving last db in case of cancel
   last_database = Current$database
-  Current$database = tclvalue(tkgetOpenFile(initialdir = file.path("","data","databases")))
+
+  # initial dir at location of last selected db
+  path_database = strsplit(Current$database, split = "/")
+  path_database = paste0(paste(path_database[[1]][-length(path_database[[1]])], collapse= "/"), sep = "/")
+  Current$database = tclvalue(tkgetOpenFile(initialdir = path_database))
   
   # error catch if no db selected
   if (Current$database == "") {

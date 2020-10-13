@@ -134,7 +134,7 @@ Main$calculateCutoff <- function(marker_values) {
 
                 for (i in idx_shoulder) {
 
-                    if (abs(x_shoulder_max - incline_x[i]) <= 0.3) {
+                    if ((abs(x_shoulder_max - incline_x[i])) <= 0.3) {
                         remove = c(remove, which(idx_shoulder == i))
 
                     }
