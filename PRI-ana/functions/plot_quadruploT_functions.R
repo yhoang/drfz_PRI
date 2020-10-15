@@ -277,6 +277,13 @@ fcs$doquadruploT <- function() {
     this$q3.prodcells <- 0
   }
   this$q4.prodcells <- round((100 * q4.prodcells.num / nrow(tdata.q4)), 2)
+
+  ### Testing to get all feature z1/z2 positive cells for later display
+  print("extracted all cells which are positive for feature z1 and y")
+  this$q4.feature_z = tdata.q4[which(tdata.q4[, 3] >= cutoffs[3]), 3]
+  this$q4.feature_y = tdata.q4[which(tdata.q4[, 2] >= cutoffs[2]), 2]
+  ###
+
   if (is.nan(this$q4.prodcells)) {
     this$q4.prodcells <- 0
   }
@@ -702,6 +709,15 @@ fcs$binquadruplot <- function(
       text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]),
     y = par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]),
     label = sprintf("%0.1f%%", this$q4.total), col = quadrants.color, cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
+    
+    ### Testing added median of feature z and y
+      text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]) + 2.5,
+    y = par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]),
+    label = paste0("z: ", round(median(this$q4.feature_z), 2)), col = "blue", cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
+     
+     text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]) + 2.5,
+    y = par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]),
+    label = paste0("y: ", round(median(this$q4.feature_y), 2)), col = "blue", cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
 
     ### q1: quadrant left lower red and green ink
     text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]),

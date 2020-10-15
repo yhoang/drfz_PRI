@@ -288,6 +288,12 @@ Main$GUImain <- function() {
     ## bind command to save cutoffs to database
     # need to add class vars to avoid repetition
     tkbind(button_save_data, "<Button-1>", function(...) {
+
+      # error catch for no specified data - needs to be added here
+      # cutoffs are actually re-calculated but not the selected markers (only in plotting so far)
+      if (length(Current$specified_marker_data) == 0) {
+        tk_messageBox(caption = Current$version, message = "Please calculate/plot Cutoffs first .")
+      }
       
       # calculated thresholds
       thresholds = rep(0, marker_length)

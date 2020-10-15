@@ -277,6 +277,12 @@ fcs$dotriploT <- function() {
       }
 
       this$q4.prodcells <- 100 * length(tdata.q4[which(tdata.q4 >= cutoffs[3])]) / length(tdata.q4)
+
+      ### Testing
+      #print("extracted cells which are positive for feature c")
+      #this$feature_z = tdata.q4[which(tdata.q4 >= cutoffs[3])]
+      ###
+
       if (is.nan(this$q4.prodcells)) {
         this$q4.prodcells <- 0
       }
@@ -4147,6 +4153,10 @@ fcs$bintriplot <- function(
         text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.total), col=quadrants.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
         text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
         text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.14 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
+        
+        ### Testing
+        # additional parameters: median of y and z values
+        #text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]) + 2.5, par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]), label=paste0("z: ",round(median(this$feature_z),2)), col="black", cex=1.00 * set.cex, pos=4, xpd=TRUE)
         
         csv.content <- c(current.date, displayfile, this$current.cofactor, checkCALC,
         colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange, 
