@@ -157,7 +157,7 @@ fcs$GUImain <- function () {
     }
   })
   btdeselAll <- tkbutton(ttfselButtons, text="Deselect all vars", command=function() {
-    for (i in 1:len) {
+    for (i in 1:len.vars) {
       tclvalue(this$cbVal[[i]]) <- "0"
     }
   })
