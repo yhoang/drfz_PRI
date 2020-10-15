@@ -280,7 +280,11 @@ fcs$doquadruploT <- function() {
 
   ### Testing to get all feature z1/z2 positive cells for later display
   print("extracted all cells which are positive for feature z1 and y")
-  this$q4.feature_z = tdata.q4[which(tdata.q4[, 3] >= cutoffs[3]), 3]
+  #print(paste("q4.prodcells.num <- nrow(tdata.q4[which(tdata.q4[, 3]", sign.C1[1], "cutoffs[3] ", "& tdata.q4[, 4]", sign.C2[1], "cutoffs[4]), ])", sep=""))
+  #print(colnames(tdata))
+  #print(cutoffs[3])
+  #print(cutoffs[4])
+  this$q4.feature_z = tdata.q4[which((tdata.q4[, 3] >= cutoffs[3]) & (tdata.q4[, 4] <= cutoffs[4])), 3]
   this$q4.feature_y = tdata.q4[which(tdata.q4[, 2] >= cutoffs[2]), 2]
   ###
 

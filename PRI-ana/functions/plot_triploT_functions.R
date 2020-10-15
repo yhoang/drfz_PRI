@@ -246,6 +246,13 @@ fcs$dotriploT <- function() {
     tdata.q2 <- tdata[which(tdata[, 1] >= cutoffs[1] & tdata[, 2] < cutoffs[2]), 3]
     tdata.q3 <- tdata[which(tdata[, 1] >= cutoffs[1] & tdata[, 2] >= cutoffs[2]), 3]
     tdata.q4 <- tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 3]
+    this$test = tdata.q4
+
+    ### Testing cells that are in quadrant 4
+    this$tri.q4.feature_y = tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 2]
+    if (length(this$tri.q4.feature_y) == 0) {
+      this$tri.q4.feature_y = 0
+    }
     
     ### q[x].total [ink=black]
     ### percentage of cells in quadrant to total cells 
@@ -277,6 +284,17 @@ fcs$dotriploT <- function() {
       }
 
       this$q4.prodcells <- 100 * length(tdata.q4[which(tdata.q4 >= cutoffs[3])]) / length(tdata.q4)
+      
+      ### Testing
+      print("extracted cells which are positive for feature c")
+      this$tri.q4.feature_z = tdata.q4[which(tdata.q4 >= cutoffs[3])]
+      this$test2 = cutoffs[3]
+      if (length(this$tri.q4.feature_z) == 0) {
+        this$tri.q4.feature_z <- 0
+      }
+      
+      ###
+      
       if (is.nan(this$q4.prodcells)) {
         this$q4.prodcells <- 0
       }
@@ -638,6 +656,12 @@ fcs$dotriploTfiles <- function(read=FALSE) {
               tdata.q3 <- tdata[which(tdata[, 1] >= cutoffs[1] & tdata[, 2] >= cutoffs[2]), 3]
               tdata.q4 <- tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 3]
               
+              ### Testing added selection of cells in Q4 which are positive for y
+              this$tri.q4.feature_y = tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 2]
+              if (length(this$tri.q4.feature_y) == 0) {
+                this$tri.q4.feature_y = 0
+              }
+
               ### q[x].total [ink=black]
               ### percentage of cells in quadrant to total cells 
               ### or in MSI(+): percentage of cells in quadrant to total positive cells
@@ -661,6 +685,10 @@ fcs$dotriploTfiles <- function(read=FALSE) {
                 this$q4.prodcells <- 100 * length(tdata.q4[which(tdata.q4 >= cutoffs[3])]) / length(tdata.q4)
                 if (is.nan(this$q4.prodcells)) this$q4.prodcells <- 0
                 
+                ### Testing
+                print("2 : extracted cells which are positive for feature c")
+                this$tri.q4.feature_z = tdata.q4[which(tdata.q4 >= cutoffs[3])]
+
                 ### only do MSI plots on producing cells only
                 if (checkCALC == "MSI(+)") {
                   ### cut all cells which are not producing cells
@@ -4142,6 +4170,11 @@ fcs$bintriplot <- function(
         text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
         text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.14 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
         
+        ### Testing
+        # additional parameters: median of y and z values
+        text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]) + 2.5, par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=paste0("y: ",round(median(this$tri.q4.feature_y),2)), col="blue", cex=1.00 * set.cex, pos=4, xpd=TRUE)
+        text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]) + 2.5, par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]), label=paste0("z: ",round(median(this$tri.q4.feature_z),2)), col="blue", cex=1.00 * set.cex, pos=4, xpd=TRUE)
+
         csv.content <- c(current.date, displayfile, this$current.cofactor, checkCALC,
         colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange, 
         xmin.val, xmax.val, ymin.val, ymax.val,
