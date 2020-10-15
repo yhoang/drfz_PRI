@@ -12,7 +12,8 @@
 
 - might need some class vars in Main-GUI for cutoff display + saving
 * calculated thresholds
-* selected markers cols
+* selected markers cols (needed to fix problem with saving data)
+
 * IDEA: 
 **create class vars outside and assign value to local var inside bind functions
 ** only assign back to class var at output/final state of local var
@@ -51,7 +52,9 @@
 * add new ones 
 
 - add storage/database manipulation 
-* save created thresholds - done
+* save created thresholds - done (MAKE SURE ONLY NEWEST CALCULATED CUTOFFS CAN BE SAVED)
+** right now cutoffs from previous calculation get saved
+** sample ID changes dynamically but not cutoff recalc (might need a flag/warning)
 * extract existing thresholds - done but not displayed yet
 * reload last used database - not needed (dynamic initial dir is fine)
 
