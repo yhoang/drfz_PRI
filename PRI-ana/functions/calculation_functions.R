@@ -275,8 +275,29 @@ fcs$autoSetCutoff <- function() {
 
 			if (!skip) {
 				idx.minima = idx.maxima = idx.shoulder = vector()
+
+				# check exeption if incline lists contain 1 element only
+				if ((length(incline_x) == 1) && (length(incline_list) == 1)) {
+					# check for local minima
+				if (incline_list[[1]][3] < 0 & incline_list[[1]][3] > 0) {
+					idx_minima = c(idx_minima, 1)
+				}
+					# check for local maxima
+				if (incline_list[[1]][3] < 0 & incline_list[[1]][3] > 0) {
+					idx_minima = c(idx_minima, 1)
+				}
+				# check for local shoulder
+				if (abs(incline_list[[1]][3]) < 0.01) {
+					idx_shoulder = c(idx_shoulder, 1)
+				}
+               
+            } else {
+
+
+
 				for ( inc in 1: (length(incline_x)-1) ) {
 					#printf("inc=%s list[3]=%s",inc,incline_list[[inc]][3])
+					
 				
 					### check if there is at least one minima
 				  # difference at position inc should be -, and at position inc+1 should be +
@@ -298,6 +319,7 @@ fcs$autoSetCutoff <- function() {
 						idx.shoulder=c(idx.shoulder,inc)
 					}
 					
+				}
 				}
 				this$inc=incline_x
 				this$inc_list=incline_list
