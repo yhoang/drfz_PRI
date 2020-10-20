@@ -16,6 +16,7 @@
 - started function for custom cutoffs (need to ask Ria)
 - added database location memory
 - fixed inc subscript put of bounds (also fixed in PRI-ana)
+- added custom cutoff calculation for CD63, CD123 and FCeR
 
 
 ########## v0.3 - pdf saving 
