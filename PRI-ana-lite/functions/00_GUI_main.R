@@ -176,7 +176,7 @@ Main$GUImain <- function() {
         # retrieving number of selected markers
         num_markers = length(marker_cols)
         selected_marker_names = Current$marker_names[marker_cols,]
-        #print(selected_marker_names)
+        print(selected_marker_names)
 
         ## check if any markers are selected
         if (num_markers > 0) {
@@ -188,13 +188,28 @@ Main$GUImain <- function() {
           # get marker data for current selected markers and sample
           Current$specified_marker_data  = Current$getMarkerData(Current$database, Current$project, sample_idx, markerindex)
 
-          # automatically calculate cutoffs
+          ### automatically calculate cutoffs
+
+          # insert custom marker names that have specified custom cutoff aclulations
+          custom_markers = c("CD63_VioBlue", "FceRI_PE_Vio.770","CD123_FITC")
           thresholds = rep(0, marker_length)
           for (marker in 1:ncol(Current$specified_marker_data)) {
+
+            # custom cutoff calculation
+            if (selected_marker_names[marker] %in% custom_markers) {
+              print(paste0("#### ",selected_marker_names[marker]))
+              custom_marker = custom_markers[which(selected_marker_names[marker] == custom_markers)]
+              thresholds[marker] = Current$customCutoff(Current$specified_marker_data[,marker], custom_marker)
+              print(thresholds[marker])
+
+            } else {
+            # default automatic cutoff calculation
             print(paste0("#### ",selected_marker_names[marker]))
             thresholds[marker] = Current$calculateCutoff(Current$specified_marker_data[,marker])
             print(thresholds[marker])
+            }
           }
+          ####################################
 
           # plotting Histograms
           Current$plotHistograms(Current$specified_marker_data, num_markers, selected_marker_names, thresholds, sample_name)

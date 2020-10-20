@@ -232,12 +232,16 @@ Main$customCutoff <- function(marker_values, identifier) {
    
    print("do: customCutoff")
 
-   # CD63 set cutoff at 25% percentile
-   if (identifier == "CD63") {
-       return(Main$calcCutoffQuantile(marker_values, 25))
+   # CD63 set cutoff at 98.5% percentile
+   if (identifier == "CD63_VioBlue") {
+       return(round(quantile(marker_values, 0.985),1))
 
-   # FCR/ CD123 cutoff at Lage der Quadranten (Triplot) 
-   } else if (identifier == "FCR" | identifier == "CD123") {
-      return(0)
+   # FCR cutoff at Lage der Quadranten (Triplot) 
+   } else if (identifier == "FceRI_PE_Vio.770") {
+      return(round(quantile(marker_values, 0.995),1)) 
+      
+   # CD123 cutoff at Lage der Quadranten (Triplot) 
+   } else if (identifier == "CD123_FITC") {
+      return(round(quantile(marker_values, 0.971),1))
    } 
 }
