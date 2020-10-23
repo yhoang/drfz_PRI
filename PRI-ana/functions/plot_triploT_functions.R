@@ -252,6 +252,11 @@ fcs$dotriploT <- function() {
     if (length(this$tri.q4.feature_y) == 0) {
       this$tri.q4.feature_y = 0
     }
+
+    ### added only cells are counted that are within bins with >= mincells
+    q4.rows = which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2])
+    refined.rows = intersect(q4.rows, this$bin.rows)
+    this$tri.bins.q4.feature_y = tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 2]
     
     ### q[x].total [ink=black]
     ### percentage of cells in quadrant to total cells 
@@ -290,7 +295,12 @@ fcs$dotriploT <- function() {
       if (length(this$tri.q4.feature_z) == 0) {
         this$tri.q4.feature_z <- 0
       }
-      
+
+      ### added only cells are counted that are within bins with >= mincells
+      q4.rows = which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2])
+      refined.rows = intersect(q4.rows, this$bin.rows)
+      this$tri.bins.q4.feature_z = tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 3]
+        
       ###
       
       if (is.nan(this$q4.prodcells)) {
@@ -659,6 +669,11 @@ fcs$dotriploTfiles <- function(read=FALSE) {
                 this$tri.q4.feature_y = 0
               }
 
+              ### added only cells are counted that are within bins with >= mincells
+              q4.rows = which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2])
+              refined.rows = intersect(q4.rows, this$bin.rows)
+              this$tri.bins.q4.feature_y = tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 2]
+
               ### q[x].total [ink=black]
               ### percentage of cells in quadrant to total cells 
               ### or in MSI(+): percentage of cells in quadrant to total positive cells
@@ -685,6 +700,11 @@ fcs$dotriploTfiles <- function(read=FALSE) {
                 ### Testing
                 print("2 : extracted cells which are positive for feature c")
                 this$tri.q4.feature_z = tdata.q4[which(tdata.q4 >= cutoffs[3])]
+
+                ### added only cells are counted that are within bins with >= mincells
+                q4.rows = which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2])
+                refined.rows = intersect(q4.rows, this$bin.rows)
+                this$tri.bins.q4.feature_z = tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 3]
 
                 ### only do MSI plots on producing cells only
                 if (checkCALC == "MSI(+)") {
@@ -3922,6 +3942,7 @@ fcs$bintriplot <- function(
   colnames(tab) <- seq(ymin.val, ymax.val - binSize, by=binSize)
   rownames(tab) <- seq(xmin.val, xmax.val - binSize, by=binSize)
   fXY <- as.factor(paste(fX, fY))
+  this$fXY = fXY
     
   ### construct bins for MSI(+)
   if (checkCALC == "MSI(+)") {
@@ -3937,6 +3958,7 @@ fcs$bintriplot <- function(
   if (density) {
     # number of cells in bin
     my.calc <- aggregate(tdata[, 3], by=list(fXY), length)
+
   } else {
     # get means / median / freq
     if (grepl("MSI", checkCALC)) {
@@ -3969,6 +3991,15 @@ fcs$bintriplot <- function(
   
   my.lengths <- aggregate(tdata[, 3], by=list(fXY), length)
   my.LENGTHS <- any(my.lengths[, 2] >= mincells)
+
+  # determining bins that contain >= mincells
+  labels = my.lengths$Group.1[which(my.lengths$x >= mincells)]
+  this$bin.rows = c()
+
+  # retrieve rows of actual values which are contained in label bins with >= 5 cells
+  for (label in labels) {
+       this$bin.rows = c(this$bin.rows, which(fXY == label))
+    }
    
   absRange <- 0
   ### if there are bins to display
