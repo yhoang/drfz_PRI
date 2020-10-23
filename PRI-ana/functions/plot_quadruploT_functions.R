@@ -556,6 +556,23 @@ fcs$binquadruplot <- function(
     length.double <- aggregate(tdata.double[, 3], by=list(fXY.double), length)
     rownames(length.double) <- length.double$Group.1
 
+    ### extracting values of only bins with >= 5 cells
+
+    # get all bin labels that contain >= 5 cells
+    labels = length.double[which(length.double$x >= mincells), ]$Group.1
+    this$rows = c()
+
+    # retrieve rows of actual values which are contained in label bins with >= 5 cells
+    for (label in labels) {
+       this$rows = c(this$rows, which(fXY.double == label))
+    }
+
+    # feature y data for only cells contained in bins >= 5 cells and within C1 and C2 biubdaries
+    this$q4.bins.feature_y = tdata[this$rows, 2]
+
+    # feature z data for only cells contained in bins >= 5 cells and within C1 and C2 biubdaries
+    this$q4.bins.feature_z = tdata[this$rows, 3]
+
     ### count total cells in each bin
     length.all <- aggregate(tdata[, 4], by=list(fXY), length)
     rownames(length.all) <- length.all$Group.1
@@ -717,11 +734,11 @@ fcs$binquadruplot <- function(
     ### Testing added median of feature z and y
       text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]) + 2.5,
     y = par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]),
-    label = paste0("z: ", round(median(this$q4.feature_z), 2)), col = "blue", cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
+    label = paste0("z: ", round(median(this$q4.bins.feature_z), 2)), col = "blue", cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
      
      text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]) + 2.5,
     y = par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]),
-    label = paste0("y: ", round(median(this$q4.feature_y), 2)), col = "blue", cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
+    label = paste0("y: ", round(median(this$q4.bins.feature_y), 2)), col = "blue", cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
 
     ### q1: quadrant left lower red and green ink
     text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]),

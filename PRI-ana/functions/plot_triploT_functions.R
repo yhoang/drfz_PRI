@@ -246,7 +246,6 @@ fcs$dotriploT <- function() {
     tdata.q2 <- tdata[which(tdata[, 1] >= cutoffs[1] & tdata[, 2] < cutoffs[2]), 3]
     tdata.q3 <- tdata[which(tdata[, 1] >= cutoffs[1] & tdata[, 2] >= cutoffs[2]), 3]
     tdata.q4 <- tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 3]
-    this$test = tdata.q4
 
     ### Testing cells that are in quadrant 4
     this$tri.q4.feature_y = tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 2]
@@ -288,7 +287,6 @@ fcs$dotriploT <- function() {
       ### Testing
       print("extracted cells which are positive for feature c")
       this$tri.q4.feature_z = tdata.q4[which(tdata.q4 >= cutoffs[3])]
-      this$test2 = cutoffs[3]
       if (length(this$tri.q4.feature_z) == 0) {
         this$tri.q4.feature_z <- 0
       }
@@ -476,7 +474,6 @@ fcs$dotriploTfiles <- function(read=FALSE) {
   v3 <- this$checkMarker(tclvalue(tkget(this$cbvar3)))
   tkset(this$cbvar3, v3)
   vars <- c(v1, v2, v3)
-  
   ### if Feature A is not in sample
   if (length(v1) == 0){
     tkmessageBox(title = "An error has occured!", 
@@ -874,7 +871,6 @@ fcs$dotriploTtable <- function() {
     v2 <- this$checkMarker(as.character(triplot.table$Y[i]))
     v3 <- this$checkMarker(as.character(triplot.table$Z[i]))
     vars <- c(v1, v2, v3)
-    
     triplot.q <- as.character(triplot.table$Q[i])
     
 
@@ -1137,7 +1133,6 @@ fcs$dotriploTRectData <- function() {
   var3 <- this$checkMarker(tclvalue(tkget(this$cbvar3)))
   tkset(this$cbvar3, var3)
   vars <- c(var1, var2, var3)
-  
   ### if features are not in sample
   if (length(var1) == 0 | length(var2) == 0 | length(var3) == 0){
     tkmessageBox(title = "An error has occured!", 
