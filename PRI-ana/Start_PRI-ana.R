@@ -19,14 +19,14 @@ fcs$version <- "v0.40"
 ### ----------------------------------------------------------------------
 
 # work.station <- "asus-vividbook"
-#work.station <- "drfz"
+work.station <- "drfz"
 # work.station <- "lenovoz570"
 # work.station <- "rev"
 # work.station <- "Ria"
 # work.station <- "Praktika"
 # work.station <- "asus-zenbook"
 # work.station <- "felix"
- work.station = "delta_local"
+# work.station = "delta_local"
 
 if (work.station == "asus-zenbook") {
   PRIana.path <- file.path("", "scratch", "drfz_PRI", "PRI-ana", "functions") 
