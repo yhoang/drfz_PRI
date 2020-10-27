@@ -729,7 +729,7 @@ fcs$binquadruplot <- function(
     ### q4 quadrant left upper black ink
       text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]),
     y = par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]),
-    label = sprintf("%0.1f%%", this$q4.total), col = quadrants.color, cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
+    label = sprintf("%0.2f%%", this$q4.total), col = quadrants.color, cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
 
     ### Testing added median of feature z and y
       text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]) + 2.5,
@@ -770,7 +770,7 @@ fcs$binquadruplot <- function(
         label=sprintf("%0.1f%%", this$q4.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
     text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), 
         y = par()$usr[4] - 0.14 * (par()$usr[4] - par()$usr[3]), 
-        label=sprintf("%0.1f%%", this$q4.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
+        label=sprintf("%0.2f%%", this$q4.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
 
     ### save meta table values -------------------------------------------
     csv.content <- c(current.date, displayfile,
