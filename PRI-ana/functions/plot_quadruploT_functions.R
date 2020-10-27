@@ -725,7 +725,7 @@ fcs$binquadruplot <- function(
     ### q3 quadrant right upper black ink
       text(x = par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]),
     y = par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]),
-    label=sprintf("%0.1f%%", this$q3.total), col=quadrants.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
+    label=sprintf("%0.2f%%", this$q3.total), col=quadrants.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
     ### q4 quadrant left upper black ink
       text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]),
     y = par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]),
@@ -762,7 +762,7 @@ fcs$binquadruplot <- function(
         label=sprintf("%0.1f%%", this$q3.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
     text(x = par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]),
         y = par()$usr[4] - 0.14 * (par()$usr[4] - par()$usr[3]),
-        label=sprintf("%0.1f%%", this$q3.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
+        label=sprintf("%0.2f%%", this$q3.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
         
     ### q4 quadrant left upper red and green ink
     text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]),
