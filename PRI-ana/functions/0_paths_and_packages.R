@@ -9,8 +9,8 @@
 if (work.station  ==  "asus-zenbook") {
   ### ASUS Zenbook
   Lib.path <- "/opt/R-3.5.1/library"
-  Param.path <- vector()
   setwd(file.path("", "scratch", "drfz_PRI", "PRI-ana"))
+  Param.path <- getwd()
 
   fcs$db.path <- file.path("", "data", "databases")
   fcs$db.name <- "EM_20200210_EME002_WTCD4.sqlite3"
@@ -24,8 +24,8 @@ if (work.station  ==  "asus-zenbook") {
   fcs$template.file <- file.path("tcl", "template.png")
 } else if (work.station == "asus-vividbook") {
   Lib.path <- file.path("C:", "Program\ Files", "R", "R-3.5.1", "library")
-  Param.path <- vector()
   setwd(file.path("D:", "drfz_PRI", "PRI-ana"))
+  Param.path <- getwd()
 
   fcs$db.path <- file.path("D:", "DB")
   fcs$db.name <- "SGJP_20180524_NZBxWIL21+Cytokines.sqlite3"
@@ -49,6 +49,7 @@ if (work.station  ==  "asus-zenbook") {
   fcs$template.file <- file.path("tcl", "template.png")
 } else if (work.station == "lenovoz570") {
   setwd(file.path("/", "scratch", "drfz_PRI"))
+  Param.path <- getwd()
   fcs$db.path <- file.path("", "data", "databases")
   fcs$db.name <- ""
   fcs$working <- FALSE
@@ -58,6 +59,7 @@ if (work.station  ==  "asus-zenbook") {
   fcs$template.file <- file.path("tcl", "template.png")
 } else if (work.station == "Ria") {
   setwd("C:/Users/ag-baumgras/Documents/R")
+  Param.path <- getwd()
   fcs$db.path <- file.path("data")
   fcs$db.name <- ""
   fcs$working <- FALSE
@@ -66,16 +68,17 @@ if (work.station  ==  "asus-zenbook") {
   fcs$template.file <- file.path("tcl", "template.png")
 } else if (work.station == "delta") {
   Lib.path <- "/usr/local/lib/R/site-library"
-  Param.path <- vector()
   setwd(file.path("", "scratch", "drfz", "PRI", "PRI-ana"))
+  Param.path <- getwd()
 
   fcs$db.path <- file.path("", "data", "databases")
   # fcs$db.name <- "RB_20191002_Good2018.sqlite3"
   fcs$db.name <- "YH_20190524_Tordesillas2016.sqlite3"
 
-  fcs$table.dir <- "/scratch/drfz/Spitzer2017library(RSQLite, quietly=TRUE, lib.loc = Lib.path)
-library(tcltk2, quietly=TRUE, lib.loc = Lib.path)
-library(R.devices, quietly=TRUE, lib.loc = Lib.path)/glmnet_bio_keep/"
+  fcs$table.dir <- "/scratch/drfz/Spitzer2017/glmnet_bio_keep/"  
+  library(RSQLite, quietly=TRUE, lib.loc = Lib.path)
+  library(tcltk2, quietly=TRUE, lib.loc = Lib.path)
+  library(R.devices, quietly=TRUE, lib.loc = Lib.path)
   fcs$working <- TRUE
   #fcs$working <- FALSE
 

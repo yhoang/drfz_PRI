@@ -7,7 +7,7 @@ rm(list = ls())
 fcs <- new.env()
 param <- new.env()
 fcs$parent.env <- ls()
-fcs$version <- "v0.40"
+fcs$version <- "v0.40a"
 
 ### Chose work.stations --------------------------------------------------
 ### "drfz"          : DRFZ Office
@@ -18,15 +18,14 @@ fcs$version <- "v0.40"
 ### "asus-vividbook": ASUS Vividbook
 ### ----------------------------------------------------------------------
 
-# work.station <- "asus-vividbook"
- work.station <- "drfz"
+# work.station <- "drfz"
 # work.station <- "lenovoz570"
 # work.station <- "rev"
 # work.station <- "Ria"
 # work.station <- "Praktika"
 # work.station <- "asus-zenbook"
-# work.station <- "felix"
-# work.station = "delta_local"
+work.station <- "felix"
+work.station <- "asus-vividbook"
 
 if (work.station == "asus-zenbook") {
   PRIana.path <- file.path("", "scratch", "drfz_PRI", "PRI-ana", "functions") 
@@ -42,12 +41,10 @@ if (work.station == "asus-zenbook") {
   PRIana.path <- file.path("D:", "drfz_PRI", "PRI-ana", "functions")
 } else if (work.station == "felix") {
  PRIana.path <- file.path("~","Github", "DRFZ-AG-Baumgrass", "AG_Baumgrass","PRI", "drfz_PRI", "PRI-ana", "functions")
-}  else if (work.station == "delta_local") {
-  PRIana.path = file.path("","home","flohrke","PRI-Github","drfz_PRI","PRI-ana","functions")
-} 
+}
 
 ### Load functions -------------------------------------------------------
- setwd(PRIana.path)
+# setwd(PRIana.path)
 ### Source several R scripts
 source.files <- list.files(path = PRIana.path, pattern = "\\.[Rr]$")
 # for (nm in 1:5) {

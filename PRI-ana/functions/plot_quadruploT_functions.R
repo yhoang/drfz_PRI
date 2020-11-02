@@ -717,11 +717,11 @@ fcs$binquadruplot <- function(
     ### q1: quadrant left lower black ink
     text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), 
     y = par()$usr[3] + 0.03 * (par()$usr[4] - par()$usr[3]), 
-    label = sprintf("%0.1f%%", this$q1.total), col = quadrants.color, cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
+    label = sprintf("%0.2f%%", this$q1.total), col = quadrants.color, cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
     ### q2: quadrant right lower black ink
       text(x = par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]),
     y = par()$usr[3] + 0.03 * (par()$usr[4] - par()$usr[3]),
-    label = sprintf("%0.1f%%", this$q2.total), col = quadrants.color, cex = 1.00 * set.cex, pos = 2, xpd = TRUE)
+    label = sprintf("%0.2f%%", this$q2.total), col = quadrants.color, cex = 1.00 * set.cex, pos = 2, xpd = TRUE)
     ### q3 quadrant right upper black ink
       text(x = par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]),
     y = par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]),
@@ -746,7 +746,7 @@ fcs$binquadruplot <- function(
         label=sprintf("%0.1f%%", this$q1.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
     text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]),
         y = par()$usr[3] + 0.13 * (par()$usr[4] - par()$usr[3]),
-        label=sprintf("%0.1f%%", this$q1.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
+        label=sprintf("%0.2f%%", this$q1.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
 
     ### q2: quadrant right lower red and green ink
     text(x = par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]),
@@ -754,7 +754,7 @@ fcs$binquadruplot <- function(
         label=sprintf("%0.1f%%", this$q2.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
     text(x = par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]),
         y = par()$usr[3] + 0.13 * (par()$usr[4] - par()$usr[3]),
-        label=sprintf("%0.1f%%", this$q2.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
+        label=sprintf("%0.2f%%", this$q2.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
 
     ### q3 quadrant right upper red and green ink
     text(x = par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]),

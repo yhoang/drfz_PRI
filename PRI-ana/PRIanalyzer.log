@@ -4,6 +4,15 @@
 #		2015-2020
 ##########	PRI-analyzer Update Log
 
+########## v0.40a
+*** general
+- fixed some minor outbounding plot issues
+- readded the second decimal number
+
+*** quadruploT
+- added median of parameter B and C1 in quadrant 4 (top left)
+########## 20201102
+
 ########## v0.40
 *** general
 - !!! use script "Start_PRI-ana.R" from now on !!!
