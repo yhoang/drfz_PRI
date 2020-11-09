@@ -4198,8 +4198,8 @@ fcs$bintriplot <- function(
         
         ### Testing
         # additional parameters: median of y and z values
-        text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]) + 2.5, par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=paste0("y: ",round(median(this$tri.q4.feature_y),2)), col="blue", cex=1.00 * set.cex, pos=4, xpd=TRUE)
-        text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]) + 2.5, par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]), label=paste0("z: ",round(median(this$tri.q4.feature_z),2)), col="blue", cex=1.00 * set.cex, pos=4, xpd=TRUE)
+        #text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]) + 2.5, par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=paste0("y: ",round(median(this$tri.q4.feature_y),2)), col="blue", cex=1.00 * set.cex, pos=4, xpd=TRUE)
+        #text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]) + 2.5, par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]), label=paste0("z: ",round(median(this$tri.q4.feature_z),2)), col="blue", cex=1.00 * set.cex, pos=4, xpd=TRUE)
 
         csv.content <- c(current.date, displayfile, this$current.cofactor, checkCALC,
         colnames(data)[1], colnames(data)[2], colnames(data)[3], absRange, 
