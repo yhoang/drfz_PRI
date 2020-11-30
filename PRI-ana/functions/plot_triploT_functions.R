@@ -4185,7 +4185,7 @@ fcs$bintriplot <- function(
         ### Calculation percentage of cells in all colored bins which are Z+ versus all cells in colored bins in Q2
         
 
-        ### added bins that are z+ in Q2
+        ### calculation of mean of all z+ cells (in bins) that are in Q2
         q2.rows = which(tdata[, 1] >= cutoffs[1] & tdata[, 2] < cutoffs[2])
         this$q2.rows = q2.rows
         refined.rows = intersect(q2.rows, this$bin.rows)
