@@ -247,16 +247,43 @@ fcs$dotriploT <- function() {
     tdata.q3 <- tdata[which(tdata[, 1] >= cutoffs[1] & tdata[, 2] >= cutoffs[2]), 3]
     tdata.q4 <- tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 3]
 
+    ### added only cells are counted that are within bins with >= mincells
+    q4.rows = which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2])
+    refined.rows = intersect(q4.rows, this$bin.rows)
+    this$tri.bins.q4.feature_y = tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 2]
+
     ### Testing cells that are in quadrant 4
+    print("Do: testing 1 intialized")
     this$tri.q4.feature_y = tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 2]
     if (length(this$tri.q4.feature_y) == 0) {
       this$tri.q4.feature_y = 0
     }
 
-    ### added only cells are counted that are within bins with >= mincells
-    q4.rows = which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2])
-    refined.rows = intersect(q4.rows, this$bin.rows)
-    this$tri.bins.q4.feature_y = tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 2]
+    ### added bins that are z+ in Q2
+    q2.rows = which(tdata[, 1] >= cutoffs[1] & tdata[, 2] < cutoffs[2])
+    this$q2.rows = q2.rows
+    refined.rows = intersect(q2.rows, this$bin.rows)
+    print(this$bin.rows)
+    print(refined.rows)
+    this$refined.rows = refined.rows
+    data_bins_q2 = tdata[refined.rows,]
+    data_bin_q2_z = data_bins_q2[, 3]
+    this$tri.q2.feature_z = data_bin_q2_z[which(data_bin_q2_z >= cutoffs[3])]
+    if (length(this$tri.q2.feature_z) == 0) {
+      this$tri.q2.feature_z = 0
+    }
+
+    ### calculated % of cells in Q2 that are Z+ compared to all Z+ cells in plot
+    data_bins = tdata[this$bin.rows,]
+    num_zpositive = nrow(data_bins[which(data_bins[,3] >= cutoffs[3]),])
+    num_zpositive_q2 = length(this$tri.q2.feature_z)
+    print(num_zpositive)
+    print(num_zpositive_q2)
+    this$pos_z_percent_q2 = (num_zpositive_q2/num_zpositive)*100
+    if ((length(this$pos_z_percent_q2) == 0) | (is.nan(this$pos_z_percent_q2)) | (is.infinite(this$pos_z_percent_q2))) {
+       this$pos_z_percent_q2 = 0
+    }
+
     
     ### q[x].total [ink=black]
     ### percentage of cells in quadrant to total cells 
@@ -288,13 +315,6 @@ fcs$dotriploT <- function() {
       }
 
       this$q4.prodcells <- 100 * length(tdata.q4[which(tdata.q4 >= cutoffs[3])]) / length(tdata.q4)
-      
-      ### Testing
-      print("extracted cells which are positive for feature c")
-      this$tri.q4.feature_z = tdata.q4[which(tdata.q4 >= cutoffs[3])]
-      if (length(this$tri.q4.feature_z) == 0) {
-        this$tri.q4.feature_z <- 0
-      }
 
       ### added only cells are counted that are within bins with >= mincells
       q4.rows = which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2])
@@ -662,12 +682,6 @@ fcs$dotriploTfiles <- function(read=FALSE) {
               tdata.q2 <- tdata[which(tdata[, 1] >= cutoffs[1] & tdata[, 2] < cutoffs[2]), 3]
               tdata.q3 <- tdata[which(tdata[, 1] >= cutoffs[1] & tdata[, 2] >= cutoffs[2]), 3]
               tdata.q4 <- tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 3]
-              
-              ### Testing added selection of cells in Q4 which are positive for y
-              this$tri.q4.feature_y = tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 2]
-              if (length(this$tri.q4.feature_y) == 0) {
-                this$tri.q4.feature_y = 0
-              }
 
               ### added only cells are counted that are within bins with >= mincells
               q4.rows = which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2])
@@ -697,9 +711,6 @@ fcs$dotriploTfiles <- function(read=FALSE) {
                 this$q4.prodcells <- 100 * length(tdata.q4[which(tdata.q4 >= cutoffs[3])]) / length(tdata.q4)
                 if (is.nan(this$q4.prodcells)) this$q4.prodcells <- 0
                 
-                ### Testing
-                print("2 : extracted cells which are positive for feature c")
-                this$tri.q4.feature_z = tdata.q4[which(tdata.q4 >= cutoffs[3])]
 
                 ### added only cells are counted that are within bins with >= mincells
                 q4.rows = which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2])
@@ -1012,14 +1023,6 @@ fcs$dotriploTtable <- function() {
                 tdata.q1 <- tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] < cutoffs[2]), 3]
                 tdata.q2 <- tdata[which(tdata[, 1] >= cutoffs[1] & tdata[, 2] < cutoffs[2]), 3]
                 tdata.q3 <- tdata[which(tdata[, 1] >= cutoffs[1] & tdata[, 2] >= cutoffs[2]), 3]
-                tdata.q4 <- tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 3]
-                
-                ### q[x].total [ink=black]
-                ### percentage of cells in quadrant to total cells 
-                ### or in MSI(+): percentage of cells in quadrant to total positive cells
-                this$q1.total <- abs(100 * length(tdata.q1) / ncells)
-                this$q2.total <- abs(100 * length(tdata.q2) / ncells)
-                this$q3.total <- abs(100 * length(tdata.q3) / ncells)
                 this$q4.total <- abs(100 - this$q1.total - this$q2.total - this$q3.total)
                 
                 if (cutoffs[3] > 0) {
@@ -4175,6 +4178,36 @@ fcs$bintriplot <- function(
     ##### if its not background and not a png minimalistic picture, then print legend and label
     if ((!bg | density) & !png & this$plot.percentage) {
       if (cutoffs[1] > 0 & cutoffs[2] > 0 & cutoffs[3] > 0 & !density) {
+
+
+        #### --- TESTING HERE BECAUSE BIN.ROWS IS CALCULATED AFTER QUADRANT CALCULATIONS --- ####
+
+        ### Calculation percentage of cells in all colored bins which are Z+ versus all cells in colored bins in Q2
+        
+
+        ### added bins that are z+ in Q2
+        q2.rows = which(tdata[, 1] >= cutoffs[1] & tdata[, 2] < cutoffs[2])
+        this$q2.rows = q2.rows
+        refined.rows = intersect(q2.rows, this$bin.rows)
+        this$refined.rows = refined.rows
+        data_bins_q2 = tdata[refined.rows,]
+        data_bin_q2_z = data_bins_q2[, 3]
+        this$tri.q2.feature_z = data_bin_q2_z[which(data_bin_q2_z >= cutoffs[3])]
+        if (length(this$tri.q2.feature_z) == 0) {
+          this$tri.q2.feature_z = 0
+        }
+
+        ### calculated % of cells in Q2 that are Z+ compared to all Z+ cells in plot
+        data_bins = tdata[this$bin.rows,]
+        num_zpositive = nrow(data_bins[which(data_bins[,3] >= cutoffs[3]),])
+        num_zpositive_q2 = length(this$tri.q2.feature_z)
+        this$pos_z_percent_q2 = (num_zpositive_q2/num_zpositive)*100
+        if ((length(this$pos_z_percent_q2) == 0) | (is.nan(this$pos_z_percent_q2)) | (is.infinite(this$pos_z_percent_q2))) {
+          this$pos_z_percent_q2 = 0
+        }
+
+        #### --- TESTING HERE BECAUSE BIN.ROWS IS CALCULATED AFTER QUADRANT CALCULATIONS --- ####
+
         #if (this$working) print("w: add quadrant and product percentages on triplot")
         ### quadrant left lower
         text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[3] + 0.03 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q1.total), col=quadrants.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
@@ -4186,11 +4219,16 @@ fcs$bintriplot <- function(
         text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[3] + 0.08 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q2.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
         text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[3] + 0.13 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q2.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
         
+        ### Testing mean of all Z+ cells in Q2
+        # additional parameters: median of y and z values
+        text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]) - 2.5, par()$usr[3] + 0.03 * (par()$usr[4] - par()$usr[3]), label=paste0("%: ", round(this$pos_z_percent_q2,2)), col="blue", cex=1.00 * set.cex, pos=2, xpd=TRUE)
+        text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]) - 2.5, par()$usr[3] + 0.08 * (par()$usr[4] - par()$usr[3]), label=paste0("z-mean: ",round(mean(this$tri.q2.feature_z),2)), col="blue", cex=1.00 * set.cex, pos=2, xpd=TRUE)
+
         ### quadrant right upper
         text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.2f%%", this$q3.total), col=quadrants.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
         text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q3.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
         text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.14 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.2f%%", this$q3.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
-        
+
         ### quadrant left upper
         text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.2f%%", this$q4.total), col=quadrants.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
         text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q4.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)

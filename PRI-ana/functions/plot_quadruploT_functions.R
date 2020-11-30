@@ -731,14 +731,14 @@ fcs$binquadruplot <- function(
     y = par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]),
     label = sprintf("%0.2f%%", this$q4.total), col = quadrants.color, cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
 
-    ### Testing added median of feature z and y
-    #  text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]) + 2.5,
-    #y = par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]),
-    #label = paste0("z: ", round(median(this$q4.bins.feature_z), 2)), col = "blue", cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
+    ### Testing added mean of feature z of all z positive bins to Q3
+      text(x = par()$usr[2] - 0.01 * (par()$usr[2] - par()$usr[1]) - 5,
+    y = par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]),
+    label = paste0("z: ", round(median(this$q4.bins.feature_z), 2)), col = "blue", cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
      
-    # text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]) + 2.5,
-    #y = par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]),
-    #label = paste0("y: ", round(median(this$q4.bins.feature_y), 2)), col = "blue", cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
+     text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]) + 2.5,
+    y = par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]),
+    label = paste0("y: ", round(median(this$q4.bins.feature_y), 2)), col = "blue", cex = 1.00 * set.cex, pos = 4, xpd = TRUE)
 
     ### q1: quadrant left lower red and green ink
     text(x = par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]),
