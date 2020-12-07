@@ -252,7 +252,8 @@ fcs$dotriploT <- function() {
     refined.rows = intersect(q4.rows, this$bin.rows)
     this$tri.bins.q4.feature_y = tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 2]
 
-    ### Testing cells that are in quadrant 4
+    ### TESTING
+    ### cells that are in quadrant 4
     print("Do: testing 1 intialized")
     this$tri.q4.feature_y = tdata[which(tdata[, 1] < cutoffs[1] & tdata[, 2] >= cutoffs[2]), 2]
     if (length(this$tri.q4.feature_y) == 0) {
@@ -260,30 +261,31 @@ fcs$dotriploT <- function() {
     }
 
     ### added bins that are z+ in Q2
-    q2.rows = which(tdata[, 1] >= cutoffs[1] & tdata[, 2] < cutoffs[2])
-    this$q2.rows = q2.rows
-    refined.rows = intersect(q2.rows, this$bin.rows)
-    print(this$bin.rows)
-    print(refined.rows)
-    this$refined.rows = refined.rows
-    data_bins_q2 = tdata[refined.rows,]
-    data_bin_q2_z = data_bins_q2[, 3]
-    this$tri.q2.feature_z = data_bin_q2_z[which(data_bin_q2_z >= cutoffs[3])]
-    if (length(this$tri.q2.feature_z) == 0) {
-      this$tri.q2.feature_z = 0
-    }
+    #q2.rows = which(tdata[, 1] >= cutoffs[1] & tdata[, 2] < cutoffs[2])
+    #this$q2.rows = q2.rows
+    #refined.rows = intersect(q2.rows, this$bin.rows)
+    #print(this$bin.rows)
+    #print(refined.rows)
+    #this$refined.rows = refined.rows
+    #data_bins_q2 = tdata[refined.rows,]
+    #data_bin_q2_z = data_bins_q2[, 3]
+    #this$tri.q2.feature_z = data_bin_q2_z[which(data_bin_q2_z >= cutoffs[3])]
+    #if (length(this$tri.q2.feature_z) == 0) {
+    #  this$tri.q2.feature_z = 0
+    #}
 
+    
     ### calculated % of cells in Q2 that are Z+ compared to all Z+ cells in plot
-    data_bins = tdata[this$bin.rows,]
-    num_zpositive = nrow(data_bins[which(data_bins[,3] >= cutoffs[3]),])
-    num_zpositive_q2 = length(this$tri.q2.feature_z)
-    print(num_zpositive)
-    print(num_zpositive_q2)
-    this$pos_z_percent_q2 = (num_zpositive_q2/num_zpositive)*100
-    if ((length(this$pos_z_percent_q2) == 0) | (is.nan(this$pos_z_percent_q2)) | (is.infinite(this$pos_z_percent_q2))) {
-       this$pos_z_percent_q2 = 0
-    }
-
+    #data_bins = tdata[this$bin.rows,]
+    #num_zpositive = nrow(data_bins[which(data_bins[,3] >= cutoffs[3]),])
+    #num_zpositive_q2 = length(this$tri.q2.feature_z)
+    #print(num_zpositive)
+    #print(num_zpositive_q2)
+    #this$pos_z_percent_q2 = (num_zpositive_q2/num_zpositive)*100
+    #if ((length(this$pos_z_percent_q2) == 0) | (is.nan(this$pos_z_percent_q2)) | (is.infinite(this$pos_z_percent_q2))) {
+    #   this$pos_z_percent_q2 = 0
+    #}
+    ### TESTING
     
     ### q[x].total [ink=black]
     ### percentage of cells in quadrant to total cells 
@@ -4182,26 +4184,29 @@ fcs$bintriplot <- function(
 
         #### --- TESTING HERE BECAUSE BIN.ROWS IS CALCULATED AFTER QUADRANT CALCULATIONS --- ####
 
-        ### Calculation percentage of cells in all colored bins which are Z+ versus all cells in colored bins in Q2
+        ### Calculation percentage of cells in all colored bins which are Z+ versus all cells in bins in Q2 (theoretically since they are prefiltered in MSI+)
         
 
         ### calculation of mean of all z+ cells (in bins) that are in Q2
         q2.rows = which(tdata[, 1] >= cutoffs[1] & tdata[, 2] < cutoffs[2])
         this$q2.rows = q2.rows
         refined.rows = intersect(q2.rows, this$bin.rows)
-        this$refined.rows = refined.rows
-        data_bins_q2 = tdata[refined.rows,]
-        data_bin_q2_z = data_bins_q2[, 3]
+        data_bin_q2 = tdata[refined.rows,]
+        #data_bins_q2_z = data_bins_q2[which(data_bins_q2[,3] >= cutoffs[3]),]
+        data_bin_q2_z = data_bin_q2[, 3]
         this$tri.q2.feature_z = data_bin_q2_z[which(data_bin_q2_z >= cutoffs[3])]
         if (length(this$tri.q2.feature_z) == 0) {
           this$tri.q2.feature_z = 0
         }
 
         ### calculated % of cells in Q2 that are Z+ compared to all Z+ cells in plot
-        data_bins = tdata[this$bin.rows,]
-        num_zpositive = nrow(data_bins[which(data_bins[,3] >= cutoffs[3]),])
+        #data_bins = tdata[this$bin.rows,]
+        #num_zpositive = nrow(data_bins[which(data_bins[,3] >= cutoffs[3]),])
         num_zpositive_q2 = length(this$tri.q2.feature_z)
-        this$pos_z_percent_q2 = (num_zpositive_q2/num_zpositive)*100
+        num_bin_cells_q2 = nrow(data_bin_q2)
+        #print(num_zpositive_q2)
+        #print(length(q2.rows))
+        this$pos_z_percent_q2 = (num_zpositive_q2/length(q2.rows))*100
         if ((length(this$pos_z_percent_q2) == 0) | (is.nan(this$pos_z_percent_q2)) | (is.infinite(this$pos_z_percent_q2))) {
           this$pos_z_percent_q2 = 0
         }
