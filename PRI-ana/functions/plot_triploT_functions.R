@@ -4239,7 +4239,7 @@ fcs$bintriplot <- function(
         ### Testing mean of all Z+ cells in Q2
         # additional parameters: median of y and z values
         #text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]) - 2.5, par()$usr[3] + 0.03 * (par()$usr[4] - par()$usr[3]), label=paste0("%: ", round(this$pos_z_percent_q2,2)), col="blue", cex=1.00 * set.cex, pos=2, xpd=TRUE)
-        text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[3] + 0.18 * (par()$usr[4] - par()$usr[3]), label=paste0("z-m: ",round(mean(this$tri.q2.feature_z),2)), col="blue", cex=1.00 * set.cex, pos=2, xpd=TRUE)
+        text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]) - 2.5, par()$usr[3] + 0.03 * (par()$usr[4] - par()$usr[3]), label=paste0("z-m: ",round(mean(this$tri.q2.feature_z),2)), col="blue", cex=1.00 * set.cex, pos=2, xpd=TRUE)
 
         ### quadrant right upper
         text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.2f%%", this$q3.total), col=quadrants.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
@@ -4247,7 +4247,7 @@ fcs$bintriplot <- function(
         text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.14 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.2f%%", this$q3.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
         
         ### Testing mean of all Z+ cells in Q3
-        text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.185 * (par()$usr[4] - par()$usr[3]), label=paste0("z-m: ",round(mean(this$tri.q3.feature_z),2)), col="blue", cex=1.00 * set.cex, pos=2, xpd=TRUE)
+        text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]) - 2.5, par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=paste0("z-m: ",round(mean(this$tri.q3.feature_z),2)), col="blue", cex=1.00 * set.cex, pos=2, xpd=TRUE)
 
 
         ### quadrant left upper
