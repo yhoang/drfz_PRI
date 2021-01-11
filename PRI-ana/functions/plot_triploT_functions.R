@@ -4199,6 +4199,18 @@ fcs$bintriplot <- function(
           this$tri.q2.feature_z = 0
         }
 
+        ### calculation of mean of all z+ cells (in bins) that are in Q3
+        q3.rows = which(tdata[, 1] >= cutoffs[1] & tdata[, 2] > cutoffs[2])
+        this$q3.rows = q3.rows
+        refined.rows = intersect(q3.rows, this$bin.rows)
+        data_bin_q3 = tdata[refined.rows,]
+        #data_bins_q2_z = data_bins_q2[which(data_bins_q2[,3] >= cutoffs[3]),]
+        data_bin_q3_z = data_bin_q3[, 3]
+        this$tri.q3.feature_z = data_bin_q3_z[which(data_bin_q3_z >= cutoffs[3])]
+        if (length(this$tri.q3.feature_z) == 0) {
+          this$tri.q3.feature_z = 0
+        }
+
         ### calculated % of cells in Q2 that are Z+ compared to all Z+ cells in plot
         #data_bins = tdata[this$bin.rows,]
         #num_zpositive = nrow(data_bins[which(data_bins[,3] >= cutoffs[3]),])
@@ -4227,12 +4239,16 @@ fcs$bintriplot <- function(
         ### Testing mean of all Z+ cells in Q2
         # additional parameters: median of y and z values
         #text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]) - 2.5, par()$usr[3] + 0.03 * (par()$usr[4] - par()$usr[3]), label=paste0("%: ", round(this$pos_z_percent_q2,2)), col="blue", cex=1.00 * set.cex, pos=2, xpd=TRUE)
-        text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]) - 2.5, par()$usr[3] + 0.08 * (par()$usr[4] - par()$usr[3]), label=paste0("z-mean: ",round(mean(this$tri.q2.feature_z),2)), col="blue", cex=1.00 * set.cex, pos=2, xpd=TRUE)
+        text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[3] + 0.18 * (par()$usr[4] - par()$usr[3]), label=paste0("z-m: ",round(mean(this$tri.q2.feature_z),2)), col="blue", cex=1.00 * set.cex, pos=2, xpd=TRUE)
 
         ### quadrant right upper
         text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.2f%%", this$q3.total), col=quadrants.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
         text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.09 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.1f%%", this$q3.prodcells), col=prodcells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
         text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.14 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.2f%%", this$q3.prodcellsplus), col=prodpluscells.color, cex=1.00 * set.cex, pos=2, xpd=TRUE)
+        
+        ### Testing mean of all Z+ cells in Q3
+        text(par()$usr[2] + 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.185 * (par()$usr[4] - par()$usr[3]), label=paste0("z-m: ",round(mean(this$tri.q3.feature_z),2)), col="blue", cex=1.00 * set.cex, pos=2, xpd=TRUE)
+
 
         ### quadrant left upper
         text(par()$usr[1] - 0.01 * (par()$usr[2] - par()$usr[1]), par()$usr[4] - 0.04 * (par()$usr[4] - par()$usr[3]), label=sprintf("%0.2f%%", this$q4.total), col=quadrants.color, cex=1.00 * set.cex, pos=4, xpd=TRUE)
