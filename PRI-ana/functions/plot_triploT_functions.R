@@ -4183,8 +4183,6 @@ fcs$bintriplot <- function(
 
 
         #### --- TESTING HERE BECAUSE BIN.ROWS IS CALCULATED AFTER QUADRANT CALCULATIONS --- ####
-
-        ### Calculation percentage of cells in all colored bins which are Z+ versus all cells in bins in Q2 (theoretically since they are prefiltered in MSI+)
         
 
         ### calculation of mean of all z+ cells (in bins) that are in Q2
